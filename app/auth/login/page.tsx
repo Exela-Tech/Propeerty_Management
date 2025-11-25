@@ -10,12 +10,33 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import Link from "next/link"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
+
+  /**
+   * Verifies that the session is established by polling for the user session.
+   * This replaces the hardcoded delay with proper session verification.
+   */
+  const verifySession = async (supabase: ReturnType<typeof createClient>, maxAttempts = 10): Promise<boolean> => {
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      const { data: { session }, error } = await supabase.auth.getSession()
+      
+      if (session && !error) {
+        return true
+      }
+      
+      // Wait 100ms before next attempt (total max wait: 1 second)
+      await new Promise((resolve) => setTimeout(resolve, 100))
+    }
+    
+    return false
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -33,9 +54,16 @@ export default function LoginPage() {
         throw error
       }
 
-      // Wait a moment for the session to be fully established
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      window.location.href = "/dashboard"
+      // Verify session is established instead of using hardcoded delay
+      const sessionVerified = await verifySession(supabase)
+      
+      if (sessionVerified) {
+        // Use Next.js router for proper client-side navigation
+        router.push("/dashboard")
+        router.refresh() // Refresh to ensure server components get updated session
+      } else {
+        throw new Error("Session verification failed. Please try again.")
+      }
     } catch (error: unknown) {
       let errorMessage = error instanceof Error ? error.message : "An error occurred"
 
