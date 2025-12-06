@@ -31,6 +31,10 @@ export default async function AccountingDashboardPage() {
     const currentMonth = now.getMonth() + 1
     const currentYear = now.getFullYear()
 
+    // Use Date objects for proper date handling instead of string interpolation
+    const startDate = new Date(currentYear, currentMonth - 1, 1).toISOString().split('T')[0]
+    const endDate = new Date(currentYear, currentMonth, 1).toISOString().split('T')[0]
+
     // Try to fetch accounting data - if any query fails, schema is not ready
     const [paymentsResult, expensesResult, payoutsResult, tenantsResult, pendingPayoutsResult] = await Promise.all([
       supabase
@@ -42,8 +46,8 @@ export default async function AccountingDashboardPage() {
       supabase
         .from("expenses")
         .select("amount")
-        .gte("expense_date", `${currentYear}-${currentMonth.toString().padStart(2, "0")}-01`)
-        .lt("expense_date", `${currentYear}-${(currentMonth + 1).toString().padStart(2, "0")}-01`),
+        .gte("expense_date", startDate)
+        .lt("expense_date", endDate),
       supabase.from("landlord_payouts").select("total_payout").eq("month", currentMonth).eq("year", currentYear),
       supabase.from("tenants").select("*", { count: "exact", head: true }),
       supabase.from("landlord_payouts").select("*", { count: "exact", head: true }).eq("status", "pending"),

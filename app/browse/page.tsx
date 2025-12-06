@@ -29,9 +29,12 @@ export default async function BrowsePage({
     .select("*, profiles!properties_landlord_id_fkey(role)")
     .eq("status", "approved")
 
-  // Apply filters
+  // Apply filters with input validation
   if (city) {
-    query = query.ilike("city", `%${city}%`)
+    // Sanitize city input: trim whitespace and limit length
+    const sanitizedCity = city.trim().slice(0, 100)
+    // Supabase's ilike uses parameterized queries, but we sanitize for defense in depth
+    query = query.ilike("city", `%${sanitizedCity}%`)
   }
   if (property_type) {
     query = query.eq("property_type", property_type)
