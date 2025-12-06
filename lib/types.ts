@@ -55,3 +55,7 @@ export interface RentPayment {
   created_at: string
   updated_at: string
 }
+
+// Re-export Result types for convenience
+export type { Result, AppError, ErrorCodeType } from './result'
+export { ErrorCode, success, failure, createError, toAppError } from './result'

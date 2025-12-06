@@ -5,16 +5,26 @@ import { EmbeddedCheckout, EmbeddedCheckoutProvider } from "@stripe/react-stripe
 import { loadStripe } from "@stripe/stripe-js"
 import { createRentPaymentSession } from "@/app/actions/stripe"
 import { useRouter } from "next/navigation"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
 export function RentPaymentCheckout({ paymentId }: { paymentId: string }) {
   const router = useRouter()
   const [isComplete, setIsComplete] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const fetchClientSecret = useCallback(async () => {
-    return await createRentPaymentSession(paymentId)
+    const result = await createRentPaymentSession(paymentId)
+
+    if (!result.success) {
+      setError(result.error.message)
+      throw new Error(result.error.message) // Stripe expects a throw on error
+    }
+
+    return result.data
   }, [paymentId])
+
 
   if (isComplete) {
     return (
@@ -33,6 +43,11 @@ export function RentPaymentCheckout({ paymentId }: { paymentId: string }) {
 
   return (
     <div id="checkout">
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
       <EmbeddedCheckoutProvider stripe={stripePromise} options={{ fetchClientSecret }}>
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>

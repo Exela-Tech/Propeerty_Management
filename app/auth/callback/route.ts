@@ -36,6 +36,9 @@ export async function GET(request: Request) {
       // Email confirmed successfully, redirect to dashboard
       return NextResponse.redirect(`${origin}/dashboard`)
     }
+
+    // Log error for debugging
+    console.error("[Auth Callback] Failed to exchange code for session:", error.message)
   }
 
   // If there's an error or no code, redirect to login

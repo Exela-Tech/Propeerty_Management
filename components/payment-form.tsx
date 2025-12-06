@@ -49,24 +49,23 @@ export function PaymentForm({ tenants }: PaymentFormProps) {
 
     const supabase = createClient()
 
-    try {
-      const paymentData = {
-        tenant_id: formData.tenant_id,
-        amount: Number(formData.amount),
-        due_date: formData.due_date,
-        status: formData.status,
-      }
-
-      const { error } = await supabase.from("rent_payments").insert([paymentData])
-      if (error) throw error
-
-      router.push("/dashboard/payments")
-      router.refresh()
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred")
-    } finally {
-      setIsLoading(false)
+    const paymentData = {
+      tenant_id: formData.tenant_id,
+      amount: Number(formData.amount),
+      due_date: formData.due_date,
+      status: formData.status,
     }
+
+    const { error } = await supabase.from("rent_payments").insert([paymentData])
+
+    if (error) {
+      setError(error.message)
+      setIsLoading(false)
+      return
+    }
+
+    router.push("/dashboard/payments")
+    router.refresh()
   }
 
   return (

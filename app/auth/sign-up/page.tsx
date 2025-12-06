@@ -28,26 +28,26 @@ export default function SignUpPage() {
     setIsLoading(true)
     setError(null)
 
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-          data: {
-            full_name: fullName,
-            phone_number: phoneNumber,
-            role: role,
-          },
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        data: {
+          full_name: fullName,
+          phone_number: phoneNumber,
+          role: role,
         },
-      })
-      if (error) throw error
-      router.push("/auth/sign-up-success")
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred")
-    } finally {
+      },
+    })
+
+    if (error) {
+      setError(error.message)
       setIsLoading(false)
+      return
     }
+
+    router.push("/auth/sign-up-success")
   }
 
   return (

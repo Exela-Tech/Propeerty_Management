@@ -26,15 +26,15 @@ export default function LoginPage() {
   const verifySession = async (supabase: ReturnType<typeof createClient>, maxAttempts = 10): Promise<boolean> => {
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       const { data: { session }, error } = await supabase.auth.getSession()
-      
+
       if (session && !error) {
         return true
       }
-      
+
       // Wait 100ms before next attempt (total max wait: 1 second)
       await new Promise((resolve) => setTimeout(resolve, 100))
     }
-    
+
     return false
   }
 
@@ -44,28 +44,13 @@ export default function LoginPage() {
     setIsLoading(true)
     setError(null)
 
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
 
-      if (error) {
-        throw error
-      }
-
-      // Verify session is established instead of using hardcoded delay
-      const sessionVerified = await verifySession(supabase)
-      
-      if (sessionVerified) {
-        // Use Next.js router for proper client-side navigation
-        router.push("/dashboard")
-        router.refresh() // Refresh to ensure server components get updated session
-      } else {
-        throw new Error("Session verification failed. Please try again.")
-      }
-    } catch (error: unknown) {
-      let errorMessage = error instanceof Error ? error.message : "An error occurred"
+    if (error) {
+      let errorMessage = error.message
 
       if (errorMessage.includes("Email not confirmed")) {
         errorMessage =
@@ -76,7 +61,21 @@ export default function LoginPage() {
 
       setError(errorMessage)
       setIsLoading(false)
+      return
     }
+
+    // Verify session is established instead of using hardcoded delay
+    const sessionVerified = await verifySession(supabase)
+
+    if (!sessionVerified) {
+      setError("Session verification failed. Please try again.")
+      setIsLoading(false)
+      return
+    }
+
+    // Use Next.js router for proper client-side navigation
+    router.push("/dashboard")
+    router.refresh() // Refresh to ensure server components get updated session
   }
 
   return (

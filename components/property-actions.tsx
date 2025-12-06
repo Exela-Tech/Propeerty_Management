@@ -20,17 +20,17 @@ export function PropertyActions({ propertyId, currentStatus }: PropertyActionsPr
     setIsLoading(true)
     const supabase = createClient()
 
-    try {
-      const { error } = await supabase.from("properties").update({ status }).eq("id", propertyId)
+    const { error } = await supabase.from("properties").update({ status }).eq("id", propertyId)
 
-      if (error) throw error
-
-      router.refresh()
-    } catch (error) {
-      console.error("[v0] Error updating property status:", error)
-    } finally {
+    if (error) {
+      console.error("[Error] Failed to update property status:", error.message)
+      // TODO: Show toast notification to user
       setIsLoading(false)
+      return
     }
+
+    router.refresh()
+    setIsLoading(false)
   }
 
   return (

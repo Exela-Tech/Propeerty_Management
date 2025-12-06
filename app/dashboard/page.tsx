@@ -13,7 +13,7 @@ export default async function DashboardPage() {
     const { data, error } = await supabase.auth.getUser()
 
     if (error) {
-      console.error("[v0] Auth error:", error.message)
+      console.error("[Dashboard] Auth error:", error.message)
       // If user doesn't exist in auth, clear session and redirect
       if (error.message.includes("User from sub claim in JWT does not exist")) {
         await supabase.auth.signOut()
@@ -23,7 +23,7 @@ export default async function DashboardPage() {
 
     user = data.user
   } catch (error) {
-    console.error("[v0] Failed to get user:", error)
+    console.error("[Dashboard] Failed to get user:", error)
     redirect("/auth/login")
   }
 
