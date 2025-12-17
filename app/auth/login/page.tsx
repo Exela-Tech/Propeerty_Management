@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { createClient } from "@/lib/supabase/client"
+import { login } from "@/app/actions/auth"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -19,56 +19,25 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
-  /**
-   * Verifies that the session is established by polling for the user session.
-   * This replaces the hardcoded delay with proper session verification.
-   */
-  const verifySession = async (supabase: ReturnType<typeof createClient>, maxAttempts = 10): Promise<boolean> => {
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      const { data: { session }, error } = await supabase.auth.getSession()
-
-      if (session && !error) {
-        return true
-      }
-
-      // Wait 100ms before next attempt (total max wait: 1 second)
-      await new Promise((resolve) => setTimeout(resolve, 100))
-    }
-
-    return false
-  }
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    const supabase = createClient()
     setIsLoading(true)
     setError(null)
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const result = await login({
       email,
       password,
     })
 
-    if (error) {
-      let errorMessage = error.message
-
-      if (errorMessage.includes("Email not confirmed")) {
-        errorMessage =
-          "Please confirm your email address before logging in. Check your inbox for the confirmation link."
-      } else if (errorMessage.includes("Invalid login credentials")) {
-        errorMessage = "Invalid email or password. Please check your credentials and try again."
+    if (!result.success) {
+      // Format validation errors for display
+      if (result.error.code === "VALIDATION_ERROR" && result.error.details?.errors) {
+        const errors = result.error.details.errors as Array<{ path: string[]; message: string }>
+        const errorMessages = errors.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")
+        setError(errorMessages)
+      } else {
+        setError(result.error.message)
       }
-
-      setError(errorMessage)
-      setIsLoading(false)
-      return
-    }
-
-    // Verify session is established instead of using hardcoded delay
-    const sessionVerified = await verifySession(supabase)
-
-    if (!sessionVerified) {
-      setError("Session verification failed. Please try again.")
       setIsLoading(false)
       return
     }

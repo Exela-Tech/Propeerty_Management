@@ -1,8 +1,14 @@
 "use server"
 
 import { z } from "zod"
+import { headers } from "next/headers"
 import { createClient } from "@/lib/supabase/server"
 import { Result, success, failure, createError, ErrorCode, toAppError } from "@/lib/types"
+import {
+  authRateLimiter,
+  getRateLimitIdentifier,
+  getIpAddress,
+} from "@/lib/ratelimit"
 
 // Zod schema for sign-up validation
 const signUpSchema = z
@@ -47,8 +53,15 @@ const signUpSchema = z
     }
   )
 
-const signUpSchemaWithRedirect = signUpSchema.extend({
-  redirectUrl: z.string().url().optional(),
+// Zod schema for login validation
+const loginSchema = z.object({
+  email: z
+    .string()
+    .min(1, "Email is required")
+    .email("Invalid email format")
+    .toLowerCase()
+    .trim(),
+  password: z.string().min(1, "Password is required"),
 })
 
 export async function signUp(
@@ -69,6 +82,28 @@ export async function signUp(
     }
 
     const validatedData = validationResult.data
+
+    // Rate limiting: Use email as identifier to prevent multiple sign-ups with same email
+    const headersList = await headers()
+    const ipAddress = getIpAddress(headersList)
+    // Use email as primary identifier, fallback to IP
+    const identifier = validatedData.email || getRateLimitIdentifier(null, ipAddress)
+
+    const { success: rateLimitSuccess, limit, remaining, reset } = await authRateLimiter.limit(identifier)
+
+    if (!rateLimitSuccess) {
+      return failure(
+        createError(
+          ErrorCode.VALIDATION_ERROR,
+          "Too many sign-up attempts. Please try again later.",
+          {
+            limit,
+            remaining,
+            reset: new Date(reset).toISOString(),
+          }
+        )
+      )
+    }
 
     // Use provided redirect URL or construct from environment
     const emailRedirectTo = redirectUrl || 
@@ -103,6 +138,83 @@ export async function signUp(
 
     if (!authData.user) {
       return failure(createError(ErrorCode.INTERNAL_ERROR, "User creation failed - no user returned"))
+    }
+
+    return success({ userId: authData.user.id })
+  } catch (error) {
+    return failure(toAppError(error))
+  }
+}
+
+export async function login(
+  data: z.infer<typeof loginSchema>
+): Promise<Result<{ userId: string }>> {
+  try {
+    const supabase = await createClient()
+
+    // Validate input with Zod
+    const validationResult = loginSchema.safeParse(data)
+    if (!validationResult.success) {
+      return failure(
+        createError(ErrorCode.VALIDATION_ERROR, "Invalid login data", {
+          errors: validationResult.error.errors,
+        })
+      )
+    }
+
+    const validatedData = validationResult.data
+
+    // Rate limiting: Use email as identifier to prevent brute force attacks
+    const headersList = await headers()
+    const ipAddress = getIpAddress(headersList)
+    // Use email as primary identifier, fallback to IP
+    const identifier = validatedData.email || getRateLimitIdentifier(null, ipAddress)
+
+    const { success: rateLimitSuccess, limit, remaining, reset } = await authRateLimiter.limit(identifier)
+
+    if (!rateLimitSuccess) {
+      return failure(
+        createError(
+          ErrorCode.VALIDATION_ERROR,
+          "Too many login attempts. Please try again later.",
+          {
+            limit,
+            remaining,
+            reset: new Date(reset).toISOString(),
+          }
+        )
+      )
+    }
+
+    // Attempt to sign in
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email: validatedData.email,
+      password: validatedData.password,
+    })
+
+    if (authError) {
+      // Handle specific Supabase errors
+      if (authError.message.includes("Email not confirmed")) {
+        return failure(
+          createError(
+            ErrorCode.VALIDATION_ERROR,
+            "Please confirm your email address before logging in. Check your inbox for the confirmation link."
+          )
+        )
+      } else if (authError.message.includes("Invalid login credentials")) {
+        return failure(
+          createError(ErrorCode.VALIDATION_ERROR, "Invalid email or password. Please check your credentials and try again.")
+        )
+      }
+      return failure(
+        createError(ErrorCode.VALIDATION_ERROR, "Failed to login", {
+          error: authError.message,
+        })
+      )
+    }
+
+    if (!authData.user) {
+      return failure(createError(ErrorCode.INTERNAL_ERROR, "Login failed - no user returned"))
     }
 
     return success({ userId: authData.user.id })
