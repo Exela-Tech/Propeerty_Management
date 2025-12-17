@@ -6,6 +6,7 @@ import {
   getRateLimitIdentifier,
   getIpAddress,
 } from "@/lib/ratelimit"
+import { logger } from "@/lib/logger"
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
@@ -55,7 +56,7 @@ export async function GET(request: Request) {
     }
 
     // Log error for debugging
-    console.error("[Auth Callback] Failed to exchange code for session:", error.message)
+    logger.error("Failed to exchange code for session", error)
   }
 
   // If there's an error or no code, redirect to login

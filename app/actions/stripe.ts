@@ -9,6 +9,7 @@ import {
   getRateLimitIdentifier,
   getIpAddress,
 } from "@/lib/ratelimit"
+import { logger } from "@/lib/logger"
 
 /**
  * Convert payment amount to Stripe's smallest currency unit
@@ -36,9 +37,7 @@ function convertToStripeAmount(amount: number, currency: string): number {
       const roundedAmount = Math.round(ugxAmount / 100) * 100
 
       if (roundedAmount !== ugxAmount) {
-        // Keep a console warning for visibility in server logs
-        // eslint-disable-next-line no-console
-        console.warn(`UGX amount ${amount} was rounded from ${ugxAmount} to ${roundedAmount}`)
+        logger.warn(`UGX amount was rounded from ${ugxAmount} to ${roundedAmount}`, { amount })
       }
 
       return roundedAmount

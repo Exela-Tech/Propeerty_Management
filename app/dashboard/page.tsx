@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Building2, Home, DollarSign } from "lucide-react"
 import Link from "next/link"
+import { logger } from "@/lib/logger"
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -13,7 +14,7 @@ export default async function DashboardPage() {
     const { data, error } = await supabase.auth.getUser()
 
     if (error) {
-      console.error("[Dashboard] Auth error:", error.message)
+      logger.error("Auth error", error)
       // If user doesn't exist in auth, clear session and redirect
       if (error.message.includes("User from sub claim in JWT does not exist")) {
         await supabase.auth.signOut()
@@ -23,7 +24,7 @@ export default async function DashboardPage() {
 
     user = data.user
   } catch (error) {
-    console.error("[Dashboard] Failed to get user:", error)
+    logger.error("Failed to get user", error)
     redirect("/auth/login")
   }
 
@@ -35,7 +36,7 @@ export default async function DashboardPage() {
   let { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single()
 
   if (!profile) {
-    console.log("[v0] Profile not found, creating one for user:", user.id)
+    logger.debug("Profile not found, creating one for user")
 
     const { data: newProfile, error: insertError } = await supabase
       .from("profiles")
@@ -49,7 +50,7 @@ export default async function DashboardPage() {
       .single()
 
     if (insertError) {
-      console.error("[v0] Error creating profile:", insertError)
+      logger.error("Error creating profile", insertError)
       redirect("/auth/login")
     }
 
