@@ -1,0 +1,20 @@
+{
+  "node": {
+    "00119374a0d8f3d6ed6466fcb8c65c5f59b19ff5db": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 60514,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_ACTION_0",
+          "filename": "app/admin/page.tsx"
+        }
+      },
+      "layer": {
+        "app/admin/page": "rsc"
+      },
+      "exportedName": "$$RSC_SERVER_ACTION_0",
+      "filename": "app/admin/page.tsx"
+    }
+  },
+  "edge": {}
+}

@@ -1,0 +1,20 @@
+{
+  "node": {
+    "0003d26dd318ff41a2c593ae68165b0ef5dda1363a": {
+      "workers": {
+        "app/dashboard/payments/page": {
+          "moduleId": 690,
+          "async": false,
+          "exportedName": "$$RSC_SERVER_ACTION_0",
+          "filename": "app/dashboard/payments/page.tsx"
+        }
+      },
+      "layer": {
+        "app/dashboard/payments/page": "rsc"
+      },
+      "exportedName": "$$RSC_SERVER_ACTION_0",
+      "filename": "app/dashboard/payments/page.tsx"
+    }
+  },
+  "edge": {}
+}

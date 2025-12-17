@@ -15,8 +15,8 @@ interface PaymentFormProps {
   tenants: Array<{
     id: string
     monthly_rent: number
-    properties: { title: string; address: string }
-    profiles: { full_name: string | null; email: string }
+    properties: Array<{ title: string; address: string }>
+    profiles: Array<{ full_name: string | null; email: string }>
   }>
 }
 
@@ -82,7 +82,7 @@ export function PaymentForm({ tenants }: PaymentFormProps) {
                 <SelectContent>
                   {tenants.map((tenant) => (
                     <SelectItem key={tenant.id} value={tenant.id}>
-                      {tenant.profiles.full_name || "No name"} - {tenant.properties.title}
+                      {tenant.profiles[0]?.full_name || "No name"} - {tenant.properties[0]?.title || "No property"}
                     </SelectItem>
                   ))}
                 </SelectContent>

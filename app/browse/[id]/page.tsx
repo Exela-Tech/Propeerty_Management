@@ -137,7 +137,7 @@ export default async function PropertyDetailPage({ params }: { params: Promise<{
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-2">
-                      {property.amenities.map((amenity, index) => (
+                      {property.amenities.map((amenity: string, index: number) => (
                         <Badge key={index} variant="secondary">
                           {amenity}
                         </Badge>

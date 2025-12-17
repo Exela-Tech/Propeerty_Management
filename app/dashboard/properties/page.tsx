@@ -115,7 +115,7 @@ export default async function PropertiesPage() {
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Rent:</span>
-                        <span className="font-medium">${property.rent_amount.toLocaleString()}/mo</span>
+                        <span className="font-medium">${(property.rent_amount ?? 0).toLocaleString()}/mo</span>
                       </div>
                       <div className="mt-4 flex gap-2">
                         <Link href={`/dashboard/properties/${property.id}`} className="flex-1">

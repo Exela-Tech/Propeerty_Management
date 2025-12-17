@@ -1,36 +1,5 @@
 {
-  "node": {
-    "00ed825d052f25ebb1c1d4fff1841c7d73a9f0fc67": {
-      "workers": {
-        "app/dashboard/page": {
-          "moduleId": "[project]/.next-internal/server/app/dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/dashboard/page.tsx [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "$$RSC_SERVER_ACTION_0",
-          "filename": "app/dashboard/page.tsx"
-        }
-      },
-      "layer": {
-        "app/dashboard/page": "rsc"
-      },
-      "filename": "app/dashboard/page.tsx",
-      "exportedName": "$$RSC_SERVER_ACTION_0"
-    },
-    "00145fea5d92642b3e19c8761ef1c04317f008c5fe": {
-      "workers": {
-        "app/admin/page": {
-          "moduleId": "[project]/.next-internal/server/app/admin/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/admin/page.tsx [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
-          "async": false,
-          "exportedName": "$$RSC_SERVER_ACTION_0",
-          "filename": "app/admin/page.tsx"
-        }
-      },
-      "layer": {
-        "app/admin/page": "rsc"
-      },
-      "filename": "app/admin/page.tsx",
-      "exportedName": "$$RSC_SERVER_ACTION_0"
-    }
-  },
+  "node": {},
   "edge": {},
   "encryptionKey": "jFw/nnTNm3I5uh+jXNebTfO0KfvgSnVKaS1HamC1pgs="
 }

@@ -72,7 +72,7 @@ export default async function NewPaymentPage() {
             <p className="text-muted-foreground">Create a new rent payment record</p>
           </div>
 
-          <PaymentForm properties={properties || []} tenants={tenants || []} />
+          <PaymentForm tenants={tenants || []} />
         </div>
       </main>
     </div>
