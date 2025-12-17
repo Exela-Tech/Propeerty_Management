@@ -9,6 +9,7 @@ import {
   getRateLimitIdentifier,
   getIpAddress,
 } from "@/lib/ratelimit"
+
 /**
  * Convert payment amount to Stripe's smallest currency unit
  * @param amount - The payment amount
@@ -259,4 +260,3 @@ export async function markPaymentAsPaid(
     return failure(toAppError(error))
   }
 }
-
