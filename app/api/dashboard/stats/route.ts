@@ -22,27 +22,30 @@ export async function GET() {
     const cookieStore = await cookies()
     const supabase = getServiceClient(cookieStore)
 
-    const [{ data: propertiesCount }, { data: unitsStats }, { data: tenantsStats }] = await Promise.all([
+    const [{ count: propertiesCount }, { data: unitsStats }, { data: tenantsStats }] = await Promise.all([
       // Get property count efficiently
       supabase
         .from("properties")
-        .select("id", { count: "exact", head: true }),
+        .select("id", { count: "exact", head: true })
+        .limit(1),
 
       // Get unit statistics with status counts
       supabase
         .from("units")
-        .select("status"),
+        .select("status")
+        .limit(10000), // Limit to prevent loading entire table
 
       // Get tenant payment statistics efficiently
       supabase
         .from("tenants")
         .select("balance,total_paid,status")
-        .eq("status", "active"),
+        .eq("status", "active")
+        .limit(5000), // Limit active tenants
     ])
 
     // Calculate metrics from limited data
-    const totalProperties = propertiesCount?.length || 0
-    const activeProperties = totalProperties // Assuming all returned are active
+    const totalProperties = propertiesCount || 0
+    const activeProperties = propertiesCount || 0
 
     // Process unit statistics
     const unitStats = Array.isArray(unitsStats) ? unitsStats : []

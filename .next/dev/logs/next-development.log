@@ -1,8 +1,166 @@
-[00:00:02.425] Server  LOG      ✓ Ready in 1862ms
-[00:00:10.687] Server  LOG      ○ Compiling / ...
-[00:00:12.845] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:13.190] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:00:13.190] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
-[00:00:13.190] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766937143889}
-[00:00:17.052] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/auth/login color: rgb(120, 120, 120) color: inherit {"dp":"/auth/login","o":"http://localhost:3000/auth/login","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766937147750}
-[00:00:29.168] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3000/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766937159868}
+[00:00:03.238] Server  LOG      ✓ Ready in 2.7s
+[00:00:06.773] Server  LOG      ○ Compiling /landlords/[id]/edit ...
+[00:00:16.669] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:17.335] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
+      <AppDevOverlayErrorBoundary globalError={[...]}>
+        <ReplaySsrOnlyErrors>
+        <DevRootHTTPAccessFallbackBoundary>
+          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
+            <HTTPAccessFallbackErrorBoundary pathname="/landlords..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
+              <RedirectBoundary>
+                <RedirectErrorBoundary router={{...}}>
+                  <Head>
+                  <__next_root_layout_boundary__>
+                    <SegmentViewNode type="layout" pagePath="layout.tsx">
+                      <SegmentTrieNode>
+                      <link>
+                      <script>
+                      <script>
+                      <script>
+                      <RootLayout>
+                        <html lang="en">
+                          <body
+                            className="font-sans antialiased"
+-                           data-new-gr-c-s-check-loaded="14.1131.0"
+-                           data-gr-ext-installed=""
+                          >
+                  ...
+
+[00:00:17.521] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:00:17.521] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/landlords/a4e2e98f-7cc2-4fc1-b296-2fda7eefe949/edit","route":"/landlords/[id]/edit"}
+[00:00:17.522] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/landlords/a4e2e98f-7cc2-4fc1-b296-2fda7eefe949/edit color: rgb(120, 120, 120) color: inherit {"dp":"/landlords/[id]/edit","o":"http://localhost:3000/landlords/a4e2e98f-7cc2-4fc1-b296-2fda7eefe949/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955013387}
+[00:00:34.612] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/landlords color: rgb(120, 120, 120) color: inherit {"dp":"/landlords","o":"http://localhost:3000/landlords","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955030469}
+[00:01:16.918] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955072782}
+[00:01:18.973] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955074836}
+[00:01:21.159] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/landlords color: rgb(120, 120, 120) color: inherit {"dp":"/landlords","o":"http://localhost:3000/landlords","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955077027}
+[00:01:28.502] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/landlords/payments color: rgb(120, 120, 120) color: inherit {"dp":"/landlords/payments","o":"http://localhost:3000/landlords/payments","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955084358}
+[00:01:30.670] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955086540}
+[00:01:32.128] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955087976}
+[00:01:35.734] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants color: rgb(120, 120, 120) color: inherit {"dp":"/tenants","o":"http://localhost:3000/tenants","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955091596}
+[00:01:42.470] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/maintenance color: rgb(120, 120, 120) color: inherit {"dp":"/maintenance","o":"http://localhost:3000/maintenance","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955098335}
+[00:01:45.565] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/expenses color: rgb(120, 120, 120) color: inherit {"dp":"/expenses","o":"http://localhost:3000/expenses","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955101429}
+[00:01:50.361] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/financials color: rgb(120, 120, 120) color: inherit {"dp":"/financials","o":"http://localhost:3000/financials","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955106224}
+[00:01:56.145] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/team color: rgb(120, 120, 120) color: inherit {"dp":"/team","o":"http://localhost:3000/team","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955112014}
+[00:02:00.743] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/reports color: rgb(120, 120, 120) color: inherit {"dp":"/reports","o":"http://localhost:3000/reports","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955116509}
+[00:09:30.374] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955566241}
+[00:09:37.317] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\node_modules_next_dist_3b4d20e1._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:37.319] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\[root-of-the-server]__0f9ef903._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:37.320] Server  WARN    Error: Route "/properties/[id]/edit" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:09:37.457] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\node_modules_next_dist_3b4d20e1._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:37.458] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\[root-of-the-server]__0f9ef903._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:37.463] Server  WARN    Error: Route "/properties/[id]/edit" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:09:37.551] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\node_modules_next_dist_3b4d20e1._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:37.552] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\[root-of-the-server]__0f9ef903._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:09:37.553] Server  WARN    Error: Route "/properties/[id]/edit" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:09:39.725] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/081753c5-7868-44ab-b411-83921597f46c/edit color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/081753c5-7868-44ab-b411-83921597f46c/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955575580}
+[00:09:49.740] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955585604}
+[00:09:52.785] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/maintenance color: rgb(120, 120, 120) color: inherit {"dp":"/maintenance","o":"http://localhost:3000/maintenance","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955588647}
+[00:09:57.788] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants color: rgb(120, 120, 120) color: inherit {"dp":"/tenants","o":"http://localhost:3000/tenants","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955593653}
+[00:10:00.297] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:00.297] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:00.297] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:00.297] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:00.297] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants/5afd258b-5893-4407-9d95-f8835c05259d/edit color: rgb(120, 120, 120) color: inherit {"dp":"/tenants/[id]/edit","o":"http://localhost:3000/tenants/5afd258b-5893-4407-9d95-f8835c05259d/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955596138}
+[00:10:00.812] Server  ERROR   [v0] Error fetching tenant: {}
+[00:10:00.813] Server  ERROR   [v0] getTenant failed: {}
+[00:10:01.498] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:01.498] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:02.796] Server  ERROR   [v0] Error fetching tenant: {}
+[00:10:02.797] Server  ERROR   [v0] getTenant failed: {}
+[00:10:02.916] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:02.916] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:03.267] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants color: rgb(120, 120, 120) color: inherit {"dp":"/tenants","o":"http://localhost:3000/tenants","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955599125}
+[00:10:07.665] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:07.665] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:07.665] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:07.665] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:07.665] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants/5afd258b-5893-4407-9d95-f8835c05259d/edit color: rgb(120, 120, 120) color: inherit {"dp":"/tenants/[id]/edit","o":"http://localhost:3000/tenants/5afd258b-5893-4407-9d95-f8835c05259d/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955603523}
+[00:10:07.932] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:07.932] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:08.225] Server  ERROR   [v0] Error fetching tenant: {}
+[00:10:08.226] Server  ERROR   [v0] getTenant failed: {}
+[00:10:09.001] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:09.001] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:10.071] Server  ERROR   [v0] Error fetching tenant: {}
+[00:10:10.072] Server  ERROR   [v0] getTenant failed: {}
+[00:10:10.532] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:10.532] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:10.815] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants color: rgb(120, 120, 120) color: inherit {"dp":"/tenants","o":"http://localhost:3000/tenants","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955606675}
+[00:10:13.648] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955609514}
+[00:10:17.024] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:17.024] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:17.024] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:17.024] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:17.024] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units/4fa6d78b-1c31-4af3-91ca-6638f5191fa5/edit color: rgb(120, 120, 120) color: inherit {"dp":"/units/[id]/edit","o":"http://localhost:3000/units/4fa6d78b-1c31-4af3-91ca-6638f5191fa5/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955612892}
+[00:10:17.539] Server  ERROR   Error fetching unit: {}
+[00:10:18.210] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:18.210] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:18.659] Server  ERROR   Error fetching unit: {}
+[00:10:19.317] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:19.317] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:23.236] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:23.236] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:24.341] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:10:24.341] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:24.864] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3000/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955680718}
+[00:11:25.965] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/landlords color: rgb(120, 120, 120) color: inherit {"dp":"/landlords","o":"http://localhost:3000/landlords","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955681833}
+[00:11:32.649] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/landlords/payments color: rgb(120, 120, 120) color: inherit {"dp":"/landlords/payments","o":"http://localhost:3000/landlords/payments","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955688519}
+[00:11:33.979] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955689836}
+[00:11:35.727] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955691594}
+[00:11:38.759] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants color: rgb(120, 120, 120) color: inherit {"dp":"/tenants","o":"http://localhost:3000/tenants","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955694627}
+[00:11:41.427] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:41.428] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:41.428] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:41.428] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:41.428] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants/5afd258b-5893-4407-9d95-f8835c05259d/edit color: rgb(120, 120, 120) color: inherit {"dp":"/tenants/[id]/edit","o":"http://localhost:3000/tenants/5afd258b-5893-4407-9d95-f8835c05259d/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955697288}
+[00:11:41.933] Server  ERROR   [v0] Error fetching tenant: {}
+[00:11:41.933] Server  ERROR   [v0] getTenant failed: {}
+[00:11:42.591] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:42.591] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:43.070] Server  ERROR   [v0] Error fetching tenant: {}
+[00:11:43.070] Server  ERROR   [v0] getTenant failed: {}
+[00:11:43.210] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:43.210] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:44.244] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants color: rgb(120, 120, 120) color: inherit {"dp":"/tenants","o":"http://localhost:3000/tenants","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955700109}
+[00:11:48.312] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955704178}
+[00:11:49.771] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:49.771] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:49.771] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:49.771] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:49.771] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units/4fa6d78b-1c31-4af3-91ca-6638f5191fa5/edit color: rgb(120, 120, 120) color: inherit {"dp":"/units/[id]/edit","o":"http://localhost:3000/units/4fa6d78b-1c31-4af3-91ca-6638f5191fa5/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955705637}
+[00:11:50.240] Server  ERROR   Error fetching unit: {}
+[00:11:50.939] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:50.939] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:51.387] Server  ERROR   Error fetching unit: {}
+[00:11:52.057] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:52.058] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:55.965] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:55.965] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:57.570] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:11:57.570] Browser ERROR   A param property was accessed directly with `params.id`. `params` is a Promise and must be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:12:27.390] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955743258}
+[00:15:46.943] Server  LOG      ✓ Compiled in 1600ms
+[00:15:51.546] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units/4fa6d78b-1c31-4af3-91ca-6638f5191fa5/edit color: rgb(120, 120, 120) color: inherit {"dp":"/units/[id]/edit","o":"http://localhost:3000/units/4fa6d78b-1c31-4af3-91ca-6638f5191fa5/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955947392}
+[00:16:00.356] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766955956221}
+[00:16:49.704] Server  LOG      ✓ Compiled in 267ms
+[00:17:01.331] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants color: rgb(120, 120, 120) color: inherit {"dp":"/tenants","o":"http://localhost:3000/tenants","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766956017194}
+[00:17:12.155] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants/773a5ea6-93c7-4063-b14d-344c77a79f58/edit color: rgb(120, 120, 120) color: inherit {"dp":"/tenants/[id]/edit","o":"http://localhost:3000/tenants/773a5ea6-93c7-4063-b14d-344c77a79f58/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766956027978}
+[00:17:23.743] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants color: rgb(120, 120, 120) color: inherit {"dp":"/tenants","o":"http://localhost:3000/tenants","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766956039609}
+[00:18:12.688] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766956088552}
+[00:18:15.175] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\node_modules_next_dist_3b4d20e1._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:18:15.176] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\[root-of-the-server]__0f9ef903._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:18:15.177] Server  WARN    Error: Route "/properties/[id]/edit" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:18:16.501] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766956092359}

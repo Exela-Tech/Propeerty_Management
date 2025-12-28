@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { use, useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,7 +13,8 @@ import Link from "next/link"
 import { updateUnit, getUnit, getProperties } from "../../actions"
 import { useToast } from "@/hooks/use-toast"
 
-export default function EditUnitPage({ params }: { params: { id: string } }) {
+export default function EditUnitPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
   const router = useRouter()
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
@@ -23,7 +24,7 @@ export default function EditUnitPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     async function loadData() {
-      const [unitResult, propertiesResult] = await Promise.all([getUnit(params.id), getProperties()])
+      const [unitResult, propertiesResult] = await Promise.all([getUnit(id), getProperties()])
 
       if (unitResult.success && unitResult.data) {
         setUnit(unitResult.data)
@@ -41,7 +42,7 @@ export default function EditUnitPage({ params }: { params: { id: string } }) {
       }
     }
     loadData()
-  }, [params.id, toast])
+  }, [id, toast])
 
   function handlePropertyChange(propertyId: string) {
     const property = properties.find((p) => p.id === propertyId)
@@ -53,7 +54,7 @@ export default function EditUnitPage({ params }: { params: { id: string } }) {
     setLoading(true)
 
     const formData = new FormData(e.currentTarget)
-    const result = await updateUnit(params.id, formData)
+    const result = await updateUnit(id, formData)
 
     if (!result.success) {
       toast({

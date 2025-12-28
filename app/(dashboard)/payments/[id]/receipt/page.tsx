@@ -45,6 +45,11 @@ export default function PaymentReceiptPage() {
   const paymentId = params.id as string
   const [receipt, setReceipt] = useState<PaymentReceipt | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   useEffect(() => {
     async function loadReceipt() {
@@ -62,17 +67,6 @@ export default function PaymentReceiptPage() {
 
     loadReceipt()
   }, [paymentId])
-
-  useEffect(() => {
-    console.log(
-      "[v0] Receipt loaded - Unit:",
-      receipt?.unit,
-      "Property:",
-      receipt?.property,
-      "Balance:",
-      receipt?.tenant.balanceAtPayment,
-    )
-  }, [receipt])
 
   if (loading) return <div className="p-8">Loading...</div>
   if (!receipt) return <div className="p-8">Receipt not found</div>
@@ -201,7 +195,7 @@ export default function PaymentReceiptPage() {
         <div className="border-t-2 border-dashed border-black p-4 text-center space-y-2">
           <p className="text-xs">Thank you for your payment</p>
           <div className="w-full h-px bg-black"></div>
-          <p className="text-xs text-gray-600">{new Date().toLocaleDateString()}</p>
+          <p className="text-xs text-gray-600">{isClient ? new Date().toLocaleDateString() : ""}</p>
         </div>
       </div>
 

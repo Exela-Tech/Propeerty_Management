@@ -1,18 +1,34 @@
-import { createClient } from "@supabase/supabase-js"
+import { createServerClient } from "@supabase/ssr"
+import { cookies } from "next/headers"
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-    },
-  })
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params
 
-  const { data, error } = await supabase.from("owners").select("*").eq("id", params.id).single()
+    const cookieStore = await cookies()
+    const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll(cookies: any[]) {
+          cookies.forEach(({ name, value, options }) => {
+            cookieStore.set(name, value, options)
+          })
+        },
+      },
+    })
 
-  if (error) {
-    return Response.json({ success: false, error: error.message }, { status: 400 })
+    const { data, error } = await supabase.from("owners").select("*").eq("id", id).single()
+
+    if (error) {
+      console.log("[v0] Landlord fetch error:", error)
+      return Response.json({ success: false, error: error.message }, { status: 400 })
+    }
+
+    return Response.json({ success: true, data })
+  } catch (err) {
+    console.log("[v0] Landlord API error:", err)
+    return Response.json({ success: false, error: "Failed to fetch landlord" }, { status: 500 })
   }
-
-  return Response.json({ success: true, data })
 }

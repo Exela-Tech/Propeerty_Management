@@ -1,5 +1,19 @@
 {
   "/(dashboard)/dashboard/page": "app/(dashboard)/dashboard/page.js",
-  "/auth/login/page": "app/auth/login/page.js",
-  "/page": "app/page.js"
+  "/(dashboard)/expenses/page": "app/(dashboard)/expenses/page.js",
+  "/(dashboard)/financials/page": "app/(dashboard)/financials/page.js",
+  "/(dashboard)/landlords/[id]/edit/page": "app/(dashboard)/landlords/[id]/edit/page.js",
+  "/(dashboard)/landlords/page": "app/(dashboard)/landlords/page.js",
+  "/(dashboard)/landlords/payments/page": "app/(dashboard)/landlords/payments/page.js",
+  "/(dashboard)/maintenance/page": "app/(dashboard)/maintenance/page.js",
+  "/(dashboard)/properties/[id]/edit/page": "app/(dashboard)/properties/[id]/edit/page.js",
+  "/(dashboard)/properties/page": "app/(dashboard)/properties/page.js",
+  "/(dashboard)/reports/page": "app/(dashboard)/reports/page.js",
+  "/(dashboard)/team/page": "app/(dashboard)/team/page.js",
+  "/(dashboard)/tenants/[id]/edit/page": "app/(dashboard)/tenants/[id]/edit/page.js",
+  "/(dashboard)/tenants/page": "app/(dashboard)/tenants/page.js",
+  "/(dashboard)/units/[id]/edit/page": "app/(dashboard)/units/[id]/edit/page.js",
+  "/(dashboard)/units/page": "app/(dashboard)/units/page.js",
+  "/api/expenses/route": "app/api/expenses/route.js",
+  "/api/landlords/[id]/route": "app/api/landlords/[id]/route.js"
 }

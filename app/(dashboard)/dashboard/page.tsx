@@ -1,41 +1,63 @@
-import { createClient } from "@supabase/supabase-js"
+import { createServerClient } from "@supabase/ssr"
+import { cookies } from "next/headers"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Building2, Users, Wrench, DollarSign, Building, UserCircle } from "lucide-react"
 
 export default async function DashboardPage() {
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
+  const cookieStore = await cookies()
+  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll()
+      },
+      setAll(cookiesToSet: any) {
+        try {
+          cookiesToSet.forEach((cookie: any) => cookieStore.set(cookie.name, cookie.value, cookie.options))
+        } catch {}
+      },
     },
   })
 
   const [
-    { data: properties },
-    { data: units },
-    { data: tenantsData },
-    { data: owners },
+    { count: propertiesCount },
+    { count: unitsCount },
+    { data: tenants },
+    { count: ownersCount },
     { data: maintenanceData },
     { data: payments },
   ] = await Promise.all([
-    supabase.from("properties").select("*"),
-    supabase.from("units").select("*"),
-    supabase.from("tenants").select("*"),
-    supabase.from("owners").select("*"),
-    supabase.from("maintenance_requests").select("*, property:properties(*)").eq("status", "pending"),
+    supabase.from("properties").select("id", { count: "exact", head: true }).limit(1),
+
+    supabase.from("units").select("id", { count: "exact", head: true }).limit(1),
+
+    supabase
+      .from("tenants")
+      .select("id, first_name, last_name, email, unit_number, monthly_rent")
+      .eq("status", "active")
+      .limit(5), // Only fetch recent 5 tenants
+
+    supabase.from("owners").select("id", { count: "exact", head: true }).limit(1),
+
+    supabase
+      .from("maintenance_requests")
+      .select("id, title, status, priority, properties(name)")
+      .eq("status", "pending")
+      .limit(5), // Only fetch recent 5 requests
+
     supabase
       .from("tenant_payments")
       .select("amount")
-      .gte("payment_date", new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0]),
+      .gte("payment_date", new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split("T")[0])
+      .limit(1000), // Limit monthly payments query
   ])
 
   const totalRevenue = payments?.reduce((sum, payment) => sum + Number(payment.amount), 0) || 0
 
   const stats = {
-    properties: properties?.length || 0,
-    units: units?.length || 0,
-    tenants: tenantsData?.length || 0,
-    owners: owners?.length || 0,
+    properties: propertiesCount || 0,
+    units: unitsCount || 0,
+    tenants: tenants?.length || 0,
+    owners: ownersCount || 0,
     maintenanceRequests: maintenanceData?.length || 0,
     totalRevenue,
   }
@@ -121,9 +143,9 @@ export default async function DashboardPage() {
             <CardTitle>Recent Tenants</CardTitle>
           </CardHeader>
           <CardContent>
-            {tenantsData && tenantsData.length > 0 ? (
+            {tenants && tenants.length > 0 ? (
               <div className="space-y-4">
-                {tenantsData.slice(0, 5).map((tenant) => (
+                {tenants.map((tenant) => (
                   <div key={tenant.id} className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">
@@ -151,11 +173,11 @@ export default async function DashboardPage() {
           <CardContent>
             {maintenanceData && maintenanceData.length > 0 ? (
               <div className="space-y-4">
-                {maintenanceData.slice(0, 5).map((request) => (
+                {maintenanceData.map((request) => (
                   <div key={request.id} className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">{request.title}</p>
-                      <p className="text-sm text-muted-foreground">{request.property?.name}</p>
+                      <p className="text-sm text-muted-foreground">{request.properties?.[0]?.name}</p>
                     </div>
                     <div className="rounded-full bg-amber-500/10 px-2 py-1 text-xs font-medium text-amber-600">
                       {request.priority}
