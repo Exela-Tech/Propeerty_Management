@@ -87,109 +87,140 @@ export default function DashboardPage() {
   }
 
   const occupancyData = [
-    { name: "Occupied", value: stats.occupiedUnits, fill: "#22c55e" },
-    { name: "Vacant", value: stats.vacantUnits, fill: "#ef4444" },
-    { name: "Maintenance", value: stats.maintenanceUnits, fill: "#f59e0b" },
+    { name: "Occupied", value: stats.occupiedUnits, fill: "hsl(142, 55%, 42%)" },
+    { name: "Vacant", value: stats.vacantUnits, fill: "hsl(0, 84.2%, 60.2%)" },
+    { name: "Maintenance", value: stats.maintenanceUnits, fill: "hsl(38, 92%, 50%)" },
   ]
 
   return (
-    <div className="p-8 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">Property management overview and key metrics</p>
+    <div className="p-8 space-y-8 bg-gradient-to-br from-background via-background to-muted/20 min-h-screen">
+      <div className="space-y-3">
+        <h1 className="text-5xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+          Dashboard
+        </h1>
+        <p className="text-lg text-muted-foreground max-w-2xl">
+          Property management overview and key metrics at a glance
+        </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Properties</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {/* Total Properties - Rose/Terracotta */}
+        <Card className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-card to-card/80 hover:scale-105">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-r from-primary/10 to-primary/5 border-b-2 border-primary/20">
+            <CardTitle className="text-sm font-semibold text-foreground">Total Properties</CardTitle>
+            <div className="rounded-lg bg-primary/15 p-3">
+              <Building2 className="h-6 w-6 text-primary" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalProperties}</div>
-            <p className="text-xs text-muted-foreground">{stats.activeProperties} active</p>
+          <CardContent className="pt-4">
+            <div className="text-4xl font-bold text-primary">{stats.totalProperties}</div>
+            <p className="text-xs text-muted-foreground mt-2 font-medium">{stats.activeProperties} active</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Occupancy Rate</CardTitle>
-            <PieChart className="h-4 w-4 text-muted-foreground" />
+        {/* Occupancy Rate - Deep Green */}
+        <Card className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-card to-card/80 hover:scale-105">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-r from-secondary/10 to-secondary/5 border-b-2 border-secondary/20">
+            <CardTitle className="text-sm font-semibold text-foreground">Occupancy Rate</CardTitle>
+            <div className="rounded-lg bg-secondary/15 p-3">
+              <PieChart className="h-6 w-6 text-secondary" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.occupancyRate}%</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.occupiedUnits} of {stats.totalUnits} units
+          <CardContent className="pt-4">
+            <div className="text-4xl font-bold text-secondary">{stats.occupancyRate}%</div>
+            <p className="text-xs text-muted-foreground mt-2 font-medium">
+              {stats.occupiedUnits}/{stats.totalUnits} units
             </p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Rent Collected</CardTitle>
-            <TrendingUp className="h-4 w-4 text-green-600" />
+        {/* Rent Collected - Gold/Yellow */}
+        <Card className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-card to-card/80 hover:scale-105">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-r from-accent/10 to-accent/5 border-b-2 border-accent/20">
+            <CardTitle className="text-sm font-semibold text-foreground">Rent Collected</CardTitle>
+            <div className="rounded-lg bg-accent/15 p-3">
+              <TrendingUp className="h-6 w-6 text-accent" />
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">UGX {Math.round(stats.rentCollectedThisMonth).toLocaleString()}</div>
-            <p className="text-xs text-muted-foreground">This month</p>
+          <CardContent className="pt-4">
+            <div className="text-3xl font-bold text-accent">
+              UGX {Math.round(stats.rentCollectedThisMonth / 1000000)}M
+            </div>
+            <p className="text-xs text-muted-foreground mt-2 font-medium">This month</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Outstanding</CardTitle>
-            <AlertCircle className="h-4 w-4 text-red-600" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600">
-              UGX {Math.round(stats.outstandingBalance).toLocaleString()}
+        {/* Outstanding - Red/Destructive */}
+        <Card className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 bg-gradient-to-br from-card to-card/80 hover:scale-105">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-r from-destructive/10 to-destructive/5 border-b-2 border-destructive/20">
+            <CardTitle className="text-sm font-semibold text-foreground">Outstanding</CardTitle>
+            <div className="rounded-lg bg-destructive/15 p-3">
+              <AlertCircle className="h-6 w-6 text-destructive" />
             </div>
-            <p className="text-xs text-muted-foreground">{stats.delayedPayments} delayed payments</p>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <div className="text-3xl font-bold text-destructive">
+              UGX {Math.round(stats.outstandingBalance / 1000000)}M
+            </div>
+            <p className="text-xs text-muted-foreground mt-2 font-medium">{stats.delayedPayments} delayed</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Charts */}
       <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Revenue Trend</CardTitle>
-            <CardDescription>Rent collected vs outstanding over 12 months</CardDescription>
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-card to-card/80">
+          <CardHeader className="bg-gradient-to-r from-primary/5 to-secondary/5 border-b-2 border-primary/10">
+            <CardTitle className="text-lg font-semibold text-foreground">Revenue Trend</CardTitle>
+            <CardDescription className="text-sm">Rent collected vs outstanding</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             <ChartContainer
               config={{
-                collected: { label: "Collected", color: "#22c55e" },
-                outstanding: { label: "Outstanding", color: "#ef4444" },
+                collected: { label: "Collected", color: "hsl(142, 55%, 42%)" },
+                outstanding: { label: "Outstanding", color: "hsl(0, 84.2%, 60.2%)" },
               }}
               className="h-[300px]"
             >
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={stats.revenueTrendData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" />
+                  <YAxis stroke="hsl(var(--muted-foreground))" />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Legend />
-                  <Line type="monotone" dataKey="collected" stroke="#22c55e" name="Collected" />
-                  <Line type="monotone" dataKey="outstanding" stroke="#ef4444" name="Outstanding" />
+                  <Line
+                    type="monotone"
+                    dataKey="collected"
+                    stroke="hsl(142, 55%, 42%)"
+                    strokeWidth={3}
+                    name="Collected"
+                    dot={{ fill: "hsl(142, 55%, 42%)" }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="outstanding"
+                    stroke="hsl(0, 84.2%, 60.2%)"
+                    strokeWidth={3}
+                    name="Outstanding"
+                    dot={{ fill: "hsl(0, 84.2%, 60.2%)" }}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </ChartContainer>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Unit Status</CardTitle>
-            <CardDescription>Occupancy distribution</CardDescription>
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-card to-card/80">
+          <CardHeader className="bg-gradient-to-r from-secondary/5 to-accent/5 border-b-2 border-secondary/10">
+            <CardTitle className="text-lg font-semibold text-foreground">Unit Status</CardTitle>
+            <CardDescription className="text-sm">Occupancy distribution</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             <ChartContainer
               config={{
-                occupied: { label: "Occupied", color: "#22c55e" },
-                vacant: { label: "Vacant", color: "#ef4444" },
-                maintenance: { label: "Maintenance", color: "#f59e0b" },
+                occupied: { label: "Occupied", color: "hsl(142, 55%, 42%)" },
+                vacant: { label: "Vacant", color: "hsl(0, 84.2%, 60.2%)" },
+                maintenance: { label: "Maintenance", color: "hsl(38, 92%, 50%)" },
               }}
               className="h-[300px]"
             >
@@ -211,28 +242,28 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Income vs Expenses</CardTitle>
-            <CardDescription>Monthly revenue and expenses comparison</CardDescription>
+        <Card className="border-0 shadow-lg bg-gradient-to-br from-card to-card/80 md:col-span-2">
+          <CardHeader className="bg-gradient-to-r from-accent/5 to-primary/5 border-b-2 border-accent/10">
+            <CardTitle className="text-lg font-semibold text-foreground">Income vs Expenses</CardTitle>
+            <CardDescription className="text-sm">Monthly comparison</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             <ChartContainer
               config={{
-                income: { label: "Income", color: "#3b82f6" },
-                expense: { label: "Expenses", color: "#f59e0b" },
+                income: { label: "Income", color: "hsl(142, 55%, 42%)" },
+                expense: { label: "Expenses", color: "hsl(38, 92%, 50%)" },
               }}
               className="h-[300px]"
             >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={stats.incomeExpenseData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" />
+                  <YAxis stroke="hsl(var(--muted-foreground))" />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Legend />
-                  <Bar dataKey="income" fill="#3b82f6" name="Income" />
-                  <Bar dataKey="expense" fill="#f59e0b" name="Expenses" />
+                  <Bar dataKey="income" fill="hsl(142, 55%, 42%)" name="Income" radius={[8, 8, 0, 0]} />
+                  <Bar dataKey="expense" fill="hsl(38, 92%, 50%)" name="Expenses" radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </ChartContainer>

@@ -28,7 +28,7 @@ export default async function EditPropertyPage({ params }: { params: Promise<{ i
 
   const { data: propertyData, error: propertyError } = await supabase
     .from("properties")
-    .select("id, name, property_type, location, total_units, owner_id, description")
+    .select("id, name, property_type, location, total_units, owner_id, description, management_fee")
     .eq("id", propertyId)
     .limit(1)
 

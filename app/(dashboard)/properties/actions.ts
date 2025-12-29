@@ -76,6 +76,8 @@ export async function updateProperty(formData: FormData) {
 
   const id = formData.get("id") as string
   const location = formData.get("location") as string
+  const managementFeeType = formData.get("management_fee_type") as string
+  const managementFee = Number.parseFloat(formData.get("management_fee") as string) || 0
 
   const propertyData = {
     name: formData.get("name") as string,
@@ -86,6 +88,8 @@ export async function updateProperty(formData: FormData) {
     total_units: Number.parseInt(formData.get("total_units") as string) || 0,
     owner_id: (formData.get("landlord_id") as string) || null,
     description: (formData.get("description") as string) || null,
+    management_fee_type: managementFeeType,
+    management_fee: managementFee,
   }
 
   const { error } = await supabase.from("properties").update(propertyData).eq("id", id)

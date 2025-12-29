@@ -77,9 +77,9 @@ export default function LandlordPaymentHistoryPage() {
   if (error || !data) {
     return (
       <div className="space-y-6 p-8">
-        <Link href="/landlords">
+        <Link href="/landlords/payments">
           <Button variant="outline">
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Landlords
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Payment Schedule
           </Button>
         </Link>
         <div className="text-center py-12 text-red-600">{error || "Failed to load payment history"}</div>
@@ -117,7 +117,7 @@ export default function LandlordPaymentHistoryPage() {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-4">
-            <Link href="/landlords">
+            <Link href="/landlords/payments">
               <Button variant="outline" size="icon">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
@@ -130,9 +130,16 @@ export default function LandlordPaymentHistoryPage() {
             </div>
           </div>
         </div>
-        <Button variant="outline" size="icon">
-          <Download className="h-4 w-4" />
-        </Button>
+        <div className="flex gap-2">
+          <Link href={`/landlords/${landlordId}/payment-note`}>
+            <Button variant="outline" size="icon" title="View Payment Note">
+              <Download className="h-4 w-4" />
+            </Button>
+          </Link>
+          <Button variant="outline" size="icon">
+            <Download className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       {/* Summary Cards */}

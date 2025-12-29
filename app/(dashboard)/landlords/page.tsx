@@ -17,7 +17,9 @@ export default async function LandlordsPage() {
       },
       setAll(cookiesToSet) {
         try {
-          cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
+          cookiesToSet.forEach(({ name, value, options }) => {
+            cookieStore.set(name, value, options)
+          })
         } catch {
           // ignore
         }
@@ -25,7 +27,7 @@ export default async function LandlordsPage() {
     },
   })
 
-  const { data: landlords, error } = await supabase.from("owners").select("*").order("name", { ascending: true })
+  const { data: landlords, error } = await supabase.from("owners").select("*").order("created_at", { ascending: false })
 
   if (error) {
     console.error("Error fetching landlords:", error)
@@ -33,13 +35,13 @@ export default async function LandlordsPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Landlords</h1>
+            <h1 className="text-3xl font-bold tracking-tight">LANDLORDS</h1>
             <p className="text-muted-foreground">Manage landlord records for tracking and reporting</p>
           </div>
           <Link href="/landlords/new">
             <Button>
               <Plus className="mr-2 h-4 w-4" />
-              Add Landlord
+              New Landlord
             </Button>
           </Link>
         </div>
@@ -55,5 +57,21 @@ export default async function LandlordsPage() {
     )
   }
 
-  return <LandlordsContent initialLandlords={landlords || []} />
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">LANDLORDS</h1>
+          <p className="text-muted-foreground">Manage landlord records for tracking and reporting</p>
+        </div>
+        <Link href="/landlords/new">
+          <Button>
+            <Plus className="mr-2 h-4 w-4" />
+            New Landlord
+          </Button>
+        </Link>
+      </div>
+      <LandlordsContent initialLandlords={landlords || []} />
+    </div>
+  )
 }

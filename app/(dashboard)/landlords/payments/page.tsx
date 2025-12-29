@@ -93,62 +93,62 @@ export default async function LandlordPaymentsPage() {
   const periodStart = `${year}-${month}-01`
   const periodEnd = `${year}-${month}-${new Date(Number.parseInt(year), Number.parseInt(month), 0).getDate()}`
 
-  const landlordData: LandlordWithPaymentInfo[] = []
+  const landlordData: LandlordWithPaymentInfo[] = await Promise.all(
+    (landlords || []).map(async (landlord) => {
+      const { data: properties } = await supabase.from("properties").select("id").eq("owner_id", landlord.id)
 
-  for (const landlord of landlords || []) {
-    const { data: properties } = await supabase.from("properties").select("id").eq("owner_id", landlord.id)
+      const propertyIds = properties?.map((p) => p.id) || []
 
-    const propertyIds = properties?.map((p) => p.id) || []
+      let expectedRent = 0
+      let tenantCount = 0
+      let paymentCount = 0
 
-    let expectedRent = 0
-    let tenantCount = 0
-    let paymentCount = 0
+      if (propertyIds.length > 0) {
+        const { data: tenants } = await supabase
+          .from("tenants")
+          .select("id, monthly_rent")
+          .in("property_id", propertyIds)
+          .eq("status", "active")
 
-    if (propertyIds.length > 0) {
-      const { data: tenants } = await supabase
-        .from("tenants")
-        .select("id, monthly_rent")
-        .in("property_id", propertyIds)
-        .eq("status", "active")
+        tenantCount = tenants?.length || 0
+        expectedRent = tenants?.reduce((sum, t) => sum + (t.monthly_rent || 0), 0) || 0
 
-      tenantCount = tenants?.length || 0
-      expectedRent = tenants?.reduce((sum, t) => sum + (t.monthly_rent || 0), 0) || 0
+        if (tenants && tenants.length > 0) {
+          const tenantIds = tenants.map((t) => t.id)
 
-      if (tenants && tenants.length > 0) {
-        const tenantIds = tenants.map((t) => t.id)
+          const { count: paymentRecords } = await supabase
+            .from("tenant_payments")
+            .select("*", { count: "exact", head: true })
+            .in("tenant_id", tenantIds)
+            .gte("payment_date", periodStart)
+            .lte("payment_date", periodEnd)
 
-        const { count: paymentRecords } = await supabase
-          .from("tenant_payments")
-          .select("*", { count: "exact", head: true })
-          .in("tenant_id", tenantIds)
-          .gte("payment_date", periodStart)
-          .lte("payment_date", periodEnd)
-
-        paymentCount = paymentRecords || 0
+          paymentCount = paymentRecords || 0
+        }
       }
-    }
 
-    const { owed, totalCollected, totalPaidToLandlord, commissionDeducted, netPayout } = await calculateLandlordOwed(
-      landlord.id,
-      periodStart,
-      periodEnd,
-    )
+      const { owed, totalCollected, totalPaidToLandlord, commissionDeducted, netPayout } = await calculateLandlordOwed(
+        landlord.id,
+        periodStart,
+        periodEnd,
+      )
 
-    const collectionRate = expectedRent > 0 ? (totalCollected / expectedRent) * 100 : 0
+      const collectionRate = expectedRent > 0 ? (totalCollected / expectedRent) * 100 : 0
 
-    landlordData.push({
-      ...landlord,
-      owed,
-      totalCollected,
-      totalPaidToLandlord,
-      tenantCount,
-      paymentCount,
-      expectedRent,
-      collectionRate,
-      commissionDeducted,
-      netPayout,
-    })
-  }
+      return {
+        ...landlord,
+        owed,
+        totalCollected,
+        totalPaidToLandlord,
+        tenantCount,
+        paymentCount,
+        expectedRent,
+        collectionRate,
+        commissionDeducted,
+        netPayout,
+      }
+    }),
+  )
 
   // Group by payment due day
   const groupedByDueDay: { [key: number]: LandlordWithPaymentInfo[] } = {}
