@@ -30,185 +30,281 @@
       "filename": "app/(dashboard)/properties/actions.ts",
       "exportedName": "deleteProperty"
     },
-    "403e89684fdc3e7bc5a128fc9cc92c1c23a4b8d94d": {
+    "40eaaa6130878ee5f963be7716cc4bdbe7abef77b1": {
       "workers": {
-        "app/(dashboard)/expenses/page": {
-          "moduleId": "[project]/.next-internal/server/app/(dashboard)/expenses/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/expenses/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+        "app/(dashboard)/units/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/units/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/units/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false,
-          "exportedName": "deleteExpense",
-          "filename": "app/(dashboard)/expenses/actions.ts"
+          "exportedName": "deleteUnit",
+          "filename": "app/(dashboard)/units/actions.ts"
         }
       },
       "layer": {
-        "app/(dashboard)/expenses/page": "action-browser"
+        "app/(dashboard)/units/page": "action-browser"
       },
-      "filename": "app/(dashboard)/expenses/actions.ts",
-      "exportedName": "deleteExpense"
+      "filename": "app/(dashboard)/units/actions.ts",
+      "exportedName": "deleteUnit"
     },
-    "00ee1b8245aec5ca1163216af410bc5bfb2c89bea4": {
+    "60fbd6b7a918f8f7b5edde0011cfe34d8ea1ee7c7b": {
       "workers": {
-        "app/(dashboard)/financials/page": {
-          "moduleId": "[project]/.next-internal/server/app/(dashboard)/financials/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/financials/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+        "app/(dashboard)/units/[id]/edit/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/units/[id]/edit/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/units/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false,
-          "exportedName": "getLandlordFinancials",
-          "filename": "app/(dashboard)/financials/actions.ts"
+          "exportedName": "updateUnit",
+          "filename": "app/(dashboard)/units/actions.ts"
         }
       },
       "layer": {
-        "app/(dashboard)/financials/page": "action-browser"
+        "app/(dashboard)/units/[id]/edit/page": "action-browser"
       },
-      "filename": "app/(dashboard)/financials/actions.ts",
-      "exportedName": "getLandlordFinancials"
+      "filename": "app/(dashboard)/units/actions.ts",
+      "exportedName": "updateUnit"
     },
-    "00c0792053d616cd3dc9f1817bda6540d8167e77a0": {
+    "40559a02ab867e0e439dac04ff0ac7104990c2eff4": {
       "workers": {
-        "app/(dashboard)/team/page": {
-          "moduleId": "[project]/.next-internal/server/app/(dashboard)/team/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/team/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+        "app/(dashboard)/units/[id]/edit/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/units/[id]/edit/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/units/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false,
-          "exportedName": "getTeamMembers",
-          "filename": "app/(dashboard)/team/actions.ts"
+          "exportedName": "getUnit",
+          "filename": "app/(dashboard)/units/actions.ts"
         }
       },
       "layer": {
-        "app/(dashboard)/team/page": "rsc"
+        "app/(dashboard)/units/[id]/edit/page": "action-browser"
       },
-      "filename": "app/(dashboard)/team/actions.ts",
-      "exportedName": "getTeamMembers"
+      "filename": "app/(dashboard)/units/actions.ts",
+      "exportedName": "getUnit"
     },
-    "402a2e0629b210809b10cfbcbae5c86e6fcf0adaee": {
+    "00d19ab4dad3c723c6ad294ddb06b45c56d9fc15ea": {
       "workers": {
-        "app/(dashboard)/team/page": {
-          "moduleId": "[project]/.next-internal/server/app/(dashboard)/team/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/team/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+        "app/(dashboard)/units/[id]/edit/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/units/[id]/edit/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/units/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false,
-          "exportedName": "createTeamMember",
-          "filename": "app/(dashboard)/team/actions.ts"
+          "exportedName": "getProperties",
+          "filename": "app/(dashboard)/units/actions.ts"
+        },
+        "app/(dashboard)/units/new/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/units/new/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/units/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getProperties",
+          "filename": "app/(dashboard)/units/actions.ts"
         }
       },
       "layer": {
-        "app/(dashboard)/team/page": "rsc"
+        "app/(dashboard)/units/[id]/edit/page": "action-browser",
+        "app/(dashboard)/units/new/page": "action-browser"
       },
-      "filename": "app/(dashboard)/team/actions.ts",
-      "exportedName": "createTeamMember"
+      "filename": "app/(dashboard)/units/actions.ts",
+      "exportedName": "getProperties"
     },
-    "40ed44e04f26bc05b9b67139fdccc3106c388446c6": {
+    "406cb47f4b4865cc2406a41c62dcef6d0bbcff867f": {
       "workers": {
-        "app/(dashboard)/team/page": {
-          "moduleId": "[project]/.next-internal/server/app/(dashboard)/team/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/team/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+        "app/(dashboard)/landlords/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/landlords/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/landlords/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false,
-          "exportedName": "deleteTeamMember",
-          "filename": "app/(dashboard)/team/actions.ts"
+          "exportedName": "deleteLandlord",
+          "filename": "app/(dashboard)/landlords/actions.ts"
         }
       },
       "layer": {
-        "app/(dashboard)/team/page": "action-browser"
+        "app/(dashboard)/landlords/page": "action-browser"
       },
-      "filename": "app/(dashboard)/team/actions.ts",
-      "exportedName": "deleteTeamMember"
+      "filename": "app/(dashboard)/landlords/actions.ts",
+      "exportedName": "deleteLandlord"
     },
-    "60f4fdd11c8604a7adfd828eecb32c9985d900bfcf": {
+    "402b2f97fff2063a7c7b4fa8fdf295e584d0e2a922": {
       "workers": {
-        "app/(dashboard)/team/page": {
-          "moduleId": "[project]/.next-internal/server/app/(dashboard)/team/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/team/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+        "app/(dashboard)/landlords/payments/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/landlords/payments/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/landlords/payment-actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false,
-          "exportedName": "updateTeamMember",
-          "filename": "app/(dashboard)/team/actions.ts"
+          "exportedName": "getLandlordPayments",
+          "filename": "app/(dashboard)/landlords/payment-actions.ts"
         }
       },
       "layer": {
-        "app/(dashboard)/team/page": "rsc"
+        "app/(dashboard)/landlords/payments/page": "rsc"
       },
-      "filename": "app/(dashboard)/team/actions.ts",
-      "exportedName": "updateTeamMember"
+      "filename": "app/(dashboard)/landlords/payment-actions.ts",
+      "exportedName": "getLandlordPayments"
     },
-    "00e0f2b704bb4e1a45d6e822c320e7801044115daa": {
+    "409a4308bf643f1c505128ae99bfcebd9e567c31be": {
       "workers": {
-        "app/(dashboard)/reports/page": {
-          "moduleId": "[project]/.next-internal/server/app/(dashboard)/reports/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/reports/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+        "app/(dashboard)/landlords/payments/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/landlords/payments/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/landlords/payment-actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false,
-          "exportedName": "getMonthlyRentCollection",
-          "filename": "app/(dashboard)/reports/actions.ts"
+          "exportedName": "recordLandlordPayment",
+          "filename": "app/(dashboard)/landlords/payment-actions.ts"
         }
       },
       "layer": {
-        "app/(dashboard)/reports/page": "action-browser"
+        "app/(dashboard)/landlords/payments/page": "action-browser"
       },
-      "filename": "app/(dashboard)/reports/actions.ts",
-      "exportedName": "getMonthlyRentCollection"
+      "filename": "app/(dashboard)/landlords/payment-actions.ts",
+      "exportedName": "recordLandlordPayment"
     },
-    "008249c63c37c12099277b12a7fd5e5c5905bf75ca": {
+    "70c71ae7b3349bd76df0b175677e0146487bdeb103": {
       "workers": {
-        "app/(dashboard)/reports/page": {
-          "moduleId": "[project]/.next-internal/server/app/(dashboard)/reports/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/reports/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+        "app/(dashboard)/landlords/payments/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/landlords/payments/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/landlords/payment-actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false,
-          "exportedName": "getOutstandingRent",
-          "filename": "app/(dashboard)/reports/actions.ts"
+          "exportedName": "calculateLandlordOwed",
+          "filename": "app/(dashboard)/landlords/payment-actions.ts"
         }
       },
       "layer": {
-        "app/(dashboard)/reports/page": "action-browser"
+        "app/(dashboard)/landlords/payments/page": "rsc"
       },
-      "filename": "app/(dashboard)/reports/actions.ts",
-      "exportedName": "getOutstandingRent"
+      "filename": "app/(dashboard)/landlords/payment-actions.ts",
+      "exportedName": "calculateLandlordOwed"
     },
-    "009cd56ead5db4dd354ba42faff93345a6579925cd": {
+    "404730bcf11afd250bf933f21a2d93a33627ac74f7": {
       "workers": {
-        "app/(dashboard)/reports/page": {
-          "moduleId": "[project]/.next-internal/server/app/(dashboard)/reports/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/reports/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+        "app/(dashboard)/units/new/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/units/new/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/units/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false,
-          "exportedName": "getExpenseSummary",
-          "filename": "app/(dashboard)/reports/actions.ts"
+          "exportedName": "createUnit",
+          "filename": "app/(dashboard)/units/actions.ts"
         }
       },
       "layer": {
-        "app/(dashboard)/reports/page": "action-browser"
+        "app/(dashboard)/units/new/page": "action-browser"
       },
-      "filename": "app/(dashboard)/reports/actions.ts",
-      "exportedName": "getExpenseSummary"
+      "filename": "app/(dashboard)/units/actions.ts",
+      "exportedName": "createUnit"
     },
-    "003a67815fad46886dbee07b3ae491016d03359d44": {
+    "403f8d943a116463e9b738feb1019797481591da6e": {
       "workers": {
-        "app/(dashboard)/reports/page": {
-          "moduleId": "[project]/.next-internal/server/app/(dashboard)/reports/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/reports/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+        "app/(dashboard)/properties/new/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/properties/new/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/properties/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false,
-          "exportedName": "getLandlordStatements",
-          "filename": "app/(dashboard)/reports/actions.ts"
+          "exportedName": "createProperty",
+          "filename": "app/(dashboard)/properties/actions.ts"
         }
       },
       "layer": {
-        "app/(dashboard)/reports/page": "action-browser"
+        "app/(dashboard)/properties/new/page": "action-browser"
       },
-      "filename": "app/(dashboard)/reports/actions.ts",
-      "exportedName": "getLandlordStatements"
+      "filename": "app/(dashboard)/properties/actions.ts",
+      "exportedName": "createProperty"
     },
-    "00998e39522e43d25fd285a30a070d93379d1c034f": {
+    "400b8331a5fd0eeacd0f0f0b6c57655d5552c60e82": {
       "workers": {
-        "app/(dashboard)/reports/page": {
-          "moduleId": "[project]/.next-internal/server/app/(dashboard)/reports/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/reports/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+        "app/(dashboard)/landlords/new/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/landlords/new/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/landlords/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false,
-          "exportedName": "getExpensesList",
-          "filename": "app/(dashboard)/reports/actions.ts"
+          "exportedName": "createLandlord",
+          "filename": "app/(dashboard)/landlords/actions.ts"
         }
       },
       "layer": {
-        "app/(dashboard)/reports/page": "action-browser"
+        "app/(dashboard)/landlords/new/page": "action-browser"
       },
-      "filename": "app/(dashboard)/reports/actions.ts",
-      "exportedName": "getExpensesList"
+      "filename": "app/(dashboard)/landlords/actions.ts",
+      "exportedName": "createLandlord"
     },
-    "404ef3c6c571dfc0d400b958d364022f88bf72bdf3": {
+    "60542515eb5d9529a41ac1f9bd7cbb5da9217ccd9d": {
       "workers": {
-        "app/(dashboard)/reports/page": {
-          "moduleId": "[project]/.next-internal/server/app/(dashboard)/reports/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/reports/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+        "app/(dashboard)/tenants/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/tenants/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/tenants/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false,
-          "exportedName": "getMonthlyCollectionProgress",
-          "filename": "app/(dashboard)/reports/actions.ts"
+          "exportedName": "toggleTenantStatus",
+          "filename": "app/(dashboard)/tenants/actions.ts"
         }
       },
       "layer": {
-        "app/(dashboard)/reports/page": "action-browser"
+        "app/(dashboard)/tenants/page": "action-browser"
       },
-      "filename": "app/(dashboard)/reports/actions.ts",
-      "exportedName": "getMonthlyCollectionProgress"
+      "filename": "app/(dashboard)/tenants/actions.ts",
+      "exportedName": "toggleTenantStatus"
+    },
+    "0000a4d66bbcc7eb0611692b8c5cef52eea36eb77a": {
+      "workers": {
+        "app/(dashboard)/tenants/[id]/edit/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/tenants/[id]/edit/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/tenants/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getProperties",
+          "filename": "app/(dashboard)/tenants/actions.ts"
+        },
+        "app/(dashboard)/tenants/new/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/tenants/new/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/tenants/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getProperties",
+          "filename": "app/(dashboard)/tenants/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/tenants/[id]/edit/page": "action-browser",
+        "app/(dashboard)/tenants/new/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/tenants/actions.ts",
+      "exportedName": "getProperties"
+    },
+    "40d707ede58c7f3dc622368cb57054a0d05f741605": {
+      "workers": {
+        "app/(dashboard)/tenants/[id]/edit/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/tenants/[id]/edit/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/tenants/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getVacantUnits",
+          "filename": "app/(dashboard)/tenants/actions.ts"
+        },
+        "app/(dashboard)/tenants/new/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/tenants/new/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/tenants/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getVacantUnits",
+          "filename": "app/(dashboard)/tenants/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/tenants/[id]/edit/page": "action-browser",
+        "app/(dashboard)/tenants/new/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/tenants/actions.ts",
+      "exportedName": "getVacantUnits"
+    },
+    "40b3cab6043e6913b80513dccb1acaf016718303dc": {
+      "workers": {
+        "app/(dashboard)/tenants/new/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/tenants/new/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/tenants/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "createTenant",
+          "filename": "app/(dashboard)/tenants/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/tenants/new/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/tenants/actions.ts",
+      "exportedName": "createTenant"
+    },
+    "409cc89371a5d21f520f2df629df35f486c2cf5d3f": {
+      "workers": {
+        "app/(dashboard)/tenants/[id]/edit/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/tenants/[id]/edit/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/tenants/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getTenant",
+          "filename": "app/(dashboard)/tenants/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/tenants/[id]/edit/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/tenants/actions.ts",
+      "exportedName": "getTenant"
+    },
+    "60bb65a64f02c6a102615b0849f6d231b124aeb66a": {
+      "workers": {
+        "app/(dashboard)/tenants/[id]/edit/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/tenants/[id]/edit/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/tenants/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "updateTenant",
+          "filename": "app/(dashboard)/tenants/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/tenants/[id]/edit/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/tenants/actions.ts",
+      "exportedName": "updateTenant"
     }
   },
   "edge": {},

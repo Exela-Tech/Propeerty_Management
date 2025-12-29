@@ -6,6 +6,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  productionBrowserSourceMaps: false,
 }
 
 export default nextConfig
+
+

@@ -1,52 +1,899 @@
-[00:00:03.109] Server  LOG      ✓ Ready in 2.5s
-[00:00:06.684] Server  LOG      ○ Compiling /properties/[id]/edit ...
-[00:00:15.445] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\node_modules_next_dist_3b4d20e1._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:00:15.448] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\[root-of-the-server]__0f9ef903._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
-[00:00:15.454] Server  WARN    Error: Route "/properties/[id]/edit" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-[00:00:19.412] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:20.170] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+[00:00:01.694] Server  LOG      ✓ Ready in 1306ms
+[00:00:05.445] Server  LOG      ○ Compiling /properties/[id]/edit ...
+[00:00:09.895] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\node_modules_next_dist_3b4d20e1._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:00:09.896] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\[root-of-the-server]__0f9ef903._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:00:09.899] Server  WARN    Error: Route "/properties/[id]/edit" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:00:12.133] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:12.815] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:00:12.815] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit","route":"/properties/[id]/edit"}
+[00:00:12.815] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767003549453}
+[00:03:07.251] Browser ERROR   ./app/(dashboard)/properties/[id]/edit/page.tsx:62:3
+Parsing ecmascript source code failed
+  60 |   const property = propertyData[0]
+  61 |
+> 62 |   return (
+     |   ^^^^^^^^
+> 63 |     <div className="p-8">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 64 |       <div className="flex items-center gap-4 mb-6">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 65 |         <Button asChild variant="ghost" size="sm">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 66 |           <Link href="/properties">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 67 |             <ChevronLeft className="h-4 w-4 mr-2" />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 68 |             Back
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 69 |           </Link>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 70 |         </Button>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 71 |         <div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 72 |           <h1 className="text-3xl font-bold">Edit Property</h1>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 73 |           <p className="text-muted-foreground mt-1">Update property information</p>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 74 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 75 |       </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 76 |
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 77 |       <Card className="max-w-2xl">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 78 |         <CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 79 |           <CardTitle>Property Details</CardTitle>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 80 |         </CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 81 |         <CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 82 |           <EditPropertyForm property={property} landlords={landlordsData || []} />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 83 |         </CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 84 |       </Card>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 85 |     </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 86 |   )
+     | ^^^^
+  87 | }
+  88 |
 
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
+Return statement is not allowed here
+[00:03:15.240] Browser ERROR   ./app/(dashboard)/properties/[id]/edit/page.tsx:62:3
+Parsing ecmascript source code failed
+  60 |   const property = propertyData[0]
+  61 |
+> 62 |   return (
+     |   ^^^^^^^^
+> 63 |     <div className="p-8">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 64 |       <div className="flex items-center gap-4 mb-6">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 65 |         <Button asChild variant="ghost" size="sm">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 66 |           <Link href="/properties">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 67 |             <ChevronLeft className="h-4 w-4 mr-2" />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 68 |             Back
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 69 |           </Link>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 70 |         </Button>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 71 |         <div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 72 |           <h1 className="text-3xl font-bold">Edit Property</h1>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 73 |           <p className="text-muted-foreground mt-1">Update property information</p>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 74 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 75 |       </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 76 |
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 77 |       <Card className="max-w-2xl">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 78 |         <CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 79 |           <CardTitle>Property Details</CardTitle>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 80 |         </CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 81 |         <CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 82 |           <EditPropertyForm property={property} landlords={landlordsData || []} />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 83 |         </CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 84 |       </Card>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 85 |     </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 86 |   )
+     | ^^^^
+  87 | }
+  88 |
 
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+Return statement is not allowed here
+[00:03:18.237] Browser ERROR   ./app/(dashboard)/properties/[id]/edit/page.tsx:62:3
+Parsing ecmascript source code failed
+  60 |   const property = propertyData[0]
+  61 |
+> 62 |   return (
+     |   ^^^^^^^^
+> 63 |     <div className="p-8">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 64 |       <div className="flex items-center gap-4 mb-6">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 65 |         <Button asChild variant="ghost" size="sm">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 66 |           <Link href="/properties">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 67 |             <ChevronLeft className="h-4 w-4 mr-2" />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 68 |             Back
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 69 |           </Link>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 70 |         </Button>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 71 |         <div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 72 |           <h1 className="text-3xl font-bold">Edit Property</h1>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 73 |           <p className="text-muted-foreground mt-1">Update property information</p>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 74 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 75 |       </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 76 |
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 77 |       <Card className="max-w-2xl">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 78 |         <CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 79 |           <CardTitle>Property Details</CardTitle>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 80 |         </CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 81 |         <CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 82 |           <EditPropertyForm property={property} landlords={landlordsData || []} />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 83 |         </CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 84 |       </Card>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 85 |     </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 86 |   )
+     | ^^^^
+  87 | }
+  88 |
 
-%s%s https://react.dev/link/hydration-mismatch 
+Return statement is not allowed here
+[00:04:41.237] Browser ERROR   ./app/(dashboard)/properties/[id]/edit/page.tsx:62:3
+Parsing ecmascript source code failed
+  60 |   const property = propertyData[0]
+  61 |
+> 62 |   return (
+     |   ^^^^^^^^
+> 63 |     <div className="p-8">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 64 |       <div className="flex items-center gap-4 mb-6">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 65 |         <Button asChild variant="ghost" size="sm">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 66 |           <Link href="/properties">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 67 |             <ChevronLeft className="h-4 w-4 mr-2" />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 68 |             Back
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 69 |           </Link>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 70 |         </Button>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 71 |         <div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 72 |           <h1 className="text-3xl font-bold">Edit Property</h1>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 73 |           <p className="text-muted-foreground mt-1">Update property information</p>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 74 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 75 |       </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 76 |
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 77 |       <Card className="max-w-2xl">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 78 |         <CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 79 |           <CardTitle>Property Details</CardTitle>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 80 |         </CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 81 |         <CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 82 |           <EditPropertyForm property={property} landlords={landlordsData || []} />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 83 |         </CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 84 |       </Card>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 85 |     </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 86 |   )
+     | ^^^^
+  87 | }
+  88 |
 
-  ...
-    <HotReload globalError={[...]} webSocket={WebSocket} staticIndicatorState={{pathname:null, ...}}>
-      <AppDevOverlayErrorBoundary globalError={[...]}>
-        <ReplaySsrOnlyErrors>
-        <DevRootHTTPAccessFallbackBoundary>
-          <HTTPAccessFallbackBoundary notFound={<NotAllowedRootHTTPFallbackError>}>
-            <HTTPAccessFallbackErrorBoundary pathname="/propertie..." notFound={<NotAllowedRootHTTPFallbackError>} ...>
-              <RedirectBoundary>
-                <RedirectErrorBoundary router={{...}}>
-                  <Head>
-                  <__next_root_layout_boundary__>
-                    <SegmentViewNode type="layout" pagePath="layout.tsx">
-                      <SegmentTrieNode>
-                      <link>
-                      <script>
-                      <script>
-                      <script>
-                      <RootLayout>
-                        <html lang="en">
-                          <body
-                            className="font-sans antialiased"
--                           data-new-gr-c-s-check-loaded="14.1131.0"
--                           data-gr-ext-installed=""
-                          >
-                  ...
+Return statement is not allowed here
+[00:04:43.771] Server  ERROR    ⨯ ./app/(dashboard)/properties/[id]/edit/page.tsx:38:5
+Parsing ecmascript source code failed
+  36 |
+  37 |   if (propertyError || !propertyData || propertyData.length === 0) {
+> 38 |     return (
+     |     ^^^^^^^^
+> 39 |       <div className="p-8">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 40 |         <div className="flex items-center gap-4 mb-6">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 41 |           <Button asChild variant="ghost" size="sm">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 42 |             <Link href="/properties">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 43 |               <ChevronLeft className="h-4 w-4 mr-2" />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 44 |               Back
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 45 |             </Link>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 46 |           </Button>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 47 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 48 |         <Card>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 49 |           <CardContent className="flex flex-col items-center justify-center py-12">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 50 |             <p className="text-lg font-semibold text-destructive mb-4">Failed to load property</p>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 51 |             <Button asChild>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 52 |               <Link href="/properties">Back to Properties</Link>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 53 |             </Button>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 54 |           </CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 55 |         </Card>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 56 |       </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 57 |     )
+     | ^^^^^^
+  58 |   }
+  59 |
+  60 |   const property = propertyData[0]
 
-[00:00:20.257] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:00:20.257] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit","route":"/properties/[id]/edit"}
-[00:00:20.258] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766956354813}
-[00:00:27.520] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766956362070}
-[00:00:36.751] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/expenses color: rgb(120, 120, 120) color: inherit {"dp":"/expenses","o":"http://localhost:3000/expenses","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766956371303}
-[00:00:43.901] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/financials color: rgb(120, 120, 120) color: inherit {"dp":"/financials","o":"http://localhost:3000/financials","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766956378453}
-[00:00:51.248] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/team color: rgb(120, 120, 120) color: inherit {"dp":"/team","o":"http://localhost:3000/team","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766956385798}
-[00:00:53.926] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/reports color: rgb(120, 120, 120) color: inherit {"dp":"/reports","o":"http://localhost:3000/reports","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1766956388362}
+Return statement is not allowed here
+
+
+
+./app/(dashboard)/properties/[id]/edit/page.tsx:62:3
+Parsing ecmascript source code failed
+  60 |   const property = propertyData[0]
+  61 |
+> 62 |   return (
+     |   ^^^^^^^^
+> 63 |     <div className="p-8">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 64 |       <div className="flex items-center gap-4 mb-6">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 65 |         <Button asChild variant="ghost" size="sm">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 66 |           <Link href="/properties">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 67 |             <ChevronLeft className="h-4 w-4 mr-2" />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 68 |             Back
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 69 |           </Link>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 70 |         </Button>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 71 |         <div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 72 |           <h1 className="text-3xl font-bold">Edit Property</h1>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 73 |           <p className="text-muted-foreground mt-1">Update property information</p>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 74 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 75 |       </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 76 |
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 77 |       <Card className="max-w-2xl">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 78 |         <CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 79 |           <CardTitle>Property Details</CardTitle>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 80 |         </CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 81 |         <CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 82 |           <EditPropertyForm property={property} landlords={landlordsData || []} />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 83 |         </CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 84 |       </Card>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 85 |     </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 86 |   )
+     | ^^^^
+  87 | }
+  88 |
+
+Return statement is not allowed here
+
+
+[00:04:43.906] Browser ERROR   ./app/(dashboard)/properties/[id]/edit/page.tsx:62:3
+Parsing ecmascript source code failed
+  60 |   const property = propertyData[0]
+  61 |
+> 62 |   return (
+     |   ^^^^^^^^
+> 63 |     <div className="p-8">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 64 |       <div className="flex items-center gap-4 mb-6">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 65 |         <Button asChild variant="ghost" size="sm">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 66 |           <Link href="/properties">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 67 |             <ChevronLeft className="h-4 w-4 mr-2" />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 68 |             Back
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 69 |           </Link>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 70 |         </Button>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 71 |         <div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 72 |           <h1 className="text-3xl font-bold">Edit Property</h1>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 73 |           <p className="text-muted-foreground mt-1">Update property information</p>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 74 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 75 |       </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 76 |
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 77 |       <Card className="max-w-2xl">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 78 |         <CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 79 |           <CardTitle>Property Details</CardTitle>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 80 |         </CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 81 |         <CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 82 |           <EditPropertyForm property={property} landlords={landlordsData || []} />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 83 |         </CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 84 |       </Card>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 85 |     </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 86 |   )
+     | ^^^^
+  87 | }
+  88 |
+
+Return statement is not allowed here
+[00:04:44.920] Browser ERROR   ./app/(dashboard)/properties/[id]/edit/page.tsx:62:3
+Parsing ecmascript source code failed
+  60 |   const property = propertyData[0]
+  61 |
+> 62 |   return (
+     |   ^^^^^^^^
+> 63 |     <div className="p-8">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 64 |       <div className="flex items-center gap-4 mb-6">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 65 |         <Button asChild variant="ghost" size="sm">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 66 |           <Link href="/properties">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 67 |             <ChevronLeft className="h-4 w-4 mr-2" />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 68 |             Back
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 69 |           </Link>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 70 |         </Button>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 71 |         <div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 72 |           <h1 className="text-3xl font-bold">Edit Property</h1>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 73 |           <p className="text-muted-foreground mt-1">Update property information</p>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 74 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 75 |       </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 76 |
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 77 |       <Card className="max-w-2xl">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 78 |         <CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 79 |           <CardTitle>Property Details</CardTitle>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 80 |         </CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 81 |         <CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 82 |           <EditPropertyForm property={property} landlords={landlordsData || []} />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 83 |         </CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 84 |       </Card>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 85 |     </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 86 |   )
+     | ^^^^
+  87 | }
+  88 |
+
+Return statement is not allowed here
+[00:04:45.075] Browser ERROR   ./app/(dashboard)/properties/[id]/edit/page.tsx:62:3
+Parsing ecmascript source code failed
+  60 |   const property = propertyData[0]
+  61 |
+> 62 |   return (
+     |   ^^^^^^^^
+> 63 |     <div className="p-8">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 64 |       <div className="flex items-center gap-4 mb-6">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 65 |         <Button asChild variant="ghost" size="sm">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 66 |           <Link href="/properties">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 67 |             <ChevronLeft className="h-4 w-4 mr-2" />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 68 |             Back
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 69 |           </Link>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 70 |         </Button>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 71 |         <div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 72 |           <h1 className="text-3xl font-bold">Edit Property</h1>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 73 |           <p className="text-muted-foreground mt-1">Update property information</p>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 74 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 75 |       </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 76 |
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 77 |       <Card className="max-w-2xl">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 78 |         <CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 79 |           <CardTitle>Property Details</CardTitle>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 80 |         </CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 81 |         <CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 82 |           <EditPropertyForm property={property} landlords={landlordsData || []} />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 83 |         </CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 84 |       </Card>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 85 |     </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 86 |   )
+     | ^^^^
+  87 | }
+  88 |
+
+Return statement is not allowed here
+[00:04:46.404] Browser ERROR   uncaughtError: Error: ./app/(dashboard)/properties/[id]/edit/page.tsx:62:3
+Parsing ecmascript source code failed
+  60 |   const property = propertyData[0]
+  61 |
+> 62 |   return (
+     |   ^^^^^^^^
+> 63 |     <div className="p-8">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 64 |       <div className="flex items-center gap-4 mb-6">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 65 |         <Button asChild variant="ghost" size="sm">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 66 |           <Link href="/properties">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 67 |             <ChevronLeft className="h-4 w-4 mr-2" />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 68 |             Back
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 69 |           </Link>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 70 |         </Button>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 71 |         <div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 72 |           <h1 className="text-3xl font-bold">Edit Property</h1>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 73 |           <p className="text-muted-foreground mt-1">Update property information</p>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 74 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 75 |       </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 76 |
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 77 |       <Card className="max-w-2xl">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 78 |         <CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 79 |           <CardTitle>Property Details</CardTitle>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 80 |         </CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 81 |         <CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 82 |           <EditPropertyForm property={property} landlords={landlordsData || []} />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 83 |         </CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 84 |       </Card>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 85 |     </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 86 |   )
+     | ^^^^
+  87 | }
+  88 |
+
+Return statement is not allowed here
+
+
+[00:04:46.690] Browser ERROR   ./app/(dashboard)/properties/[id]/edit/page.tsx:62:3
+Parsing ecmascript source code failed
+  60 |   const property = propertyData[0]
+  61 |
+> 62 |   return (
+     |   ^^^^^^^^
+> 63 |     <div className="p-8">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 64 |       <div className="flex items-center gap-4 mb-6">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 65 |         <Button asChild variant="ghost" size="sm">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 66 |           <Link href="/properties">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 67 |             <ChevronLeft className="h-4 w-4 mr-2" />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 68 |             Back
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 69 |           </Link>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 70 |         </Button>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 71 |         <div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 72 |           <h1 className="text-3xl font-bold">Edit Property</h1>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 73 |           <p className="text-muted-foreground mt-1">Update property information</p>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 74 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 75 |       </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 76 |
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 77 |       <Card className="max-w-2xl">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 78 |         <CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 79 |           <CardTitle>Property Details</CardTitle>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 80 |         </CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 81 |         <CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 82 |           <EditPropertyForm property={property} landlords={landlordsData || []} />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 83 |         </CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 84 |       </Card>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 85 |     </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 86 |   )
+     | ^^^^
+  87 | }
+  88 |
+
+Return statement is not allowed here
+[00:04:46.813] Browser ERROR   ./app/(dashboard)/properties/[id]/edit/page.tsx:62:3
+Parsing ecmascript source code failed
+  60 |   const property = propertyData[0]
+  61 |
+> 62 |   return (
+     |   ^^^^^^^^
+> 63 |     <div className="p-8">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 64 |       <div className="flex items-center gap-4 mb-6">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 65 |         <Button asChild variant="ghost" size="sm">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 66 |           <Link href="/properties">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 67 |             <ChevronLeft className="h-4 w-4 mr-2" />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 68 |             Back
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 69 |           </Link>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 70 |         </Button>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 71 |         <div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 72 |           <h1 className="text-3xl font-bold">Edit Property</h1>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 73 |           <p className="text-muted-foreground mt-1">Update property information</p>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 74 |         </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 75 |       </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 76 |
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 77 |       <Card className="max-w-2xl">
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 78 |         <CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 79 |           <CardTitle>Property Details</CardTitle>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 80 |         </CardHeader>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 81 |         <CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 82 |           <EditPropertyForm property={property} landlords={landlordsData || []} />
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 83 |         </CardContent>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 84 |       </Card>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 85 |     </div>
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^
+> 86 |   )
+     | ^^^^
+  87 | }
+  88 |
+
+Return statement is not allowed here
+[00:04:58.247] Server  LOG      ✓ Compiled in 109ms
+[00:04:59.004] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\node_modules_next_dist_3b4d20e1._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:04:59.006] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\[root-of-the-server]__0f9ef903._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:04:59.008] Server  WARN    Error: Route "/properties/[id]/edit" used `params.id`. `params` is a Promise and must be unwrapped with `await` or `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+[00:05:01.665] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:05:03.239] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:05:03.239] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit","route":"/properties/[id]/edit"}
+[00:05:03.239] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767003839190}
+[00:09:12.227] Server  LOG      ✓ Compiled in 340ms
+[00:09:27.269] Server  LOG      ○ Compiling /properties ...
+[00:09:29.673] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004106300}
+[00:09:46.879] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004123467}
+[00:10:04.288] Server  ERROR   Error updating property: {}
+[00:10:04.299] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\_63ffa619._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:10:04.376] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:10:04.409] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\node_modules_02d157c4._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:10:04.417] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:10:04.423] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:10:04.433] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:10:04.434] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:10:04.436] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:10:04.439] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:10:04.440] Server  ERROR    ⨯ Error: new row for relation "properties" violates check constraint "properties_property_type_check"
+[00:10:04.552] Browser ERROR   unhandledRejection: Error: new row for relation "properties" violates check constraint "properties_property_type_check"
+[00:10:05.322] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:10:05.687] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:10:05.687] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit","route":"/properties/[id]/edit"}
+[00:10:05.687] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit?id=922c5b98-c281-49b5-aa86-de978e032c35&name=Ouma+Apartment&location=Kampala&total_units=28&description=Very+New color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit?id=922c5b98-c281-49b5-aa86-de978e032c35&name=Ouma+Apartment&location=Kampala&total_units=28&description=Very+New","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004142328}
+[00:10:17.574] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:10:18.199] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:10:18.199] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit","route":"/properties/[id]/edit"}
+[00:10:18.199] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit?id=922c5b98-c281-49b5-aa86-de978e032c35&name=Ouma+Apartment&location=Kampala&total_units=28&description=Very+New color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit?id=922c5b98-c281-49b5-aa86-de978e032c35&name=Ouma+Apartment&location=Kampala&total_units=28&description=Very+New","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004154840}
+[00:10:25.323] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:10:26.004] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:10:26.004] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit","route":"/properties/[id]/edit"}
+[00:10:26.004] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit?id=922c5b98-c281-49b5-aa86-de978e032c35&name=Ouma+Apartment&location=Kampala&total_units=28&description=Very+New color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit?id=922c5b98-c281-49b5-aa86-de978e032c35&name=Ouma+Apartment&location=Kampala&total_units=28&description=Very+New","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004162630}
+[00:10:46.807] Server  ERROR   Error updating property: {}
+[00:10:46.810] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\_63ffa619._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:10:46.815] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:10:46.815] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\node_modules_02d157c4._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:10:46.816] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:10:46.817] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:10:46.818] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:10:46.819] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:10:46.819] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:10:46.821] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:10:46.824] Server  ERROR    ⨯ Error: new row for relation "properties" violates check constraint "properties_property_type_check"
+[00:10:46.941] Browser ERROR   unhandledRejection: Error: new row for relation "properties" violates check constraint "properties_property_type_check"
+[00:10:49.050] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:10:49.625] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:10:49.625] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit","route":"/properties/[id]/edit"}
+[00:10:49.625] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit?id=922c5b98-c281-49b5-aa86-de978e032c35&name=Ouma+Apartment&location=Kampala&total_units=28&description=Very+New color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit?id=922c5b98-c281-49b5-aa86-de978e032c35&name=Ouma+Apartment&location=Kampala&total_units=28&description=Very+New","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004186263}
+[00:11:03.890] Server  ERROR   Error updating property: {}
+[00:11:03.895] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\_63ffa619._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:03.900] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:03.900] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\node_modules_02d157c4._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:03.901] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:03.902] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:03.904] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:03.905] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:03.906] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:03.906] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:03.908] Server  ERROR    ⨯ Error: new row for relation "properties" violates check constraint "properties_property_type_check"
+[00:11:04.040] Browser ERROR   unhandledRejection: Error: new row for relation "properties" violates check constraint "properties_property_type_check"
+[00:11:05.844] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:11:06.677] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:11:06.677] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit","route":"/properties/[id]/edit"}
+[00:11:06.677] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit?id=922c5b98-c281-49b5-aa86-de978e032c35&name=Ouma+Apartment&location=Kampala&total_units=28&description=Very+New color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit?id=922c5b98-c281-49b5-aa86-de978e032c35&name=Ouma+Apartment&location=Kampala&total_units=28&description=Very+New","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004203308}
+[00:11:17.066] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:11:17.813] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:11:17.813] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit","route":"/properties/[id]/edit"}
+[00:11:17.813] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit?id=922c5b98-c281-49b5-aa86-de978e032c35&name=Ouma+Apartment&location=Kampala&total_units=28&description=Very+New color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit?id=922c5b98-c281-49b5-aa86-de978e032c35&name=Ouma+Apartment&location=Kampala&total_units=28&description=Very+New","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004214452}
+[00:11:20.303] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004216939}
+[00:11:25.296] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004221801}
+[00:11:33.491] Server  ERROR   Error updating property: {}
+[00:11:33.495] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\_63ffa619._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:33.498] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\compiled\next-server\app-page-turbo.runtime.dev.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:33.499] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\.next\dev\server\chunks\ssr\node_modules_02d157c4._.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:33.501] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\base-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:33.504] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\next-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:33.507] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\dev\next-dev-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:33.508] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\trace\trace.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:33.509] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\lib\router-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:33.510] Server  ERROR   C:\Users\Jonus Green\Downloads\Property\node_modules\next\dist\server\lib\start-server.js: Invalid source map. Only conformant source maps can be used to find the original code. Cause: Error: sourceMapURL could not be parsed
+[00:11:33.511] Server  ERROR    ⨯ Error: new row for relation "properties" violates check constraint "properties_property_type_check"
+[00:11:33.640] Browser ERROR   unhandledRejection: Error: new row for relation "properties" violates check constraint "properties_property_type_check"
+[00:11:36.139] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:11:37.097] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:11:37.098] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit","route":"/properties/[id]/edit"}
+[00:11:37.098] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit?id=922c5b98-c281-49b5-aa86-de978e032c35&name=Ouma+Apartment&location=Kampala&total_units=28&description=Very+New color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit?id=922c5b98-c281-49b5-aa86-de978e032c35&name=Ouma+Apartment&location=Kampala&total_units=28&description=Very+New","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004233733}
+[00:11:46.673] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004243302}
+[00:11:59.765] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/d250f017-d167-4fbe-a2a7-fcfe132d8e3d/edit color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/d250f017-d167-4fbe-a2a7-fcfe132d8e3d/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004256156}
+[00:12:11.363] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004267943}
+[00:12:13.606] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:12:14.718] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:12:14.718] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/properties/d250f017-d167-4fbe-a2a7-fcfe132d8e3d/edit","route":"/properties/[id]/edit"}
+[00:12:14.718] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/d250f017-d167-4fbe-a2a7-fcfe132d8e3d/edit?id=d250f017-d167-4fbe-a2a7-fcfe132d8e3d&name=Nasana+Yesus+Namala+Apartment+&location=Bugema+University&total_units=77&description= color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/d250f017-d167-4fbe-a2a7-fcfe132d8e3d/edit?id=d250f017-d167-4fbe-a2a7-fcfe132d8e3d&name=Nasana+Yesus+Namala+Apartment+&location=Bugema+University&total_units=77&description=","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004271357}
+[00:12:20.452] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004277074}
+[00:12:27.671] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004284175}
+[00:12:36.304] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:12:37.073] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:12:37.073] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit","route":"/properties/[id]/edit"}
+[00:12:37.073] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit?id=922c5b98-c281-49b5-aa86-de978e032c35&name=Ouma+Apartment&location=Kampala&total_units=28&description=Very+New color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit?id=922c5b98-c281-49b5-aa86-de978e032c35&name=Ouma+Apartment&location=Kampala&total_units=28&description=Very+New","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004293711}
+[00:12:41.240] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004297868}
+[00:13:02.537] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/7226b22f-6519-4bd8-84f9-eb44c4ad0f0a/edit color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/7226b22f-6519-4bd8-84f9-eb44c4ad0f0a/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004319119}
+[00:13:15.152] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:13:15.537] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:13:15.537] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/properties/7226b22f-6519-4bd8-84f9-eb44c4ad0f0a/edit","route":"/properties/[id]/edit"}
+[00:13:15.538] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/7226b22f-6519-4bd8-84f9-eb44c4ad0f0a/edit?id=7226b22f-6519-4bd8-84f9-eb44c4ad0f0a&name=FAMILY+CARE+APARTMENTS+&location=Uganda&total_units=27&description= color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/7226b22f-6519-4bd8-84f9-eb44c4ad0f0a/edit?id=7226b22f-6519-4bd8-84f9-eb44c4ad0f0a&name=FAMILY+CARE+APARTMENTS+&location=Uganda&total_units=27&description=","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004332148}
+[00:13:20.277] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004336908}
+[00:16:34.143] Server  LOG      ✓ Compiled in 1189ms
+[00:16:42.991] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/7226b22f-6519-4bd8-84f9-eb44c4ad0f0a/edit color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/7226b22f-6519-4bd8-84f9-eb44c4ad0f0a/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004539576}
+[00:16:51.231] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004547865}
+[00:17:00.921] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/081753c5-7868-44ab-b411-83921597f46c/edit color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/081753c5-7868-44ab-b411-83921597f46c/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004557506}
+[00:17:15.206] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004571844}
+[00:20:09.028] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004745660}
+[00:20:17.561] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units/5964de20-444f-4963-b2b6-49f1a52f34cc/edit color: rgb(120, 120, 120) color: inherit {"dp":"/units/[id]/edit","o":"http://localhost:3000/units/5964de20-444f-4963-b2b6-49f1a52f34cc/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004754187}
+[00:20:26.187] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:20:26.490] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:20:26.490] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/units","route":"/units"}
+[00:20:26.490] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004763130}
+[00:20:49.847] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/landlords color: rgb(120, 120, 120) color: inherit {"dp":"/landlords","o":"http://localhost:3000/landlords","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004786475}
+[00:21:00.083] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/landlords/payments color: rgb(120, 120, 120) color: inherit {"dp":"/landlords/payments","o":"http://localhost:3000/landlords/payments","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004796719}
+[00:21:14.404] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004811039}
+[00:21:17.255] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004813890}
+[00:21:19.524] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004816160}
+[00:21:26.515] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004823152}
+[00:21:37.478] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units/4fa6d78b-1c31-4af3-91ca-6638f5191fa5/edit color: rgb(120, 120, 120) color: inherit {"dp":"/units/[id]/edit","o":"http://localhost:3000/units/4fa6d78b-1c31-4af3-91ca-6638f5191fa5/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004834114}
+[00:21:49.506] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004846136}
+[00:21:56.391] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004853026}
+[00:21:59.201] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit color: rgb(120, 120, 120) color: inherit {"dp":"/properties/[id]/edit","o":"http://localhost:3000/properties/922c5b98-c281-49b5-aa86-de978e032c35/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004855794}
+[00:22:02.716] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004859349}
+[00:22:04.315] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004860951}
+[00:22:06.379] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units/4fa6d78b-1c31-4af3-91ca-6638f5191fa5/edit color: rgb(120, 120, 120) color: inherit {"dp":"/units/[id]/edit","o":"http://localhost:3000/units/4fa6d78b-1c31-4af3-91ca-6638f5191fa5/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004863008}
+[00:22:14.666] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004871300}
+[00:22:17.584] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units/5da943c5-74e4-47ab-97f4-53e4497820eb/edit color: rgb(120, 120, 120) color: inherit {"dp":"/units/[id]/edit","o":"http://localhost:3000/units/5da943c5-74e4-47ab-97f4-53e4497820eb/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004874217}
+[00:22:23.377] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004880012}
+[00:22:26.207] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units/new color: rgb(120, 120, 120) color: inherit {"dp":"/units/new","o":"http://localhost:3000/units/new","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004882806}
+[00:22:36.355] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004892983}
+[00:22:45.318] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units/new color: rgb(120, 120, 120) color: inherit {"dp":"/units/new","o":"http://localhost:3000/units/new","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004901924}
+[00:23:00.696] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004917334}
+[00:23:06.866] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units/4fa6d78b-1c31-4af3-91ca-6638f5191fa5/edit color: rgb(120, 120, 120) color: inherit {"dp":"/units/[id]/edit","o":"http://localhost:3000/units/4fa6d78b-1c31-4af3-91ca-6638f5191fa5/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004923497}
+[00:23:20.977] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767004937613}
+[00:34:21.158] Server  LOG      ✓ Compiled in 835ms
+[00:34:36.578] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units/4fa6d78b-1c31-4af3-91ca-6638f5191fa5/edit color: rgb(120, 120, 120) color: inherit {"dp":"/units/[id]/edit","o":"http://localhost:3000/units/4fa6d78b-1c31-4af3-91ca-6638f5191fa5/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767005613210}
+[00:34:56.377] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767005633011}
+[00:34:59.109] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/new color: rgb(120, 120, 120) color: inherit {"dp":"/properties/new","o":"http://localhost:3000/properties/new","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767005635721}
+[00:36:19.973] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/landlords/new color: rgb(120, 120, 120) color: inherit {"dp":"/landlords/new","o":"http://localhost:3000/landlords/new","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767005716594}
+[00:37:53.361] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/landlords color: rgb(120, 120, 120) color: inherit {"dp":"/landlords","o":"http://localhost:3000/landlords","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767005809985}
+[00:38:00.514] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767005817152}
+[00:38:07.999] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/landlords color: rgb(120, 120, 120) color: inherit {"dp":"/landlords","o":"http://localhost:3000/landlords","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767005824639}
+[00:38:18.278] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/landlords/new color: rgb(120, 120, 120) color: inherit {"dp":"/landlords/new","o":"http://localhost:3000/landlords/new","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767005834911}
+[00:39:39.996] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/landlords color: rgb(120, 120, 120) color: inherit {"dp":"/landlords","o":"http://localhost:3000/landlords","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767005916618}
+[00:39:43.964] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767005920604}
+[00:39:46.192] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/new color: rgb(120, 120, 120) color: inherit {"dp":"/properties/new","o":"http://localhost:3000/properties/new","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767005922812}
+[00:40:57.665] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:40:57.966] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:40:57.966] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/properties","route":"/properties"}
+[00:40:57.966] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767005994594}
+[00:41:03.062] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties/new color: rgb(120, 120, 120) color: inherit {"dp":"/properties/new","o":"http://localhost:3000/properties/new","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767005999665}
+[00:42:23.852] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:42:24.194] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:42:24.194] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/properties","route":"/properties"}
+[00:42:24.194] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/properties color: rgb(120, 120, 120) color: inherit {"dp":"/properties","o":"http://localhost:3000/properties","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767006080821}
+[00:42:28.192] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants color: rgb(120, 120, 120) color: inherit {"dp":"/tenants","o":"http://localhost:3000/tenants","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767006084818}
+[00:42:36.572] Browser LOG     [v0] Loading properties...
+[00:42:36.572] Browser LOG     [v0] Loading properties...
+[00:42:36.572] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants/new color: rgb(120, 120, 120) color: inherit {"dp":"/tenants/new","o":"http://localhost:3000/tenants/new","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767006093208}
+[00:42:37.078] Browser LOG     [v0] Properties loaded: [{"id":"081753c5-7868-44ab-b411-83921597f46c","name":"Bugema Apartment","property_type":"Commercial"},{"id":"02263c13-0317-42de-a955-92ef97d1b8e0","name":"Bugema Denzdof","property_type":"Residential"},{"id":"7226b22f-6519-4bd8-84f9-eb44c4ad0f0a","name":"FAMILY CARE APARTMENTS ","property_type":"Residential"},{"id":"d250f017-d167-4fbe-a2a7-fcfe132d8e3d","name":"Nasana Yesus Namala Apartment ","property_type":"Residential"},{"id":"922c5b98-c281-49b5-aa86-de978e032c35","name":"Ouma Apartment","property_type":"Commercial"},{"id":"bcaaa38a-e623-4ed7-81ec-b035adf17064","name":"US MALL kyanja","property_type":"Commercial"}]
+[00:42:37.442] Browser LOG     [v0] Properties loaded: [{"id":"081753c5-7868-44ab-b411-83921597f46c","name":"Bugema Apartment","property_type":"Commercial"},{"id":"02263c13-0317-42de-a955-92ef97d1b8e0","name":"Bugema Denzdof","property_type":"Residential"},{"id":"7226b22f-6519-4bd8-84f9-eb44c4ad0f0a","name":"FAMILY CARE APARTMENTS ","property_type":"Residential"},{"id":"d250f017-d167-4fbe-a2a7-fcfe132d8e3d","name":"Nasana Yesus Namala Apartment ","property_type":"Residential"},{"id":"922c5b98-c281-49b5-aa86-de978e032c35","name":"Ouma Apartment","property_type":"Commercial"},{"id":"bcaaa38a-e623-4ed7-81ec-b035adf17064","name":"US MALL kyanja","property_type":"Commercial"}]
+[00:43:52.603] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:43:52.896] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:43:52.897] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/tenants","route":"/tenants"}
+[00:43:52.897] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants color: rgb(120, 120, 120) color: inherit {"dp":"/tenants","o":"http://localhost:3000/tenants","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767006169523}
+[00:43:58.624] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767006175259}
+[00:44:03.489] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units/new color: rgb(120, 120, 120) color: inherit {"dp":"/units/new","o":"http://localhost:3000/units/new","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767006180079}
+[00:45:04.541] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:45:04.870] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:45:04.870] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/units","route":"/units"}
+[00:45:04.870] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767006241482}
+[00:45:09.247] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants color: rgb(120, 120, 120) color: inherit {"dp":"/tenants","o":"http://localhost:3000/tenants","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767006245881}
+[00:45:17.279] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants/a0106509-e7f7-4138-b7b0-8c9a5ec162f5/edit color: rgb(120, 120, 120) color: inherit {"dp":"/tenants/[id]/edit","o":"http://localhost:3000/tenants/a0106509-e7f7-4138-b7b0-8c9a5ec162f5/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767006253912}
+[00:45:29.698] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:45:29.960] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:45:29.960] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/tenants","route":"/tenants"}
+[00:45:29.960] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants color: rgb(120, 120, 120) color: inherit {"dp":"/tenants","o":"http://localhost:3000/tenants","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767006266596}
+[00:45:45.949] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants/a0106509-e7f7-4138-b7b0-8c9a5ec162f5/edit color: rgb(120, 120, 120) color: inherit {"dp":"/tenants/[id]/edit","o":"http://localhost:3000/tenants/a0106509-e7f7-4138-b7b0-8c9a5ec162f5/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767006282581}
+[00:45:53.167] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/tenants color: rgb(120, 120, 120) color: inherit {"dp":"/tenants","o":"http://localhost:3000/tenants","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767006289802}
+[00:45:56.609] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767006293235}
+[00:45:58.977] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units/new color: rgb(120, 120, 120) color: inherit {"dp":"/units/new","o":"http://localhost:3000/units/new","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767006295584}
+[00:46:37.462] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:46:37.763] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:46:37.763] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/units","route":"/units"}
+[00:46:37.763] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767006334397}
+[00:46:43.341] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units/f149566c-e117-463b-b90d-7b3b6ebd3f71/edit color: rgb(120, 120, 120) color: inherit {"dp":"/units/[id]/edit","o":"http://localhost:3000/units/f149566c-e117-463b-b90d-7b3b6ebd3f71/edit","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767006339967}
+[00:46:57.973] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/units color: rgb(120, 120, 120) color: inherit {"dp":"/units","o":"http://localhost:3000/units","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1767006354603}

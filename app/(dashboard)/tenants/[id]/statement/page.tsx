@@ -76,7 +76,7 @@ export default function TenantStatementPage() {
   return (
     <div className="p-8">
       <div className="mb-6 flex items-center justify-between no-print">
-        <h1 className="text-3xl font-bold">Payment Statement</h1>
+        <h1 className="text-3xl font-bold uppercase">PAYMENT STATEMENT</h1>
         <div className="flex gap-2">
           <Button onClick={handlePrint} variant="outline">
             <Printer className="mr-2 h-4 w-4" />
@@ -87,33 +87,33 @@ export default function TenantStatementPage() {
 
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>Tenant Information</CardTitle>
+          <CardTitle className="uppercase">TENANT INFORMATION</CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-sm text-muted-foreground">Name</p>
+            <p className="text-sm text-muted-foreground">NAME</p>
             <p className="font-semibold">
               {tenant.first_name} {tenant.last_name}
             </p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Email</p>
+            <p className="text-sm text-muted-foreground">EMAIL</p>
             <p className="font-semibold">{tenant.email}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Property</p>
+            <p className="text-sm text-muted-foreground">PROPERTY</p>
             <p className="font-semibold">{property?.name}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Unit</p>
+            <p className="text-sm text-muted-foreground">UNIT</p>
             <p className="font-semibold">{unit?.unit_number || "N/A"}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Status</p>
+            <p className="text-sm text-muted-foreground">STATUS</p>
             <Badge variant={tenant.status === "active" ? "default" : "secondary"}>{tenant.status}</Badge>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Phone</p>
+            <p className="text-sm text-muted-foreground">PHONE</p>
             <p className="font-semibold">{tenant.phone}</p>
           </div>
         </CardContent>
@@ -122,7 +122,7 @@ export default function TenantStatementPage() {
       <div className="grid grid-cols-4 gap-4 mb-6">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Monthly Rent</CardTitle>
+            <CardTitle className="text-sm font-medium uppercase">MONTHLY RENT</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">
@@ -132,7 +132,7 @@ export default function TenantStatementPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Paid</CardTitle>
+            <CardTitle className="text-sm font-medium uppercase">TOTAL PAID</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-green-600">
@@ -142,7 +142,7 @@ export default function TenantStatementPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Balance</CardTitle>
+            <CardTitle className="text-sm font-medium uppercase">BALANCE</CardTitle>
           </CardHeader>
           <CardContent>
             <p className={`text-2xl font-bold ${Number(tenant.balance || 0) > 0 ? "text-red-600" : "text-green-600"}`}>
@@ -152,7 +152,7 @@ export default function TenantStatementPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Lease Period</CardTitle>
+            <CardTitle className="text-sm font-medium uppercase">LEASE PERIOD</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm font-semibold">
@@ -165,16 +165,16 @@ export default function TenantStatementPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Payment History</CardTitle>
+          <CardTitle className="uppercase">PAYMENT HISTORY</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Method</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead className="uppercase">Date</TableHead>
+                <TableHead className="uppercase">Amount</TableHead>
+                <TableHead className="uppercase">Method</TableHead>
+                <TableHead className="uppercase">Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -199,7 +199,7 @@ export default function TenantStatementPage() {
                         </Badge>
                         <Link
                           href={`/payments/${payment.id}/receipt`}
-                          className="text-blue-600 hover:underline text-sm"
+                          className="text-blue-600 hover:underline text-sm no-print"
                         >
                           View Receipt
                         </Link>
@@ -217,6 +217,10 @@ export default function TenantStatementPage() {
         @media print {
           .no-print {
             display: none;
+          }
+          /* Hide IDs from table rows when printing */
+          .print\\:hidden {
+            display: none !important;
           }
         }
       `}</style>
