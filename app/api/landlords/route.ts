@@ -36,11 +36,11 @@ async function checkAdminAccess() {
   return { isAdmin: true }
 }
 
-export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
+export async function GET() {
+  const { isAdmin, error: authError } = await checkAdminAccess()
 
-  if (!id || id === "undefined") {
-    return Response.json({ success: false, error: "Invalid landlord ID" }, { status: 400 })
+  if (!isAdmin) {
+    return Response.json({ success: false, error: authError }, { status: 403 })
   }
 
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -50,30 +50,20 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     },
   })
 
-  const { data, error } = await supabase.from("owners").select("*").eq("id", id).single()
+  const { data, error } = await supabase.from("owners").select("*").order("name", { ascending: true })
 
   if (error) {
     return Response.json({ success: false, error: error.message }, { status: 400 })
   }
 
-  if (!data) {
-    return Response.json({ success: false, error: "Landlord not found" }, { status: 404 })
-  }
-
-  return Response.json({ success: true, data })
+  return Response.json({ success: true, data: data || [] })
 }
 
-export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function POST(request: Request) {
   const { isAdmin, error: authError } = await checkAdminAccess()
 
   if (!isAdmin) {
     return Response.json({ success: false, error: authError }, { status: 403 })
-  }
-
-  const { id } = await params
-
-  if (!id || id === "undefined") {
-    return Response.json({ success: false, error: "Invalid landlord ID" }, { status: 400 })
   }
 
   try {
@@ -93,55 +83,17 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       city: body.city,
       notes: body.notes,
       payment_due_day: body.payment_due_day ? Number.parseInt(body.payment_due_day) : 30,
+      landlord_id: null,
     }
 
-    const { data, error } = await supabase.from("owners").update(landlordData).eq("id", id).select().single()
+    const { data, error } = await supabase.from("owners").insert([landlordData]).select().single()
 
     if (error) {
       return Response.json({ success: false, error: error.message }, { status: 400 })
     }
 
-    return Response.json({ success: true, data })
+    return Response.json({ success: true, data }, { status: 201 })
   } catch (error) {
     return Response.json({ success: false, error: "Invalid request body" }, { status: 400 })
   }
-}
-
-export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { isAdmin, error: authError } = await checkAdminAccess()
-
-  if (!isAdmin) {
-    return Response.json({ success: false, error: authError }, { status: 403 })
-  }
-
-  const { id } = await params
-
-  if (!id || id === "undefined") {
-    return Response.json({ success: false, error: "Invalid landlord ID" }, { status: 400 })
-  }
-
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-    },
-  })
-
-  // Check if landlord has associated properties
-  const { data: properties } = await supabase.from("properties").select("id").eq("owner_id", id).limit(1)
-
-  if (properties && properties.length > 0) {
-    return Response.json(
-      { success: false, error: "Cannot delete landlord with associated properties" },
-      { status: 400 },
-    )
-  }
-
-  const { error } = await supabase.from("owners").delete().eq("id", id)
-
-  if (error) {
-    return Response.json({ success: false, error: error.message }, { status: 400 })
-  }
-
-  return Response.json({ success: true, message: "Landlord deleted successfully" })
 }
