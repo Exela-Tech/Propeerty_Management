@@ -27,15 +27,29 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       },
     })
 
-    // Fetch landlord details
     const { data: landlord, error: landlordError } = await supabase
       .from("owners")
-      .select("id, name")
+      .select("id, name, created_at")
       .eq("id", landlordId)
       .single()
 
     if (landlordError || !landlord) {
       return NextResponse.json({ error: "Landlord not found" }, { status: 404 })
+    }
+
+    const landlordCreatedMonth = new Date(landlord.created_at).toISOString().substring(0, 7)
+    if (month < landlordCreatedMonth) {
+      return NextResponse.json({
+        landlord: { id: landlord.id, name: landlord.name },
+        property: { id: propertyId, name: "" },
+        month,
+        tenantDetails: [],
+        totalExpectedRent: 0,
+        deductions: [],
+        totalDeductions: 0,
+        netPayout: 0,
+        message: "No data available before landlord creation date",
+      })
     }
 
     // Fetch property with management fee
@@ -74,14 +88,16 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     monthEnd.setDate(0)
     const monthEndStr = monthEnd.toISOString().substring(0, 10)
 
-    // Fetch maintenance requests for this property
+    console.log("[v0] Fetching maintenance for month:", month, "property:", propertyId)
+
     const { data: maintenanceRequests } = await supabase
       .from("maintenance_requests")
-      .select("id, title, estimated_cost")
+      .select("id, title, estimated_cost, approved, deduction_month")
       .eq("property_id", propertyId)
-      .eq("approved", true)
-      .gte("created_at", monthStart)
-      .lte("created_at", monthEndStr)
+      .eq("deduction_month", month)
+
+    console.log("[v0] Maintenance query - Month: ", month, "Property: ", propertyId)
+    console.log("[v0] Found maintenance requests:", maintenanceRequests)
 
     // Calculate total expected rent
     const totalExpectedRent = tenants.reduce((sum, t) => sum + (t.monthly_rent || 0), 0)

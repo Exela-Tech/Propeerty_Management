@@ -245,7 +245,7 @@ export default function PaymentNotePage() {
         <div className="mb-6 space-y-4">
           <div>
             <label className="text-xs font-semibold uppercase text-gray-600">
-              Notes (Recorded at time of payment):
+              Notes:
             </label>
             <textarea
               value={notes}

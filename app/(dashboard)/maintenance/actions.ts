@@ -64,6 +64,7 @@ export async function createMaintenanceRequest(formData: FormData) {
   const priority = formData.get("priority") as string
   const estimatedCost = formData.get("estimated_cost") as string
   const currency = formData.get("currency") as string
+  const deductionMonth = formData.get("deduction_month") as string // capture deduction_month from form
   const status = "pending"
 
   const requestData = {
@@ -77,6 +78,7 @@ export async function createMaintenanceRequest(formData: FormData) {
     estimated_cost: estimatedCost ? Number.parseFloat(estimatedCost) : null,
     currency: currency || "UGX",
     approved: false,
+    deduction_month: deductionMonth || new Date().toISOString().substring(0, 7), // save deduction_month
   }
 
   const { data: maintenanceRequest, error } = await supabase
