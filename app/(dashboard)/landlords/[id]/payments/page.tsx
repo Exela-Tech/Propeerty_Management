@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Calendar, DollarSign, Receipt } from "lucide-react"
 import Link from "next/link"
+import { Button } from "@/components/ui/button"
 import { getLandlordPayments } from "../../payment-actions"
 import { format } from "date-fns"
 
@@ -165,6 +166,7 @@ export default async function LandlordPaymentHistoryPage({ params }: { params: P
                   <TableHead>Period</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Notes</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -188,6 +190,13 @@ export default async function LandlordPaymentHistoryPage({ params }: { params: P
                     <TableCell>{getStatusBadge(payment.status || "completed")}</TableCell>
                     <TableCell className="text-sm text-muted-foreground max-w-xs truncate">
                       {payment.notes || "—"}
+                    </TableCell>
+                    <TableCell>
+                      <Link href={`/landlords/payments/${payment.id}/receipt`}>
+                        <Button size="sm" variant="ghost">
+                          View Receipt
+                        </Button>
+                      </Link>
                     </TableCell>
                   </TableRow>
                 ))}
