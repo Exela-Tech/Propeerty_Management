@@ -52,9 +52,12 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
   const { data, error } = await supabase.from("owners").select("*").eq("id", id).single()
 
-  if (error) {
-    return Response.json({ success: false, error: error.message }, { status: 400 })
-  }
+    const { data, error } = await supabase.from("owners").select("*").eq("id", id).single()
+
+    if (error) {
+      console.log("[v0] Landlord fetch error:", error)
+      return Response.json({ success: false, error: error.message }, { status: 400 })
+    }
 
   if (!data) {
     return Response.json({ success: false, error: "Landlord not found" }, { status: 404 })

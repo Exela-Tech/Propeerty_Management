@@ -16,6 +16,9 @@ import { updateLandlord } from "../../actions"
 
 export default function EditLandlordPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
+  const params = useParams()
+  const landlordId = params.id as string
+
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [landlord, setLandlord] = useState<any>(null)
@@ -40,15 +43,17 @@ export default function EditLandlordPage({ params }: { params: Promise<{ id: str
       try {
         const response = await fetch(`/api/landlords/${landlordId}`)
         const data = await response.json()
+
         if (data.success) {
           setLandlord(data.data)
         } else {
           setError(data.error || "Failed to load landlord")
         }
-      } catch (err) {
+      } catch {
         setError("Failed to load landlord")
       }
     }
+
     fetchLandlord()
   }, [landlordId])
 
@@ -122,7 +127,12 @@ export default function EditLandlordPage({ params }: { params: Promise<{ id: str
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="first_name">First Name</Label>
-                <Input id="first_name" name="first_name" defaultValue={landlord.name?.split(" ")[0] || ""} required />
+                <Input
+                  id="first_name"
+                  name="first_name"
+                  defaultValue={landlord.name?.split(" ")[0] || ""}
+                  required
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="last_name">Last Name</Label>
@@ -161,7 +171,7 @@ export default function EditLandlordPage({ params }: { params: Promise<{ id: str
                 id="payment_due_day"
                 name="payment_due_day"
                 defaultValue={landlord.payment_due_day || "30"}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
                 <option value="5">5th of the month</option>
                 <option value="15">15th of the month</option>
