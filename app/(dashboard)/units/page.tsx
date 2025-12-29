@@ -1,6 +1,5 @@
 import { createClient } from "@supabase/supabase-js"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Home, Plus } from "lucide-react"
 import Link from "next/link"
 import { UnitActionButtons } from "./unit-action-buttons"
@@ -74,7 +73,13 @@ export default async function UnitsPage() {
                   <td className="px-6 py-4 text-sm font-medium">{unit.unit_number}</td>
                   <td className="px-6 py-4 text-sm text-muted-foreground">{unit.property?.name || "-"}</td>
                   <td className="px-6 py-4 text-sm">
-                    <Badge variant={unit.status === "occupied" ? "default" : "secondary"}>{unit.status}</Badge>
+                    {unit.status === "vacant" ? (
+                      <span className="px-3 py-1 rounded-full bg-red-100 text-red-700 font-medium text-sm">Vacant</span>
+                    ) : (
+                      <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 font-medium text-sm">
+                        Occupied
+                      </span>
+                    )}
                   </td>
                   <td className="px-6 py-4 text-sm">{unit.bedrooms || "-"}</td>
                   <td className="px-6 py-4 text-sm font-medium">

@@ -1,5 +1,336 @@
 {
-  "node": {},
+  "node": {
+    "40399ca7ee6975e8895ef62c165fb2c753e0dd2956": {
+      "workers": {
+        "app/(dashboard)/units/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/units/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/units/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "deleteUnit",
+          "filename": "app/(dashboard)/units/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/units/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/units/actions.ts",
+      "exportedName": "deleteUnit"
+    },
+    "6060d9e2446327bfc696cd95f9a55ae4b1fc739410": {
+      "workers": {
+        "app/(dashboard)/units/[id]/edit/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/units/[id]/edit/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/units/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "updateUnit",
+          "filename": "app/(dashboard)/units/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/units/[id]/edit/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/units/actions.ts",
+      "exportedName": "updateUnit"
+    },
+    "4034f807dcf69184d5dff240395370335f81238d75": {
+      "workers": {
+        "app/(dashboard)/units/[id]/edit/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/units/[id]/edit/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/units/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getUnit",
+          "filename": "app/(dashboard)/units/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/units/[id]/edit/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/units/actions.ts",
+      "exportedName": "getUnit"
+    },
+    "00998746c636caf8478266b8c9cf418cfa4f648657": {
+      "workers": {
+        "app/(dashboard)/units/[id]/edit/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/units/[id]/edit/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/units/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getProperties",
+          "filename": "app/(dashboard)/units/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/units/[id]/edit/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/units/actions.ts",
+      "exportedName": "getProperties"
+    },
+    "603845af3b66af2a1faf5718a2e4d84bff5a75fec1": {
+      "workers": {
+        "app/(dashboard)/tenants/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/tenants/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/tenants/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "toggleTenantStatus",
+          "filename": "app/(dashboard)/tenants/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/tenants/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/tenants/actions.ts",
+      "exportedName": "toggleTenantStatus"
+    },
+    "004624f4a8b408bad2d2c60ee53bec119755ed379c": {
+      "workers": {
+        "app/(dashboard)/tenants/[id]/edit/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/tenants/[id]/edit/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/tenants/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getProperties",
+          "filename": "app/(dashboard)/tenants/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/tenants/[id]/edit/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/tenants/actions.ts",
+      "exportedName": "getProperties"
+    },
+    "40e646324ae073b01c2780275796f9234bf15cb63b": {
+      "workers": {
+        "app/(dashboard)/tenants/[id]/edit/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/tenants/[id]/edit/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/tenants/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getVacantUnits",
+          "filename": "app/(dashboard)/tenants/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/tenants/[id]/edit/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/tenants/actions.ts",
+      "exportedName": "getVacantUnits"
+    },
+    "402b28786c608f63f53cbf008523288a620a08985a": {
+      "workers": {
+        "app/(dashboard)/tenants/[id]/edit/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/tenants/[id]/edit/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/tenants/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getTenant",
+          "filename": "app/(dashboard)/tenants/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/tenants/[id]/edit/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/tenants/actions.ts",
+      "exportedName": "getTenant"
+    },
+    "6001b95693d6f0212e063dde92de43657a4130f927": {
+      "workers": {
+        "app/(dashboard)/tenants/[id]/edit/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/tenants/[id]/edit/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/tenants/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "updateTenant",
+          "filename": "app/(dashboard)/tenants/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/tenants/[id]/edit/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/tenants/actions.ts",
+      "exportedName": "updateTenant"
+    },
+    "401d37e9dfc8954b99648ee3b69660fdf6cce825bc": {
+      "workers": {
+        "app/(dashboard)/properties/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/properties/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/properties/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "deleteProperty",
+          "filename": "app/(dashboard)/properties/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/properties/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/properties/actions.ts",
+      "exportedName": "deleteProperty"
+    },
+    "400598c3de8d6de66504773ec47e41aaba28b67349": {
+      "workers": {
+        "app/(dashboard)/properties/[id]/edit/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/properties/[id]/edit/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/properties/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "updateProperty",
+          "filename": "app/(dashboard)/properties/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/properties/[id]/edit/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/properties/actions.ts",
+      "exportedName": "updateProperty"
+    },
+    "4018cef5400386aca1f0f1c7a5f5bfbb88a85502a3": {
+      "workers": {
+        "app/(dashboard)/landlords/payments/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/landlords/payments/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/landlords/payment-actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "recordLandlordPayment",
+          "filename": "app/(dashboard)/landlords/payment-actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/landlords/payments/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/landlords/payment-actions.ts",
+      "exportedName": "recordLandlordPayment"
+    },
+    "4061a5ae496275be2e04f6210484db2ba279600b21": {
+      "workers": {
+        "app/(dashboard)/landlords/payments/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/landlords/payments/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/landlords/payment-actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getLandlordPayments",
+          "filename": "app/(dashboard)/landlords/payment-actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/landlords/payments/page": "rsc"
+      },
+      "filename": "app/(dashboard)/landlords/payment-actions.ts",
+      "exportedName": "getLandlordPayments"
+    },
+    "7056bbc2bf6007ea4b3ae7ba7a7d4f41600e0001fa": {
+      "workers": {
+        "app/(dashboard)/landlords/payments/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/landlords/payments/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/landlords/payment-actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "calculateLandlordOwed",
+          "filename": "app/(dashboard)/landlords/payment-actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/landlords/payments/page": "rsc"
+      },
+      "filename": "app/(dashboard)/landlords/payment-actions.ts",
+      "exportedName": "calculateLandlordOwed"
+    },
+    "402487684cc4a2242b90c361e2f4dc746709decc84": {
+      "workers": {
+        "app/(dashboard)/maintenance/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/maintenance/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/maintenance/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "approveMaintenanceRequest",
+          "filename": "app/(dashboard)/maintenance/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/maintenance/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/maintenance/actions.ts",
+      "exportedName": "approveMaintenanceRequest"
+    },
+    "40e7e0c59b11c640b117b2f7ab2d23b8c2a8a35a7b": {
+      "workers": {
+        "app/(dashboard)/maintenance/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/maintenance/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/maintenance/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "rejectMaintenanceRequest",
+          "filename": "app/(dashboard)/maintenance/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/maintenance/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/maintenance/actions.ts",
+      "exportedName": "rejectMaintenanceRequest"
+    },
+    "404d9fa1086e7b70700763821da3ce30ffb6cca88a": {
+      "workers": {
+        "app/(dashboard)/maintenance/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/maintenance/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/maintenance/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "deleteMaintenanceRequest",
+          "filename": "app/(dashboard)/maintenance/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/maintenance/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/maintenance/actions.ts",
+      "exportedName": "deleteMaintenanceRequest"
+    },
+    "4041ae18f90c82b908571a135b92da357142ea861e": {
+      "workers": {
+        "app/(dashboard)/maintenance/new/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/maintenance/new/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/maintenance/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "createMaintenanceRequest",
+          "filename": "app/(dashboard)/maintenance/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/maintenance/new/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/maintenance/actions.ts",
+      "exportedName": "createMaintenanceRequest"
+    },
+    "0052df00ef8e6455c74c2233f3c8143c9ba4b99478": {
+      "workers": {
+        "app/(dashboard)/maintenance/new/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/maintenance/new/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/maintenance/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getProperties",
+          "filename": "app/(dashboard)/maintenance/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/maintenance/new/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/maintenance/actions.ts",
+      "exportedName": "getProperties"
+    },
+    "40d355ae93fc04060fae1f688f19966442ec6e57fd": {
+      "workers": {
+        "app/(dashboard)/maintenance/new/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/maintenance/new/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/maintenance/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getUnits",
+          "filename": "app/(dashboard)/maintenance/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/maintenance/new/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/maintenance/actions.ts",
+      "exportedName": "getUnits"
+    },
+    "40ad012c43294f3fbef7fae6399a1de31d5f8b9f7f": {
+      "workers": {
+        "app/(dashboard)/maintenance/new/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/maintenance/new/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/maintenance/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "getTenants",
+          "filename": "app/(dashboard)/maintenance/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/maintenance/new/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/maintenance/actions.ts",
+      "exportedName": "getTenants"
+    },
+    "40d5b94132ac59dfc275980664b2f9f2568792d05e": {
+      "workers": {
+        "app/(dashboard)/expenses/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/expenses/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/(dashboard)/expenses/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "deleteExpense",
+          "filename": "app/(dashboard)/expenses/actions.ts"
+        }
+      },
+      "layer": {
+        "app/(dashboard)/expenses/page": "action-browser"
+      },
+      "filename": "app/(dashboard)/expenses/actions.ts",
+      "exportedName": "deleteExpense"
+    }
+  },
   "edge": {},
   "encryptionKey": "bP8QUqZ+VYfHXDvFNnPNmRAmU681mytRblpxKAwBnAU="
 }

@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { useState, useEffect } from "react"
+import { use, useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -14,7 +13,8 @@ import Link from "next/link"
 import { getProperties, getVacantUnits, getTenant, updateTenant } from "../../actions"
 import { useToast } from "@/hooks/use-toast"
 
-export default function EditTenantPage({ params }: { params: { id: string } }) {
+export default function EditTenantPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
   const router = useRouter()
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
@@ -28,7 +28,7 @@ export default function EditTenantPage({ params }: { params: { id: string } }) {
   useEffect(() => {
     async function loadData() {
       try {
-        const [tenantData, propertiesData] = await Promise.all([getTenant(params.id), getProperties()])
+        const [tenantData, propertiesData] = await Promise.all([getTenant(id), getProperties()])
 
         if (!tenantData) {
           toast({
@@ -63,7 +63,7 @@ export default function EditTenantPage({ params }: { params: { id: string } }) {
       }
     }
     loadData()
-  }, [params.id, toast, router])
+  }, [id, toast, router])
 
   useEffect(() => {
     if (selectedProperty && selectedProperty !== tenant?.property_id) {
@@ -94,7 +94,7 @@ export default function EditTenantPage({ params }: { params: { id: string } }) {
 
     const formData = new FormData(e.currentTarget)
 
-    const result = await updateTenant(params.id, formData)
+    const result = await updateTenant(id, formData)
 
     if (result.success) {
       toast({
