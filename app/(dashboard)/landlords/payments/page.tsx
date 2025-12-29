@@ -17,6 +17,10 @@ interface LandlordWithPaymentInfo {
   owed: number
   totalCollected: number
   totalPaidToLandlord: number
+  expectedRent?: number
+  collectionRate?: number
+  tenantCount?: number
+  paymentCount?: number
 }
 
 function getDayLabel(day: number): string {
@@ -83,16 +87,24 @@ export default async function LandlordPaymentsPage() {
   const landlordData: LandlordWithPaymentInfo[] = []
 
   for (const landlord of landlords || []) {
-    const { owed = 0, totalCollected = 0, totalPaidToLandlord = 0 } = await calculateLandlordOwed(
-      landlord.id,
-      periodStart,
-      periodEnd,
-    )
+    const {
+      owed,
+      totalCollected,
+      totalPaidToLandlord,
+      expectedRent,
+      collectionRate,
+      tenantCount,
+      paymentCount,
+    } = await calculateLandlordOwed(landlord.id, periodStart, periodEnd)
     landlordData.push({
       ...landlord,
       owed,
       totalCollected,
       totalPaidToLandlord,
+      expectedRent: expectedRent || 0,
+      collectionRate: collectionRate || 0,
+      tenantCount: tenantCount || 0,
+      paymentCount: paymentCount || 0,
     })
   }
 
@@ -112,9 +124,18 @@ export default async function LandlordPaymentsPage() {
 
   return (
     <div className="space-y-6 p-8">
-      <div>
-        <h1 className="text-3xl font-bold">Landlord Payment Schedule</h1>
-        <p className="text-muted-foreground mt-1">Track landlord payments with collected rent and amounts owed</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Landlord Payment Schedule</h1>
+          <p className="text-muted-foreground mt-1">
+            Track landlord payments with collected rent and amounts owed. Integrated with rent collection data.
+          </p>
+        </div>
+        <Link href="/api/landlords/payment-reminders" target="_blank">
+          <Button variant="outline" size="sm">
+            View Reminders
+          </Button>
+        </Link>
       </div>
 
       <Link href="/landlords">
@@ -151,30 +172,61 @@ export default async function LandlordPaymentsPage() {
                 <div className="space-y-3">
                   {landlordsList.map((landlord) => (
                     <div key={landlord.id} className="p-4 border rounded-lg hover:bg-accent transition">
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                         <div className="flex-1">
                           <p className="font-medium">{landlord.name}</p>
                           <p className="text-sm text-muted-foreground">{landlord.email}</p>
                           <p className="text-sm text-muted-foreground">{landlord.phone}</p>
+                          {landlord.tenantCount !== undefined && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {landlord.tenantCount} active tenant{landlord.tenantCount !== 1 ? "s" : ""}
+                            </p>
+                          )}
                         </div>
                         <div className="text-right">
-                          <p className="text-xs text-muted-foreground mb-1">Collected This Month</p>
+                          <p className="text-xs text-muted-foreground mb-1">Expected Rent</p>
+                          <p className="font-semibold text-sm">
+                            UGX {Math.round(landlord.expectedRent || 0).toLocaleString()}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">Collected</p>
                           <p className="font-semibold">UGX {Math.round(landlord.totalCollected).toLocaleString()}</p>
+                          {landlord.collectionRate !== undefined && (
+                            <p className="text-xs mt-1">
+                              <span className={landlord.collectionRate >= 90 ? "text-green-600" : landlord.collectionRate >= 70 ? "text-yellow-600" : "text-red-600"}>
+                                {landlord.collectionRate.toFixed(1)}% collected
+                              </span>
+                            </p>
+                          )}
                         </div>
                         <div className="text-right">
                           <p className="text-xs text-muted-foreground mb-1">Paid to Landlord</p>
                           <p className="font-semibold text-green-600">
                             UGX {Math.round(landlord.totalPaidToLandlord).toLocaleString()}
                           </p>
-                        </div>
-                        <div className="text-right flex flex-col items-end gap-2">
-                          <div>
-                            <p className="text-xs text-muted-foreground mb-1">Amount Owed</p>
-                            <p className="font-bold text-lg text-red-600">
-                              UGX {Math.round(landlord.owed).toLocaleString()}
+                          {landlord.paymentCount !== undefined && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {landlord.paymentCount} payment{landlord.paymentCount !== 1 ? "s" : ""} received
                             </p>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xs text-muted-foreground mb-1">Amount Owed</p>
+                          <p className="font-bold text-lg text-red-600">
+                            UGX {Math.round(landlord.owed).toLocaleString()}
+                          </p>
+                          {landlord.owed > 0 && (
+                            <p className="text-xs text-red-600 mt-1">Payment pending</p>
+                          )}
+                        </div>
+                        <div className="flex flex-col items-end gap-2">
+                          <div className="flex gap-2">
+                            <Link href={`/landlords/${landlord.id}/payments`}>
+                              <Button size="sm" variant="ghost">
+                                History
+                              </Button>
+                            </Link>
+                            <RecordPaymentDialog landlord={landlord} periodStart={periodStart} periodEnd={periodEnd} />
                           </div>
-                          <RecordPaymentDialog landlord={landlord} periodStart={periodStart} periodEnd={periodEnd} />
                         </div>
                       </div>
                     </div>

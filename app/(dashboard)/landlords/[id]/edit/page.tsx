@@ -1,8 +1,9 @@
 "use client"
 
 import type React from "react"
+
 import { useState, useEffect } from "react"
-import { useRouter, useParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,7 +14,7 @@ import Link from "next/link"
 import { ChevronLeft, Loader2 } from "lucide-react"
 import { updateLandlord } from "../../actions"
 
-export default function EditLandlordPage() {
+export default function EditLandlordPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const params = useParams()
   const landlordId = params.id as string
@@ -22,8 +23,22 @@ export default function EditLandlordPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [landlord, setLandlord] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
+  const [landlordId, setLandlordId] = useState<string | null>(null)
 
   useEffect(() => {
+    async function getParams() {
+      const resolvedParams = await params
+      setLandlordId(resolvedParams.id)
+    }
+    getParams()
+  }, [params])
+
+  useEffect(() => {
+    if (!landlordId || landlordId === "undefined") {
+      setError("Invalid landlord ID")
+      return
+    }
+
     async function fetchLandlord() {
       try {
         const response = await fetch(`/api/landlords/${landlordId}`)
@@ -32,7 +47,7 @@ export default function EditLandlordPage() {
         if (data.success) {
           setLandlord(data.data)
         } else {
-          setError("Failed to load landlord")
+          setError(data.error || "Failed to load landlord")
         }
       } catch {
         setError("Failed to load landlord")
@@ -44,6 +59,8 @@ export default function EditLandlordPage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (!landlordId) return
+
     setIsLoading(true)
 
     const formData = new FormData(e.currentTarget)
