@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -14,52 +14,38 @@ import Link from "next/link"
 import { ChevronLeft, Loader2 } from "lucide-react"
 import { updateLandlord } from "../../actions"
 
-export default function EditLandlordPage({ params }: { params: Promise<{ id: string }> }) {
+export default function EditLandlordPage() {
+  const params = useParams()
+  const id = params.id as string
   const router = useRouter()
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [landlord, setLandlord] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
-  const [landlordId, setLandlordId] = useState<string | null>(null)
 
   useEffect(() => {
-    async function getParams() {
-      const resolvedParams = await params
-      setLandlordId(resolvedParams.id)
-    }
-    getParams()
-  }, [params])
-
-  useEffect(() => {
-    if (!landlordId || landlordId === "undefined") {
-      setError("Invalid landlord ID")
-      return
-    }
-
     async function fetchLandlord() {
       try {
-        const response = await fetch(`/api/landlords/${landlordId}`)
+        const response = await fetch(`/api/landlords/${id}`)
         const data = await response.json()
         if (data.success) {
           setLandlord(data.data)
         } else {
-          setError(data.error || "Failed to load landlord")
+          setError("Failed to load landlord")
         }
       } catch (err) {
         setError("Failed to load landlord")
       }
     }
     fetchLandlord()
-  }, [landlordId])
+  }, [id])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (!landlordId) return
-
     setIsLoading(true)
 
     const formData = new FormData(e.currentTarget)
-    const result = await updateLandlord(landlordId, formData)
+    const result = await updateLandlord(id, formData)
 
     if (result.success) {
       toast({

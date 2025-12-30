@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
+import { useParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,7 +14,9 @@ import Link from "next/link"
 import { updateUnit, getUnit, getProperties } from "../../actions"
 import { useToast } from "@/hooks/use-toast"
 
-export default function EditUnitPage({ params }: { params: { id: string } }) {
+export default function EditUnitPage() {
+  const params = useParams()
+  const id = params.id as string
   const router = useRouter()
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
@@ -23,14 +26,15 @@ export default function EditUnitPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     async function loadData() {
-      const [unitResult, propertiesResult] = await Promise.all([getUnit(params.id), getProperties()])
+      const [unitResult, propertiesResult] = await Promise.all([getUnit(id), getProperties()])
 
       if (unitResult.success && unitResult.data) {
         setUnit(unitResult.data)
         if (propertiesResult.success) {
           setProperties(propertiesResult.data)
           const property = propertiesResult.data.find((p: any) => p.id === unitResult.data.property_id)
-          setSelectedPropertyType(property?.property_type || null)
+          const propertyType = property?.property_type ? property.property_type.toLowerCase() : null
+          setSelectedPropertyType(propertyType)
         }
       } else {
         toast({
@@ -41,11 +45,12 @@ export default function EditUnitPage({ params }: { params: { id: string } }) {
       }
     }
     loadData()
-  }, [params.id, toast])
+  }, [id, toast])
 
   function handlePropertyChange(propertyId: string) {
     const property = properties.find((p) => p.id === propertyId)
-    setSelectedPropertyType(property?.property_type || null)
+    const propertyType = property?.property_type ? property.property_type.toLowerCase() : null
+    setSelectedPropertyType(propertyType)
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -53,7 +58,7 @@ export default function EditUnitPage({ params }: { params: { id: string } }) {
     setLoading(true)
 
     const formData = new FormData(e.currentTarget)
-    const result = await updateUnit(params.id, formData)
+    const result = await updateUnit(id, formData)
 
     if (!result.success) {
       toast({
@@ -77,8 +82,8 @@ export default function EditUnitPage({ params }: { params: { id: string } }) {
     return <div className="p-8">Loading...</div>
   }
 
-  const isResidential = selectedPropertyType?.toLowerCase() === "residential"
-  const isIndustrial = selectedPropertyType?.toLowerCase() === "industrial"
+  const isResidential = selectedPropertyType === "residential"
+  const isIndustrial = selectedPropertyType === "industrial"
 
   return (
     <div className="p-8 max-w-2xl">

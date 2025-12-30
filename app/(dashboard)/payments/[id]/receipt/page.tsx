@@ -45,6 +45,11 @@ export default function PaymentReceiptPage() {
   const paymentId = params.id as string
   const [receipt, setReceipt] = useState<PaymentReceipt | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   useEffect(() => {
     async function loadReceipt() {
@@ -62,17 +67,6 @@ export default function PaymentReceiptPage() {
 
     loadReceipt()
   }, [paymentId])
-
-  useEffect(() => {
-    console.log(
-      "[v0] Receipt loaded - Unit:",
-      receipt?.unit,
-      "Property:",
-      receipt?.property,
-      "Balance:",
-      receipt?.tenant.balanceAtPayment,
-    )
-  }, [receipt])
 
   if (loading) return <div className="p-8">Loading...</div>
   if (!receipt) return <div className="p-8">Receipt not found</div>
@@ -114,7 +108,7 @@ export default function PaymentReceiptPage() {
 
       <div className="w-80 bg-white p-0 shadow-lg print:shadow-none print:bg-white">
         <div className="p-4 text-center border-b-2 border-dashed border-black">
-          <h1 className="text-lg font-bold tracking-tight">PAYMENT RECEIPT</h1>
+          <h1 className="text-lg font-bold tracking-tight uppercase">PAYMENT RECEIPT</h1>
           <p className="text-xs mt-1">Receipt #{receipt.receipt_number}</p>
           <div className="w-full h-px bg-black my-2"></div>
         </div>
@@ -134,11 +128,11 @@ export default function PaymentReceiptPage() {
           {/* Payment Details */}
           <div className="space-y-2 border-b border-dashed pb-3">
             <div className="flex justify-between">
-              <span>Date:</span>
+              <span>DATE:</span>
               <span className="font-semibold">{new Date(receipt.payment_date).toLocaleDateString()}</span>
             </div>
             <div className="flex justify-between">
-              <span>Period:</span>
+              <span>PERIOD:</span>
               <span className="font-semibold">
                 {receipt.payment_period
                   ? new Date(receipt.payment_period + "-01").toLocaleDateString("en-US", {
@@ -149,27 +143,27 @@ export default function PaymentReceiptPage() {
               </span>
             </div>
             <div className="flex justify-between">
-              <span>Method:</span>
+              <span>METHOD:</span>
               <span className="font-semibold capitalize">{receipt.payment_method?.replace("_", " ")}</span>
             </div>
           </div>
 
           {/* Payment For */}
           <div className="border-b border-dashed pb-3">
-            <p className="font-semibold mb-1">Being Payment For:</p>
+            <p className="font-semibold mb-1 uppercase">Being Payment For:</p>
             <p className="text-xs leading-tight">{formatPaymentBreakdown()}</p>
           </div>
 
           {/* Amount */}
           <div className="border-b border-dashed pb-3 space-y-2">
             <div>
-              <p className="text-xs text-gray-600">Amount in Words:</p>
+              <p className="text-xs text-gray-600 uppercase">Amount in Words:</p>
               <p className="font-semibold text-xs uppercase">
                 {amountInWords} {tenant.currency}
               </p>
             </div>
             <div>
-              <p className="text-xs text-gray-600">Amount Paid:</p>
+              <p className="text-xs text-gray-600 uppercase">Amount Paid:</p>
               <p className="text-lg font-bold">
                 {tenant.currency} {Number(receipt.amount || 0).toLocaleString()}
               </p>
@@ -179,7 +173,7 @@ export default function PaymentReceiptPage() {
           {/* Balance */}
           <div className="space-y-2">
             <div>
-              <p className="text-xs text-gray-600">Outstanding Balance:</p>
+              <p className="text-xs text-gray-600 uppercase">Outstanding Balance:</p>
               <p
                 className={`text-lg font-bold ${Number(tenant.balanceAtPayment || 0) > 0 ? "text-red-600" : "text-green-600"}`}
               >
@@ -188,7 +182,7 @@ export default function PaymentReceiptPage() {
             </div>
             {receipt.overpayment_credit > 0 && (
               <div className="bg-gray-50 p-2 rounded text-center border border-gray-200">
-                <p className="text-xs font-semibold">Credit for Next Period:</p>
+                <p className="text-xs font-semibold uppercase">Credit for Next Period:</p>
                 <p className="font-bold text-blue-600">
                   {tenant.currency} {Number(receipt.overpayment_credit || 0).toLocaleString()}
                 </p>
@@ -201,7 +195,7 @@ export default function PaymentReceiptPage() {
         <div className="border-t-2 border-dashed border-black p-4 text-center space-y-2">
           <p className="text-xs">Thank you for your payment</p>
           <div className="w-full h-px bg-black"></div>
-          <p className="text-xs text-gray-600">{new Date().toLocaleDateString()}</p>
+          <p className="text-xs text-gray-600">{isClient ? new Date().toLocaleDateString() : ""}</p>
         </div>
       </div>
 

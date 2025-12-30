@@ -6,9 +6,10 @@ import { cookies } from "next/headers"
 import { createServerClient } from "@supabase/ssr"
 import { EditPropertyForm } from "@/components/edit-property-form"
 
-export default async function EditPropertyPage({ params }: { params: { id: string } }) {
+export default async function EditPropertyPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: propertyId } = await params
+
   const cookieStore = await cookies()
-  const { id: propertyId } = params
 
   const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
     cookies: {
@@ -27,7 +28,7 @@ export default async function EditPropertyPage({ params }: { params: { id: strin
 
   const { data: propertyData, error: propertyError } = await supabase
     .from("properties")
-    .select("id, name, property_type, location, total_units, owner_id, description")
+    .select("id, name, property_type, location, total_units, owner_id, description, management_fee")
     .eq("id", propertyId)
     .limit(1)
 

@@ -1,47 +1,51 @@
-import { createClient } from "@supabase/supabase-js"
+import { createServerClient } from "@supabase/ssr"
+import { cookies } from "next/headers"
 
-function getServiceClient() {
-  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
+function getServiceClient(cookieStore: any) {
+  return createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll()
+      },
     },
   })
 }
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const supabase = getServiceClient()
-    const { id } = params
+    const resolvedParams = await params
+    const { id } = resolvedParams
 
-    const { data: payment, error: paymentError } = await supabase
-      .from("tenant_payments")
-      .select("*")
-      .eq("id", id)
-      .single()
+    const cookieStore = await cookies()
+    const supabase = getServiceClient(cookieStore)
+
+    const [paymentResult, tenantsPaymentsResult] = await Promise.all([
+      supabase
+        .from("tenant_payments")
+        .select(
+          "*, tenant:tenant_id(id, first_name, last_name, email, phone, currency, balance, monthly_rent, prepaid_balance, property_id, unit_id, property:property_id(id, name), unit:unit_id(id, unit_number, status, bedrooms, bathrooms, monthly_rent))",
+        )
+        .eq("id", id)
+        .single(),
+
+      supabase
+        .from("tenant_payments")
+        .select("id, amount, payment_date, payment_period")
+        .limit(100) // Limit historical payments
+        .order("payment_date", { ascending: true }),
+    ])
+
+    const { data: payment, error: paymentError } = paymentResult
+    const { data: allPayments } = tenantsPaymentsResult
 
     if (paymentError || !payment) {
       return Response.json({ error: "Payment not found" }, { status: 404 })
     }
 
-    const { data: tenant } = await supabase
-      .from("tenants")
-      .select(
-        "id, first_name, last_name, email, phone, currency, balance, monthly_rent, prepaid_balance, property_id, unit_id",
-      )
-      .eq("id", payment.tenant_id)
-      .single()
-
+    const tenant = payment.tenant
     if (!tenant) {
       return Response.json({ error: "Tenant not found" }, { status: 404 })
     }
-
-    const { data: allPayments } = await supabase
-      .from("tenant_payments")
-      .select("id, amount, payment_date, payment_period")
-      .eq("tenant_id", payment.tenant_id)
-      .lte("payment_date", payment.payment_date)
-      .order("payment_date", { ascending: true })
 
     let balanceAtPayment = tenant?.monthly_rent || 0
     if (allPayments && allPayments.length > 0) {
@@ -86,29 +90,14 @@ export async function GET(request: Request, { params }: { params: { id: string }
       }
     }
 
-    const propertyResult = tenant.property_id
-      ? await supabase.from("properties").select("id, name").eq("id", tenant.property_id).single()
-      : { data: null }
-
-    const unitResult = tenant.unit_id
-      ? await supabase
-          .from("units")
-          .select("id, unit_number, status, bedrooms, bathrooms, monthly_rent")
-          .eq("id", tenant.unit_id)
-          .single()
-      : { data: null }
-
-    console.log("[v0] Unit result:", unitResult)
-    console.log("[v0] Property result:", propertyResult)
-
     return Response.json({
       ...payment,
       tenant: {
         ...tenant,
         balanceAtPayment,
       },
-      property: propertyResult.data,
-      unit: unitResult.data,
+      property: payment.tenant?.property,
+      unit: payment.tenant?.unit,
       paymentBreakdown,
     })
   } catch (error) {

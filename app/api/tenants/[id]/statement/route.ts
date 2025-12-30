@@ -1,67 +1,55 @@
-import { createClient } from "@supabase/supabase-js"
+import { createServerClient } from "@supabase/ssr"
 import { NextResponse } from "next/server"
+import { cookies } from "next/headers"
 
-function getServiceClient() {
-  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  })
-}
-
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const supabase = getServiceClient()
-    const tenantId = params.id
+    const resolvedParams = await params
+    const tenantId = resolvedParams.id
 
-    const { data: tenant, error: tenantError } = await supabase.from("tenants").select("*").eq("id", tenantId).single()
+    const cookieStore = await cookies()
+    const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll(cookiesToSet: any) {
+          try {
+            cookiesToSet.forEach((cookie: any) => cookieStore.set(cookie.name, cookie.value, cookie.options))
+          } catch {}
+        },
+      },
+    })
+
+    const [tenantResult, paymentsResult] = await Promise.all([
+      supabase
+        .from("tenants")
+        .select(
+          "id, first_name, last_name, email, phone, currency, balance, monthly_rent, prepaid_balance, property_id, unit_id, property:property_id(id, name), unit:unit_id(id, unit_number, status, bedrooms, bathrooms, monthly_rent)",
+        )
+        .eq("id", tenantId)
+        .single(),
+
+      supabase
+        .from("tenant_payments")
+        .select("id, amount, payment_date, payment_period")
+        .eq("tenant_id", tenantId)
+        .order("payment_date", { ascending: false })
+        .limit(100), // Limit payment history
+    ])
+
+    const { data: tenant, error: tenantError } = tenantResult
+    const { data: payments } = paymentsResult
 
     if (tenantError || !tenant) {
       return NextResponse.json({ error: "Tenant not found" }, { status: 404 })
     }
 
-    console.log("[v0] Tenant data:", { unit_id: tenant.unit_id, property_id: tenant.property_id })
-
-    const { data: payments } = await supabase
-      .from("tenant_payments")
-      .select("*")
-      .eq("tenant_id", tenantId)
-      .order("payment_date", { ascending: false })
-
-    let property = null
-    let unit = null
-
-    if (tenant.property_id) {
-      const { data: propertyData, error: propertyError } = await supabase
-        .from("properties")
-        .select("*")
-        .eq("id", tenant.property_id)
-        .single()
-      if (propertyError) {
-        console.error("[v0] Property query error:", propertyError)
-      }
-      property = propertyData
-    }
-
-    if (tenant.unit_id) {
-      const { data: unitData, error: unitError } = await supabase
-        .from("units")
-        .select("*")
-        .eq("id", tenant.unit_id)
-        .single()
-      if (unitError) {
-        console.error("[v0] Unit query error:", unitError)
-      }
-      console.log("[v0] Unit data retrieved:", unitData)
-      unit = unitData
-    }
-
     return NextResponse.json({
       tenant,
       payments: payments || [],
-      property,
-      unit,
+      property: tenant.property,
+      unit: tenant.unit,
     })
   } catch (error) {
     console.error("Error fetching tenant statement:", error)
