@@ -129,11 +129,11 @@ export default async function AdminPropertiesPage({
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Rent:</span>
-                          <span className="font-medium">${property.rent_amount.toLocaleString()}/mo</span>
+                          <span className="font-medium">${(property.rent_amount ?? 0).toLocaleString()}/mo</span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Deposit:</span>
-                          <span className="font-medium">${property.deposit_amount.toLocaleString()}</span>
+                          <span className="font-medium">${(property.deposit_amount ?? 0).toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Address:</span>

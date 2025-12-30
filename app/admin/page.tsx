@@ -37,6 +37,8 @@ export default async function AdminPage() {
 
   const { count: totalUsers } = await supabase.from("profiles").select("*", { count: "exact", head: true })
 
+  const { count: totalLandlords } = await supabase.from("owners").select("*", { count: "exact", head: true })
+
   return (
     <div className="flex min-h-svh flex-col">
       {/* Header */}
@@ -148,6 +150,23 @@ export default async function AdminPage() {
                 <Link href="/admin/users?role=landlord">
                   <Button variant="outline" className="w-full bg-transparent">
                     View Landlords
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Landlord Management</CardTitle>
+                <CardDescription>Create, edit, and delete landlord records</CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-4">
+                <Link href="/admin/landlords">
+                  <Button className="w-full">Manage Landlords</Button>
+                </Link>
+                <Link href="/landlords/new">
+                  <Button variant="outline" className="w-full bg-transparent">
+                    Add New Landlord ({totalLandlords || 0} total)
                   </Button>
                 </Link>
               </CardContent>

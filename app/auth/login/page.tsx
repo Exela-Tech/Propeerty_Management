@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Alert, AlertDescription } from "@/components/ui/alert"
 import Link from "next/link"
-import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { Building2 } from "lucide-react"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -48,12 +48,16 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm">
+    <div className="flex min-h-screen w-full items-center justify-center bg-background p-6">
+      <div className="w-full max-w-md">
+        <div className="mb-8 flex items-center justify-center gap-2">
+          <Building2 className="h-8 w-8" />
+          <h1 className="text-2xl font-bold">PropertyPro</h1>
+        </div>
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Login</CardTitle>
-            <CardDescription>Enter your email below to login to your account</CardDescription>
+            <CardTitle className="text-2xl">Welcome back</CardTitle>
+            <CardDescription>Sign in to access your property management dashboard</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin}>
@@ -63,7 +67,7 @@ export default function LoginPage() {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="m@example.com"
+                    placeholder="landlord@example.com"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -79,19 +83,33 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
-                {error && (
-                  <Alert variant="destructive">
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
-                )}
+                {error && <p className="text-sm text-destructive">{error}</p>}
                 <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Logging in..." : "Login"}
+                  {isLoading ? "Signing in..." : "Sign in"}
                 </Button>
               </div>
-              <div className="mt-4 text-center text-sm">
+              <div className="mt-4 text-center text-sm text-muted-foreground">
                 Don&apos;t have an account?{" "}
-                <Link href="/auth/sign-up" className="underline underline-offset-4">
-                  Sign up
+                <Link href="/auth/sign-up" className="text-foreground underline underline-offset-4 hover:text-primary">
+                  Create account
+                </Link>
+              </div>
+              <div className="mt-2 text-center text-xs text-muted-foreground">
+                System administrator?{" "}
+                <Link
+                  href="/auth/admin-signup"
+                  className="text-primary underline underline-offset-4 hover:text-primary/80"
+                >
+                  Admin signup
+                </Link>
+              </div>
+              <div className="mt-2 text-center text-xs text-muted-foreground">
+                Team member?{" "}
+                <Link
+                  href="/auth/team-member-signup"
+                  className="text-primary underline underline-offset-4 hover:text-primary/80"
+                >
+                  Accept invitation
                 </Link>
               </div>
             </form>
