@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import type { UserRole } from "@/lib/types"
+import { logger } from "@/lib/logger"
 
 interface UserRoleActionsProps {
   userId: string
@@ -28,7 +29,7 @@ export function UserRoleActions({ userId, currentRole }: UserRoleActionsProps) {
 
       router.refresh()
     } catch (error) {
-      console.error("[v0] Error updating user role:", error)
+      logger.error("Error updating user role", error)
     } finally {
       setIsLoading(false)
     }

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Check, X } from "lucide-react"
 import type { PropertyStatus } from "@/lib/types"
+import { logger } from "@/lib/logger"
 
 interface PropertyActionsProps {
   propertyId: string
@@ -23,7 +24,7 @@ export function PropertyActions({ propertyId, currentStatus }: PropertyActionsPr
     const { error } = await supabase.from("properties").update({ status }).eq("id", propertyId)
 
     if (error) {
-      console.error("[Error] Failed to update property status:", error.message)
+      logger.error("Failed to update property status", error)
       // TODO: Show toast notification to user
       setIsLoading(false)
       return

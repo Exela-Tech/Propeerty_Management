@@ -1,90 +1,98 @@
 import { Button } from "@/components/ui/button"
-import { Building2, Home, Key, Shield } from "lucide-react"
+import { Building2, BarChart3, Users, Wrench } from "lucide-react"
 import Link from "next/link"
 
 export default function HomePage() {
   return (
-    <div className="flex min-h-svh flex-col">
-      {/* Header */}
-      <header className="border-b">
+    <div className="flex min-h-screen flex-col bg-background">
+      <header className="border-b border-border bg-white/50 dark:bg-slate-950/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-2">
-            <Building2 className="h-6 w-6" />
-            <span className="text-xl font-semibold">PropertyHub</span>
+            <Building2 className="h-6 w-6 text-primary" />
+            <span className="text-xl font-bold text-primary">PropertyPro</span>
           </div>
-          <nav className="flex items-center gap-4">
-            <Link href="/browse">
-              <Button variant="ghost">Browse Properties</Button>
-            </Link>
-            <Link href="/auth/login">
-              <Button variant="ghost">Login</Button>
-            </Link>
-            <Link href="/auth/sign-up">
-              <Button>Sign Up</Button>
-            </Link>
-          </nav>
+          <div className="flex items-center gap-4">
+            <Button asChild variant="ghost" className="text-primary hover:bg-blue-50 dark:hover:bg-blue-950/20">
+              <Link href="/auth/login">Sign in</Link>
+            </Button>
+            <Button
+              asChild
+              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white shadow-md hover:shadow-lg transition-all duration-200"
+            >
+              <Link href="/auth/sign-up">Get started</Link>
+            </Button>
+          </div>
         </div>
       </header>
 
-      {/* Hero Section */}
       <main className="flex-1">
-        <section className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-balance text-5xl font-bold tracking-tight md:text-6xl">Find Your Perfect Property</h1>
-          <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground">
-            Connect landlords with renters and buyers. Manage properties, track rent, and streamline your property
-            management all in one place.
+        <section className="container mx-auto px-4 py-24 text-center">
+          <h1 className="mb-6 text-5xl font-bold tracking-tight text-balance text-foreground">
+            Manage your properties with confidence
+          </h1>
+          <p className="mx-auto mb-8 max-w-2xl text-xl text-muted-foreground text-pretty">
+            Complete property management solution for landlords. Track tenants, manage maintenance requests, collect
+            payments, and streamline operations all in one place.
           </p>
-          <div className="mt-10 flex flex-wrap justify-center gap-4">
-            <Link href="/browse">
-              <Button size="lg">Browse Properties</Button>
-            </Link>
-            <Link href="/auth/sign-up">
-              <Button size="lg" variant="outline">
-                List Your Property
-              </Button>
-            </Link>
+          <div className="flex items-center justify-center gap-4">
+            <Button
+              asChild
+              size="lg"
+              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200"
+            >
+              <Link href="/auth/sign-up">Start free trial</Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="border-2 border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950/20 transition-all duration-200 bg-transparent"
+            >
+              <Link href="/auth/login">Sign in</Link>
+            </Button>
           </div>
         </section>
 
-        {/* Features Section */}
-        <section className="border-t bg-muted/50 py-20">
+        <section className="border-t border-border bg-gradient-to-b from-blue-50 to-white dark:from-slate-900 dark:to-slate-950 py-24">
           <div className="container mx-auto px-4">
-            <h2 className="text-center text-3xl font-bold">Everything You Need</h2>
-            <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-              <div className="flex flex-col items-center text-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <Home className="h-6 w-6" />
+            <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
+              <div className="flex flex-col items-center text-center p-6 rounded-lg hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors duration-200">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                  <Building2 className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
-                <h3 className="mt-4 font-semibold">Property Listings</h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  List and browse properties with detailed information and photos
+                <h3 className="mb-2 text-lg font-semibold">Property Management</h3>
+                <p className="text-sm text-muted-foreground">
+                  Organize all your properties and units in one centralized dashboard
                 </p>
               </div>
-              <div className="flex flex-col items-center text-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <Shield className="h-6 w-6" />
+
+              <div className="flex flex-col items-center text-center p-6 rounded-lg hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors duration-200">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                  <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
-                <h3 className="mt-4 font-semibold">Admin Approval</h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  All listings are reviewed and approved by administrators
+                <h3 className="mb-2 text-lg font-semibold">Tenant Tracking</h3>
+                <p className="text-sm text-muted-foreground">
+                  Manage tenant information, leases, and payment history effortlessly
                 </p>
               </div>
-              <div className="flex flex-col items-center text-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <Key className="h-6 w-6" />
+
+              <div className="flex flex-col items-center text-center p-6 rounded-lg hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors duration-200">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                  <Wrench className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
-                <h3 className="mt-4 font-semibold">Tenant Management</h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Track leases, tenants, and rental agreements easily
+                <h3 className="mb-2 text-lg font-semibold">Maintenance Requests</h3>
+                <p className="text-sm text-muted-foreground">
+                  Track and resolve maintenance issues quickly and efficiently
                 </p>
               </div>
-              <div className="flex flex-col items-center text-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <Building2 className="h-6 w-6" />
+
+              <div className="flex flex-col items-center text-center p-6 rounded-lg hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors duration-200">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                  <BarChart3 className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
-                <h3 className="mt-4 font-semibold">Rent Tracking</h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Automated rent tracking and secure payment processing
+                <h3 className="mb-2 text-lg font-semibold">Financial Reports</h3>
+                <p className="text-sm text-muted-foreground">
+                  Monitor payments, expenses, and generate comprehensive reports
                 </p>
               </div>
             </div>
@@ -92,10 +100,9 @@ export default function HomePage() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t py-8">
+      <footer className="border-t border-border py-8 bg-white/50 dark:bg-slate-900/50">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>&copy; 2025 PropertyHub. All rights reserved.</p>
+          © 2025 PropertyPro. All rights reserved.
         </div>
       </footer>
     </div>
