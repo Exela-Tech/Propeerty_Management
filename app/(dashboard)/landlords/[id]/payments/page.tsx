@@ -298,15 +298,11 @@ export default function LandlordPaymentHistoryPage() {
                         </Badge>
                       </td>
                       <td className="py-3 px-4">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            window.print()
-                          }}
-                        >
-                          VIEW RECEIPT
-                        </Button>
+                        <Link href={`/landlords/payments/${payment.id}/receipt`}>
+                          <Button variant="outline" size="sm">
+                            VIEW RECEIPT
+                          </Button>
+                        </Link>
                       </td>
                     </tr>
                   ))}

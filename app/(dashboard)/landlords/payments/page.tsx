@@ -166,9 +166,25 @@ export default async function LandlordPaymentsPage() {
 
   return (
     <div className="space-y-6 p-8">
-      <div>
-        <h1 className="text-3xl font-bold uppercase">LANDLORD PAYMENT SCHEDULE</h1>
-        <p className="text-muted-foreground mt-1">Track landlord payments with collected rent and amounts owed</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold uppercase">LANDLORD PAYMENT SCHEDULE</h1>
+          <p className="text-muted-foreground mt-1">
+            Track landlord payments with collected rent and amounts owed. Integrated with rent collection data.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Link href="/landlords/reconciliation">
+            <Button variant="outline" size="sm">
+              Reconciliation
+            </Button>
+          </Link>
+          <Link href="/api/landlords/payment-reminders" target="_blank">
+            <Button variant="outline" size="sm">
+              View Reminders
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <Link href="/landlords">
