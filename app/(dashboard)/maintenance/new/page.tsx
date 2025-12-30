@@ -182,6 +182,31 @@ export default function NewMaintenanceRequestPage() {
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="deduction_month">Deduct From Month</Label>
+              <Select name="deduction_month" defaultValue={new Date().toISOString().slice(0, 7)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 12 }, (_, i) => {
+                    const date = new Date()
+                    date.setMonth(date.getMonth() + i)
+                    const monthValue = date.toISOString().slice(0, 7)
+                    const monthLabel = date.toLocaleString("default", { month: "long", year: "numeric" })
+                    return (
+                      <SelectItem key={monthValue} value={monthValue}>
+                        {monthLabel}
+                      </SelectItem>
+                    )
+                  })}
+                </SelectContent>
+              </Select>
+              <p className="text-sm text-muted-foreground">
+                Select which month this expense should be deducted from the landlord payment. Default is current month.
+              </p>
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="priority">Priority *</Label>
               <Select name="priority" required defaultValue="medium">
                 <SelectTrigger>

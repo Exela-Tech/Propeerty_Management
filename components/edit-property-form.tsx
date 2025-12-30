@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -19,12 +19,18 @@ interface EditPropertyFormProps {
 export function EditPropertyForm({ property, landlords }: EditPropertyFormProps) {
   const [propertyType, setPropertyType] = useState(property.property_type)
   const [landlordId, setLandlordId] = useState(property.owner_id || "")
+  const [managementFeeType, setManagementFeeType] = useState(property.management_fee_type || "percentage")
+  const [isPending, startTransition] = useTransition()
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     const formData = new FormData(e.currentTarget)
     formData.set("property_type", propertyType)
     formData.set("landlord_id", landlordId)
-    updateProperty(formData)
+    formData.set("management_fee_type", managementFeeType)
+    startTransition(() => {
+      updateProperty(formData)
+    })
   }
 
   return (
@@ -100,14 +106,49 @@ export function EditPropertyForm({ property, landlords }: EditPropertyFormProps)
         />
       </div>
 
+      <div className="border-t pt-6">
+        <h3 className="text-lg font-semibold mb-4">Management Fee Configuration</h3>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="management_fee_type">Fee Type</Label>
+            <Select value={managementFeeType} onValueChange={setManagementFeeType}>
+              <SelectTrigger id="management_fee_type">
+                <SelectValue placeholder="Select fee type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="percentage">Percentage (%)</SelectItem>
+                <SelectItem value="fixed">Fixed Amount</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="management_fee">
+              {managementFeeType === "percentage" ? "Fee Percentage (%)" : "Fee Amount (UGX)"}
+            </Label>
+            <Input
+              id="management_fee"
+              name="management_fee"
+              type="number"
+              defaultValue={property.management_fee || ""}
+              placeholder={managementFeeType === "percentage" ? "e.g., 10" : "e.g., 400000"}
+              step={managementFeeType === "percentage" ? "0.1" : "1"}
+              min="0"
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="flex gap-4">
         <button
           type="submit"
-          className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+          disabled={isPending}
+          className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Update Property
+          {isPending ? "Updating..." : "Update Property"}
         </button>
-        <Button asChild variant="outline" className="flex-1 bg-transparent">
+        <Button asChild variant="outline" className="flex-1 bg-transparent" disabled={isPending}>
           <Link href="/properties">Cancel</Link>
         </Button>
       </div>

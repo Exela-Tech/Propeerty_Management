@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { createClient } from "@/lib/supabase/client"
+import { login } from "@/app/actions/auth"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -21,25 +21,30 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    const supabase = createClient()
     setIsLoading(true)
     setError(null)
 
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+    const result = await login({
+      email,
+      password,
+    })
 
-      if (error) throw error
-
-      setTimeout(() => {
-        router.push("/dashboard")
-      }, 100)
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "An error occurred")
+    if (!result.success) {
+      // Format validation errors for display
+      if (result.error.code === "VALIDATION_ERROR" && result.error.details?.errors) {
+        const errors = result.error.details.errors as Array<{ path: string[]; message: string }>
+        const errorMessages = errors.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")
+        setError(errorMessages)
+      } else {
+        setError(result.error.message)
+      }
       setIsLoading(false)
+      return
     }
+
+    // Use Next.js router for proper client-side navigation
+    router.push("/dashboard")
+    router.refresh() // Refresh to ensure server components get updated session
   }
 
   return (

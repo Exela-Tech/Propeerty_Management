@@ -14,9 +14,16 @@ interface LandlordWithPaymentInfo {
   email: string
   phone: string
   payment_due_day: number
+  commission_percentage: number
   owed: number
   totalCollected: number
   totalPaidToLandlord: number
+  tenantCount: number
+  paymentCount: number
+  expectedRent: number
+  collectionRate: number
+  commissionDeducted: number
+  netPayout: number
 }
 
 function getDayLabel(day: number): string {
@@ -44,6 +51,12 @@ function getPaymentStatus(
   }
 }
 
+function getCollectionRateColor(rate: number): string {
+  if (rate >= 95) return "text-green-600"
+  if (rate >= 80) return "text-yellow-600"
+  return "text-red-600"
+}
+
 export default async function LandlordPaymentsPage() {
   const cookieStore = await cookies()
   const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -61,7 +74,7 @@ export default async function LandlordPaymentsPage() {
 
   const { data: landlords, error } = await supabase
     .from("owners")
-    .select("id, name, email, phone, payment_due_day")
+    .select("id, name, email, phone, payment_due_day, commission_percentage")
     .order("payment_due_day", { ascending: true })
 
   if (error) {
@@ -80,21 +93,64 @@ export default async function LandlordPaymentsPage() {
   const periodStart = `${year}-${month}-01`
   const periodEnd = `${year}-${month}-${new Date(Number.parseInt(year), Number.parseInt(month), 0).getDate()}`
 
-  const landlordData: LandlordWithPaymentInfo[] = []
+  const landlordData: LandlordWithPaymentInfo[] = await Promise.all(
+    (landlords || []).map(async (landlord) => {
+      const { data: properties } = await supabase.from("properties").select("id").eq("owner_id", landlord.id)
 
-  for (const landlord of landlords || []) {
-    const { owed, totalCollected, totalPaidToLandlord } = await calculateLandlordOwed(
-      landlord.id,
-      periodStart,
-      periodEnd,
-    )
-    landlordData.push({
-      ...landlord,
-      owed,
-      totalCollected,
-      totalPaidToLandlord,
-    })
-  }
+      const propertyIds = properties?.map((p) => p.id) || []
+
+      let expectedRent = 0
+      let tenantCount = 0
+      let paymentCount = 0
+
+      if (propertyIds.length > 0) {
+        const { data: tenants } = await supabase
+          .from("tenants")
+          .select("id, monthly_rent")
+          .in("property_id", propertyIds)
+          .eq("status", "active")
+
+        tenantCount = tenants?.length || 0
+        expectedRent = tenants?.reduce((sum, t) => sum + (t.monthly_rent || 0), 0) || 0
+
+        if (tenants && tenants.length > 0) {
+          const tenantIds = tenants.map((t) => t.id)
+
+          const { count: paymentRecords } = await supabase
+            .from("tenant_payments")
+            .select("*", { count: "exact", head: true })
+            .in("tenant_id", tenantIds)
+            .gte("payment_date", periodStart)
+            .lte("payment_date", periodEnd)
+
+          paymentCount = paymentRecords || 0
+        }
+      }
+
+      const result = await calculateLandlordOwed(
+        landlord.id,
+        periodStart,
+        periodEnd,
+      )
+
+      const { owed, totalCollected, totalPaidToLandlord, commissionDeducted = 0, netPayout = 0 } = result
+
+      const collectionRate = expectedRent > 0 ? (totalCollected / expectedRent) * 100 : 0
+
+      return {
+        ...landlord,
+        owed,
+        totalCollected,
+        totalPaidToLandlord,
+        tenantCount,
+        paymentCount,
+        expectedRent,
+        collectionRate,
+        commissionDeducted,
+        netPayout,
+      }
+    }),
+  )
 
   // Group by payment due day
   const groupedByDueDay: { [key: number]: LandlordWithPaymentInfo[] } = {}
@@ -112,9 +168,25 @@ export default async function LandlordPaymentsPage() {
 
   return (
     <div className="space-y-6 p-8">
-      <div>
-        <h1 className="text-3xl font-bold">Landlord Payment Schedule</h1>
-        <p className="text-muted-foreground mt-1">Track landlord payments with collected rent and amounts owed</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold uppercase">LANDLORD PAYMENT SCHEDULE</h1>
+          <p className="text-muted-foreground mt-1">
+            Track landlord payments with collected rent and amounts owed. Integrated with rent collection data.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Link href="/landlords/reconciliation">
+            <Button variant="outline" size="sm">
+              Reconciliation
+            </Button>
+          </Link>
+          <Link href="/api/landlords/payment-reminders" target="_blank">
+            <Button variant="outline" size="sm">
+              View Reminders
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <Link href="/landlords">
@@ -148,25 +220,45 @@ export default async function LandlordPaymentsPage() {
                 </div>
               </CardHeader>
               <CardContent className="pt-6">
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {landlordsList.map((landlord) => (
                     <div key={landlord.id} className="p-4 border rounded-lg hover:bg-accent transition">
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      {/* Landlord Info */}
+                      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-3">
                         <div className="flex-1">
                           <p className="font-medium">{landlord.name}</p>
                           <p className="text-sm text-muted-foreground">{landlord.email}</p>
                           <p className="text-sm text-muted-foreground">{landlord.phone}</p>
                         </div>
+
                         <div className="text-right">
-                          <p className="text-xs text-muted-foreground mb-1">Collected This Month</p>
-                          <p className="font-semibold">UGX {Math.round(landlord.totalCollected).toLocaleString()}</p>
+                          <p className="text-xs text-muted-foreground mb-1">EXPECTED RENT</p>
+                          <p className="font-semibold">UGX {Math.round(landlord.expectedRent).toLocaleString()}</p>
                         </div>
+
                         <div className="text-right">
-                          <p className="text-xs text-muted-foreground mb-1">Paid to Landlord</p>
+                          <p className="text-xs text-muted-foreground mb-1">COLLECTED</p>
                           <p className="font-semibold text-green-600">
-                            UGX {Math.round(landlord.totalPaidToLandlord).toLocaleString()}
+                            UGX {Math.round(landlord.totalCollected).toLocaleString()}
                           </p>
                         </div>
+
+                        <div className="text-right">
+                          <p className="text-xs text-muted-foreground mb-1">
+                            COMMISSION ({landlord.commission_percentage}%)
+                          </p>
+                          <p className="font-semibold text-orange-600">
+                            UGX {Math.round(landlord.commissionDeducted).toLocaleString()}
+                          </p>
+                        </div>
+
+                        <div className="text-right">
+                          <p className="text-xs text-muted-foreground mb-1">NET PAYOUT</p>
+                          <p className="font-bold text-lg text-blue-600">
+                            UGX {Math.round(landlord.netPayout).toLocaleString()}
+                          </p>
+                        </div>
+
                         <div className="text-right flex flex-col items-end gap-2">
                           <div>
                             <p className="text-xs text-muted-foreground mb-1">Amount Owed</p>
@@ -175,6 +267,23 @@ export default async function LandlordPaymentsPage() {
                             </p>
                           </div>
                           <RecordPaymentDialog landlord={landlord} periodStart={periodStart} periodEnd={periodEnd} />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-4 pt-3 border-t text-xs text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                          <span>Tenants: {landlord.tenantCount}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span>Payments: {landlord.paymentCount}</span>
+                        </div>
+                        <div className="text-right">
+                          <Link
+                            href={`/landlords/${landlord.id}/payments`}
+                            className="text-blue-600 hover:underline font-semibold"
+                          >
+                            View Payment History →
+                          </Link>
                         </div>
                       </div>
                     </div>

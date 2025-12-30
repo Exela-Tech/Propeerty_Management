@@ -57,6 +57,7 @@ export async function updateLandlord(id: string, formData: FormData) {
     city: formData.get("city") as string,
     notes: formData.get("notes") as string,
     payment_due_day: Number.parseInt(formData.get("payment_due_day") as string) || 30,
+    commission_percentage: Number.parseFloat(formData.get("commission_percentage") as string) || 10,
   }
 
   const { error } = await supabase.from("owners").update(landlordData).eq("id", id)
