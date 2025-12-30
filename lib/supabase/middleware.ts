@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
+import { logger } from "@/lib/logger"
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -45,13 +46,13 @@ export async function updateSession(request: NextRequest) {
 
       // "Auth session missing" is expected for unauthenticated users, not an error
       if (error.message !== "Auth session missing!") {
-        console.error("[v0] Supabase auth error:", error.message)
+        logger.error("Supabase auth error", error)
       }
     } else {
       user = data.user
     }
   } catch (error) {
-    console.error("[v0] Failed to fetch user from Supabase:", error)
+    logger.error("Failed to fetch user from Supabase", error)
     // Continue without user - don't block the request
   }
 
