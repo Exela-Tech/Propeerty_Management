@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Calendar, DollarSign, Receipt } from "lucide-react"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
 import { getLandlordPayments } from "../../payment-actions"
 import { format } from "date-fns"
 
