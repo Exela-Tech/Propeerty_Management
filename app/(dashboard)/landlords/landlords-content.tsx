@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/table"
 import { Edit2, Trash2 } from "lucide-react"
 import { deleteLandlord } from "./actions"
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,6 +43,23 @@ export function LandlordsContent({ initialLandlords }: { initialLandlords: any[]
     setDeletingId(null)
   }
 
+  // If no landlords, render nothing inside CardContent
+  if (landlords.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>All Landlords</CardTitle>
+          <CardDescription>
+            View and manage all landlord records in the system
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {/* Intentionally empty */}
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -54,75 +70,65 @@ export function LandlordsContent({ initialLandlords }: { initialLandlords: any[]
       </CardHeader>
 
       <CardContent>
-        {landlords.length > 0 ? (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>City</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Phone</TableHead>
+              <TableHead>City</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
 
-            <TableBody>
-              {landlords.map((landlord) => (
-                <TableRow key={landlord.id}>
-                  <TableCell className="font-medium">{landlord.name}</TableCell>
-                  <TableCell>{landlord.email}</TableCell>
-                  <TableCell>{landlord.phone || "—"}</TableCell>
-                  <TableCell>{landlord.city || "—"}</TableCell>
+          <TableBody>
+            {landlords.map((landlord) => (
+              <TableRow key={landlord.id}>
+                <TableCell className="font-medium">{landlord.name}</TableCell>
+                <TableCell>{landlord.email}</TableCell>
+                <TableCell>{landlord.phone || "—"}</TableCell>
+                <TableCell>{landlord.city || "—"}</TableCell>
 
-                  <TableCell className="text-right space-x-1">
-                    <Link href={`/landlords/${landlord.id}/edit`}>
+                <TableCell className="text-right space-x-1">
+                  <Link href={`/landlords/${landlord.id}/edit`}>
+                    <Button size="sm" variant="ghost">
+                      <Edit2 className="h-4 w-4" />
+                    </Button>
+                  </Link>
+
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
                       <Button size="sm" variant="ghost">
-                        <Edit2 className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4 text-red-500" />
                       </Button>
-                    </Link>
+                    </AlertDialogTrigger>
 
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button size="sm" variant="ghost">
-                          <Trash2 className="h-4 w-4 text-red-500" />
-                        </Button>
-                      </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete landlord?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This will permanently remove <strong>{landlord.name}</strong>. This action
+                          cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
 
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Delete landlord?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This will permanently remove{" "}
-                            <strong>{landlord.name}</strong>. This action
-                            cannot be undone.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            className="bg-red-600 hover:bg-red-700"
-                            onClick={() => handleDelete(landlord.id)}
-                            disabled={deletingId === landlord.id}
-                          >
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        ) : (
-          <EmptyState
-            title="No landlords found"
-            description="Use the “New Landlord” button above to add your first landlord."
-          />
-        )}
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          className="bg-red-600 hover:bg-red-700"
+                          onClick={() => handleDelete(landlord.id)}
+                          disabled={deletingId === landlord.id}
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </CardContent>
     </Card>
   )

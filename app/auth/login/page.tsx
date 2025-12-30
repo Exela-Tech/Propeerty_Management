@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { login } from "@/app/actions/auth"
+import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -21,49 +21,46 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+    const supabase = createClient()
     setIsLoading(true)
     setError(null)
 
-    const result = await login({
-      email,
-      password,
-    })
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
 
-    if (!result.success) {
-      // Format validation errors for display
-      if (result.error.code === "VALIDATION_ERROR" && result.error.details?.errors) {
-        const errors = result.error.details.errors as Array<{ path: string[]; message: string }>
-        const errorMessages = errors.map((e) => `${e.path.join(".")}: ${e.message}`).join(", ")
-        setError(errorMessages)
-      } else {
-        setError(result.error.message)
-      }
+      if (error) throw error
+
+      setTimeout(() => {
+        router.push("/dashboard")
+      }, 100)
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : "An error occurred")
       setIsLoading(false)
-      return
     }
-
-    // Use Next.js router for proper client-side navigation
-    router.push("/dashboard")
-    router.refresh() // Refresh to ensure server components get updated session
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-background p-6">
+    <div className="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-slate-800 p-6">
       <div className="w-full max-w-md">
         <div className="mb-8 flex items-center justify-center gap-2">
-          <Building2 className="h-8 w-8" />
-          <h1 className="text-2xl font-bold">PropertyPro</h1>
+          <Building2 className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+          <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400">PropertyPro</h1>
         </div>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">Welcome back</CardTitle>
+        <Card className="border-0 shadow-xl">
+          <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-750 rounded-t-lg border-b border-border">
+            <CardTitle className="text-2xl text-blue-600 dark:text-blue-400">Welcome back</CardTitle>
             <CardDescription>Sign in to access your property management dashboard</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-6">
             <form onSubmit={handleLogin}>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email" className="text-foreground font-medium">
+                    Email
+                  </Label>
                   <Input
                     id="email"
                     type="email"
@@ -71,26 +68,37 @@ export default function LoginPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    className="hover:border-blue-400 focus:border-blue-600 dark:hover:border-blue-500 dark:focus:border-blue-400 transition-colors"
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password" className="text-foreground font-medium">
+                    Password
+                  </Label>
                   <Input
                     id="password"
                     type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    className="hover:border-blue-400 focus:border-blue-600 dark:hover:border-blue-500 dark:focus:border-blue-400 transition-colors"
                   />
                 </div>
                 {error && <p className="text-sm text-destructive">{error}</p>}
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button
+                  type="submit"
+                  className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200"
+                  disabled={isLoading}
+                >
                   {isLoading ? "Signing in..." : "Sign in"}
                 </Button>
               </div>
               <div className="mt-4 text-center text-sm text-muted-foreground">
                 Don&apos;t have an account?{" "}
-                <Link href="/auth/sign-up" className="text-foreground underline underline-offset-4 hover:text-primary">
+                <Link
+                  href="/auth/sign-up"
+                  className="text-blue-600 dark:text-blue-400 underline underline-offset-4 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
+                >
                   Create account
                 </Link>
               </div>
@@ -98,7 +106,7 @@ export default function LoginPage() {
                 System administrator?{" "}
                 <Link
                   href="/auth/admin-signup"
-                  className="text-primary underline underline-offset-4 hover:text-primary/80"
+                  className="text-blue-600 dark:text-blue-400 underline underline-offset-4 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
                 >
                   Admin signup
                 </Link>
@@ -107,7 +115,7 @@ export default function LoginPage() {
                 Team member?{" "}
                 <Link
                   href="/auth/team-member-signup"
-                  className="text-primary underline underline-offset-4 hover:text-primary/80"
+                  className="text-blue-600 dark:text-blue-400 underline underline-offset-4 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
                 >
                   Accept invitation
                 </Link>
