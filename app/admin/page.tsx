@@ -188,6 +188,18 @@ export default async function AdminPage() {
                 </Link>
               </CardContent>
             </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Profile & Settings</CardTitle>
+                <CardDescription>Manage your admin profile and settings</CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-4">
+                <Link href="/admin/profile">
+                  <Button className="w-full">Edit Profile</Button>
+                </Link>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </main>
