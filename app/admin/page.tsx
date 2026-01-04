@@ -181,9 +181,9 @@ export default async function AdminPage() {
                 <Link href="/admin/accounting">
                   <Button className="w-full">Accounting Dashboard</Button>
                 </Link>
-                <Link href="/admin/accounting/rent-collection">
+                <Link href="/admin/accounting/system">
                   <Button variant="outline" className="w-full bg-transparent">
-                    Rent Collection
+                    Full Accounting System
                   </Button>
                 </Link>
               </CardContent>
