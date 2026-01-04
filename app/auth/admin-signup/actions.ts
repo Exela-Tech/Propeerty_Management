@@ -39,16 +39,20 @@ export async function adminSignUpAction(formData: FormData): Promise<AdminSignUp
     }
 
     if (authData.user) {
-      // Create profile with super admin role
+      // Create profile with admin role
       const { error: profileError } = await supabase.from("profiles").upsert({
         id: authData.user.id,
         email: email,
         full_name: fullName,
-        role: "super_admin",
+        role: "admin",
         is_admin: true,
       })
 
       if (profileError) {
+        // If profile creation fails, try to clean up the auth user
+        await supabase.auth.admin.deleteUser(authData.user.id).catch(() => {
+          // Ignore cleanup errors
+        })
         return { success: false, error: profileError.message }
       }
 
