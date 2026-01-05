@@ -1,4 +1,9 @@
 import { createClient } from "@supabase/supabase-js"
+import { successResponse, notFoundResponse, handleApiError } from "@/lib/api-response"
+import { validateUUID } from "@/lib/api-validation"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("api:landlords:payments:receipt")
 
 function getServiceClient() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -14,6 +19,11 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const supabase = getServiceClient()
     const { id } = await params
 
+    // Validate UUID format
+    if (!validateUUID(id)) {
+      return notFoundResponse("Payment")
+    }
+
     const { data: payment, error: paymentError } = await supabase
       .from("landlord_payments")
       .select("*")
@@ -21,14 +31,20 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       .single()
 
     if (paymentError || !payment) {
-      return Response.json({ error: "Payment not found" }, { status: 404 })
+      log.error("Payment not found", paymentError, { paymentId: id })
+      return notFoundResponse("Payment")
     }
 
     // Get landlord information
-    const { data: landlord } = await supabase.from("owners").select("*").eq("id", payment.landlord_id).single()
+    const { data: landlord, error: landlordError } = await supabase
+      .from("owners")
+      .select("*")
+      .eq("id", payment.landlord_id)
+      .single()
 
-    if (!landlord) {
-      return Response.json({ error: "Landlord not found" }, { status: 404 })
+    if (landlordError || !landlord) {
+      log.error("Landlord not found", landlordError, { landlordId: payment.landlord_id, paymentId: id })
+      return notFoundResponse("Landlord")
     }
 
     // Get all properties for this landlord
@@ -71,7 +87,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     // Calculate expected rent for the period
     const expectedRent = tenants?.reduce((sum, t) => sum + (t.monthly_rent || 0), 0) || 0
 
-    return Response.json({
+    return successResponse({
       ...payment,
       landlord: {
         id: landlord.id,
@@ -91,7 +107,6 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       remainingBalance: amountOwed,
     })
   } catch (error) {
-    console.error("Error fetching landlord payment receipt:", error)
-    return Response.json({ error: "Failed to fetch receipt" }, { status: 500 })
+    return handleApiError(error, "landlords:payments:[id]:receipt:GET")
   }
 }

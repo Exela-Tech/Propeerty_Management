@@ -13,6 +13,9 @@ import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { getProperties, getVacantUnits, createTenant } from "../actions"
 import { useToast } from "@/hooks/use-toast"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("tenants:new")
 
 export default function NewTenantPage() {
   const router = useRouter()
@@ -26,13 +29,13 @@ export default function NewTenantPage() {
 
   useEffect(() => {
     async function loadProperties() {
-      console.log("[v0] Loading properties...")
+      log.debug("Loading properties...")
       try {
-        const data = await getProperties()
-        console.log("[v0] Properties loaded:", data)
+        const data = await log.measurePerformance("loadProperties", async () => getProperties())
+        log.debug("Properties loaded", { count: data?.length })
         setProperties(data)
       } catch (error) {
-        console.error("[v0] Error loading properties:", error)
+        log.error("Error loading properties", error)
         toast({
           title: "Error",
           description: "Failed to load properties",

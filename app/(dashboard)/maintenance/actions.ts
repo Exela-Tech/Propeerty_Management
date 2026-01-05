@@ -2,6 +2,9 @@
 
 import { createClient } from "@supabase/supabase-js"
 import { revalidatePath } from "next/cache"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("maintenance:actions")
 
 function getServiceClient() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -103,7 +106,7 @@ export async function createMaintenanceRequest(formData: FormData) {
     const { error: expenseError } = await supabase.from("transactions").insert([expenseData])
 
     if (expenseError) {
-      console.error("Error creating pending expense:", expenseError)
+      log.error("Error creating pending expense", expenseError, { maintenanceRequestId: maintenanceRequest.id })
     }
   }
 
@@ -132,10 +135,11 @@ export async function updateMaintenanceRequest(id: string, formData: FormData) {
     .eq("id", id)
 
   if (error) {
-    console.error("[v0] Error updating maintenance request:", error)
+    log.error("Error updating maintenance request", error, { requestId: id })
     throw new Error(error.message)
   }
 
+  log.info("Maintenance request updated successfully", { requestId: id })
   revalidatePath("/maintenance")
   return { success: true }
 }
@@ -145,7 +149,7 @@ export async function getMaintenanceRequest(id: string) {
   const { data, error } = await supabase.from("maintenance_requests").select("*").eq("id", id).single()
 
   if (error) {
-    console.error("[v0] Error fetching maintenance request:", error)
+    log.error("Error fetching maintenance request", error, { requestId: id })
     throw new Error("Failed to fetch maintenance request")
   }
 
@@ -193,7 +197,7 @@ export async function approveMaintenanceRequest(formData: FormData) {
     const { error: expenseError } = await supabase.from("transactions").insert([expenseData])
 
     if (expenseError) {
-      console.error("Error creating expense:", expenseError)
+      log.error("Error creating expense", expenseError, { requestId: requestId })
       throw new Error(`Error creating expense: ${expenseError.message}`)
     }
   }
@@ -230,9 +234,10 @@ export async function deleteMaintenanceRequest(requestId: string) {
   const { error } = await supabase.from("maintenance_requests").delete().eq("id", requestId)
 
   if (error) {
-    console.error("[v0] Error deleting maintenance request:", error)
+    log.error("Error deleting maintenance request", error, { requestId })
     throw new Error(error.message)
   }
 
+  log.info("Maintenance request deleted successfully", { requestId })
   revalidatePath("/maintenance")
 }

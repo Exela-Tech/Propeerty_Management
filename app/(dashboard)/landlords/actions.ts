@@ -2,6 +2,9 @@
 
 import { createClient } from "@supabase/supabase-js"
 import { revalidatePath } from "next/cache"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("landlords:actions")
 
 export async function createLandlord(formData: FormData) {
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -25,7 +28,7 @@ export async function createLandlord(formData: FormData) {
   const { error } = await supabase.from("owners").insert([landlordData])
 
   if (error) {
-    console.error("[v0] Error creating landlord:", error)
+    log.error("Error creating landlord", error)
     if (error.code === "23502" && error.message.includes("landlord_id")) {
       return {
         error:
@@ -35,6 +38,7 @@ export async function createLandlord(formData: FormData) {
     return { error: error.message }
   }
 
+  log.info("Landlord created successfully")
   revalidatePath("/landlords")
   revalidatePath("/dashboard")
 
@@ -63,10 +67,11 @@ export async function updateLandlord(id: string, formData: FormData) {
   const { error } = await supabase.from("owners").update(landlordData).eq("id", id)
 
   if (error) {
-    console.error("[v0] Error updating landlord:", error)
+    log.error("Error updating landlord", error, { landlordId: id })
     return { error: error.message }
   }
 
+  log.info("Landlord updated successfully", { landlordId: id })
   revalidatePath("/landlords")
   revalidatePath("/dashboard")
 
@@ -84,10 +89,11 @@ export async function deleteLandlord(id: string) {
   const { error } = await supabase.from("owners").delete().eq("id", id)
 
   if (error) {
-    console.error("[v0] Error deleting landlord:", error)
+    log.error("Error deleting landlord", error, { landlordId: id })
     return { error: error.message, success: false }
   }
 
+  log.info("Landlord deleted successfully", { landlordId: id })
   revalidatePath("/landlords")
   revalidatePath("/dashboard")
 

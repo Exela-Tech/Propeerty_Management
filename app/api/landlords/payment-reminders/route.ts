@@ -1,5 +1,8 @@
 import { createClient } from "@supabase/supabase-js"
-import { NextResponse } from "next/server"
+import { successResponse, handleApiError } from "@/lib/api-response"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("api:landlords:payment-reminders")
 
 function getServiceClient() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -40,11 +43,17 @@ export async function GET(request: Request) {
       .not("payment_due_day", "is", null)
 
     if (landlordsError) {
-      return NextResponse.json({ error: landlordsError.message }, { status: 400 })
+      return handleApiError(landlordsError, "landlords:payment-reminders:GET")
     }
 
     if (!landlords || landlords.length === 0) {
-      return NextResponse.json({ reminders: [], message: "No landlords with payment due dates found" })
+      return successResponse({
+        reminders: [],
+        total: 0,
+        due: 0,
+        upcoming: 0,
+        generatedAt: new Date().toISOString(),
+      }, "No landlords with payment due dates found")
     }
 
     // Calculate current month period
@@ -124,7 +133,7 @@ export async function GET(request: Request) {
       return a.daysUntilDue - b.daysUntilDue
     })
 
-    return NextResponse.json({
+    return successResponse({
       reminders,
       total: reminders.length,
       due: reminders.filter((r) => r.isDue).length,
@@ -132,8 +141,7 @@ export async function GET(request: Request) {
       generatedAt: new Date().toISOString(),
     })
   } catch (error: any) {
-    console.error("[v0] Error generating payment reminders:", error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return handleApiError(error, "landlords:payment-reminders:GET")
   }
 }
 
@@ -149,11 +157,11 @@ export async function POST(request: Request) {
     const remindersResponse = await GET(request)
     const remindersData = await remindersResponse.json()
 
-    if (!remindersData.reminders) {
-      return NextResponse.json({ error: "Failed to fetch reminders" }, { status: 400 })
+    if (!remindersData.success || !remindersData.data?.reminders) {
+      return handleApiError(new Error("Failed to fetch reminders"), "landlords:payment-reminders:POST")
     }
 
-    const reminders: PaymentReminder[] = remindersData.reminders
+    const reminders: PaymentReminder[] = remindersData.data.reminders
 
     // In a real implementation, you would:
     // 1. Send emails using a service like SendGrid, Resend, or AWS SES
@@ -177,16 +185,16 @@ export async function POST(request: Request) {
       }
     })
 
-    return NextResponse.json({
-      success: true,
-      notifications: notificationResults,
-      totalSent: notificationResults.length,
-      message: sendEmails
+    return successResponse(
+      {
+        notifications: notificationResults,
+        totalSent: notificationResults.length,
+      },
+      sendEmails
         ? "Reminders generated. Email sending not implemented yet."
         : "Reminders generated successfully. Configure email service to send notifications.",
-    })
+    )
   } catch (error: any) {
-    console.error("[v0] Error sending payment reminders:", error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return handleApiError(error, "landlords:payment-reminders:POST")
   }
 }

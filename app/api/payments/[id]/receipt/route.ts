@@ -1,5 +1,10 @@
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
+import { successResponse, notFoundResponse, handleApiError } from "@/lib/api-response"
+import { validateUUID } from "@/lib/api-validation"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("api:payments:receipt")
 
 function getServiceClient(cookieStore: any) {
   return createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -15,6 +20,11 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   try {
     const resolvedParams = await params
     const { id } = resolvedParams
+
+    // Validate UUID format
+    if (!validateUUID(id)) {
+      return notFoundResponse("Payment")
+    }
 
     const cookieStore = await cookies()
     const supabase = getServiceClient(cookieStore)
@@ -39,12 +49,14 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const { data: allPayments } = tenantsPaymentsResult
 
     if (paymentError || !payment) {
-      return Response.json({ error: "Payment not found" }, { status: 404 })
+      log.error("Payment not found", paymentError, { paymentId: id })
+      return notFoundResponse("Payment")
     }
 
     const tenant = payment.tenant
     if (!tenant) {
-      return Response.json({ error: "Tenant not found" }, { status: 404 })
+      log.warn("Tenant not found for payment", { paymentId: id })
+      return notFoundResponse("Tenant")
     }
 
     let balanceAtPayment = tenant?.monthly_rent || 0
@@ -90,7 +102,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       }
     }
 
-    return Response.json({
+    return successResponse({
       ...payment,
       tenant: {
         ...tenant,
@@ -101,7 +113,6 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       paymentBreakdown,
     })
   } catch (error) {
-    console.error("Error fetching receipt:", error)
-    return Response.json({ error: "Failed to fetch receipt" }, { status: 500 })
+    return handleApiError(error, "payments:[id]:receipt:GET")
   }
 }

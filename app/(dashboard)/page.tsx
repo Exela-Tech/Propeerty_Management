@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Building2, TrendingUp, AlertCircle, PieChart } from "lucide-react"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("dashboard:page")
 import {
   LineChart,
   Line,
@@ -47,7 +50,7 @@ export default function DashboardPage() {
         const data = await response.json()
         setStats(data)
       } catch (error) {
-        console.error("[v0] Failed to fetch dashboard stats:", error)
+        log.error("Failed to fetch dashboard stats", error)
         setStats({
           totalProperties: 0,
           activeProperties: 0,

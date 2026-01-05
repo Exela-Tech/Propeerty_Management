@@ -3,6 +3,9 @@
 import { createServerClient } from "@supabase/ssr"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("properties:actions")
 
 export async function createProperty(formData: FormData) {
   const { cookies } = await import("next/headers")
@@ -44,10 +47,11 @@ export async function createProperty(formData: FormData) {
   const { data, error } = await supabase.from("properties").insert([propertyData]).select().single()
 
   if (error) {
-    console.error("Error creating property:", error)
+    log.error("Error creating property", error)
     throw new Error(error.message)
   }
 
+  log.info("Property created successfully", { propertyId: data?.id })
   revalidatePath("/properties")
 
   return { success: true, data }
@@ -95,10 +99,11 @@ export async function updateProperty(formData: FormData) {
   const { error } = await supabase.from("properties").update(propertyData).eq("id", id)
 
   if (error) {
-    console.error("Error updating property:", error)
+    log.error("Error updating property", error, { propertyId: id })
     throw new Error(error.message)
   }
 
+  log.info("Property updated successfully", { propertyId: id })
   revalidatePath("/properties")
   redirect("/properties")
 }
@@ -127,9 +132,10 @@ export async function deleteProperty(propertyId: string) {
   const { error } = await supabase.from("properties").delete().eq("id", propertyId)
 
   if (error) {
-    console.error("Error deleting property:", error)
+    log.error("Error deleting property", error, { propertyId })
     throw new Error(error.message)
   }
 
+  log.info("Property deleted successfully", { propertyId })
   revalidatePath("/properties")
 }

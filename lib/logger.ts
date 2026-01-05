@@ -3,6 +3,21 @@
  * Prevents sensitive data from being logged in production
  */
 
+// Performance API - works in both browser and Node.js
+let perf: { now: () => number }
+if (typeof window !== "undefined") {
+  // Browser environment
+  perf = performance
+} else {
+  // Node.js environment
+  try {
+    perf = require("perf_hooks").performance
+  } catch {
+    // Fallback if perf_hooks is not available
+    perf = { now: () => Date.now() }
+  }
+}
+
 type LogLevel = "debug" | "info" | "warn" | "error"
 
 const LOG_LEVELS: Record<LogLevel, number> = {
@@ -176,6 +191,81 @@ class Logger {
       this.formatMessage("error", `${message}`, sanitizedError, ...args)
     } else {
       this.formatMessage("error", message, ...args)
+    }
+  }
+
+  /**
+   * Performance monitoring: Measure execution time of async functions
+   * @param label - Label for the performance measurement
+   * @param fn - Async function to measure
+   * @returns Result of the function
+   */
+  async measurePerformance<T>(label: string, fn: () => Promise<T>): Promise<T> {
+    const startTime = perf.now()
+    const perfLabel = this.context ? `${this.context}:${label}` : label
+    
+    try {
+      const result = await fn()
+      const duration = perf.now() - startTime
+      
+      if (duration > 1000) {
+        this.warn(`Performance: ${perfLabel} took ${duration.toFixed(2)}ms (slow)`)
+      } else if (shouldLog("debug")) {
+        this.debug(`Performance: ${perfLabel} took ${duration.toFixed(2)}ms`)
+      }
+      
+      return result
+    } catch (error) {
+      const duration = perf.now() - startTime
+      this.error(`Performance: ${perfLabel} failed after ${duration.toFixed(2)}ms`, error)
+      throw error
+    }
+  }
+
+  /**
+   * Performance monitoring: Measure execution time of sync functions
+   * @param label - Label for the performance measurement
+   * @param fn - Sync function to measure
+   * @returns Result of the function
+   */
+  measurePerformanceSync<T>(label: string, fn: () => T): T {
+    const startTime = perf.now()
+    const perfLabel = this.context ? `${this.context}:${label}` : label
+    
+    try {
+      const result = fn()
+      const duration = perf.now() - startTime
+      
+      if (duration > 100) {
+        this.warn(`Performance: ${perfLabel} took ${duration.toFixed(2)}ms (slow)`)
+      } else if (shouldLog("debug")) {
+        this.debug(`Performance: ${perfLabel} took ${duration.toFixed(2)}ms`)
+      }
+      
+      return result
+    } catch (error) {
+      const duration = perf.now() - startTime
+      this.error(`Performance: ${perfLabel} failed after ${duration.toFixed(2)}ms`, error)
+      throw error
+    }
+  }
+
+  /**
+   * Start a performance timer (for manual tracking)
+   * @param label - Label for the timer
+   * @returns Function to end the timer and log the duration
+   */
+  startTimer(label: string): () => void {
+    const startTime = perf.now()
+    const perfLabel = this.context ? `${this.context}:${label}` : label
+    
+    return () => {
+      const duration = perf.now() - startTime
+      if (duration > 1000) {
+        this.warn(`Performance: ${perfLabel} took ${duration.toFixed(2)}ms (slow)`)
+      } else if (shouldLog("debug")) {
+        this.debug(`Performance: ${perfLabel} took ${duration.toFixed(2)}ms`)
+      }
     }
   }
 }

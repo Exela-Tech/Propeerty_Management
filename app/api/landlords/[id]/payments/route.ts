@@ -1,10 +1,19 @@
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
-import { NextResponse } from "next/server"
+import { successResponse, notFoundResponse, handleApiError } from "@/lib/api-response"
+import { validateUUID } from "@/lib/api-validation"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("api:landlords:payments")
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: landlordId } = await params
+
+    // Validate UUID format
+    if (!validateUUID(landlordId)) {
+      return notFoundResponse("Landlord")
+    }
 
     const cookieStore = await cookies()
     const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -27,7 +36,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       .single()
 
     if (landlordError || !landlord) {
-      return NextResponse.json({ error: "Landlord not found" }, { status: 404 })
+      log.error("Landlord not found", landlordError, { landlordId })
+      return notFoundResponse("Landlord")
     }
 
     const { data: payments, error: paymentsError } = await supabase
@@ -37,8 +47,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       .order("payment_date", { ascending: false })
 
     if (paymentsError) {
-      console.error("[v0] Error fetching payments:", paymentsError)
-      return NextResponse.json({ error: "Failed to fetch payments" }, { status: 500 })
+      return handleApiError(paymentsError, "landlords:[id]:payments:GET")
     }
 
     const totalPaid = payments?.reduce((sum, p) => sum + (p.amount || 0), 0) || 0
@@ -87,7 +96,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       }
     }
 
-    return NextResponse.json({
+    return successResponse({
       landlord,
       payments: payments || [],
       totalPaid,
@@ -100,7 +109,6 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       netPayoutCalculated,
     })
   } catch (error) {
-    console.error("[v0] Error in payment history API:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return handleApiError(error, "landlords:[id]:payments:GET")
   }
 }
