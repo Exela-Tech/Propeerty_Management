@@ -1,4 +1,8 @@
 import { createClient } from "@supabase/supabase-js"
+import { successResponse, handleApiError } from "@/lib/api-response"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("api:tenants:generate-monthly-dues")
 
 function getServiceClient() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -21,7 +25,7 @@ export async function POST(request: Request) {
       .eq("status", "active")
 
     if (tenantsError) {
-      return Response.json({ error: tenantsError.message }, { status: 400 })
+      return handleApiError(tenantsError, "tenants:generate-monthly-dues:POST")
     }
 
     const duesToday =
@@ -48,13 +52,13 @@ export async function POST(request: Request) {
         .eq("id", tenant.id)
     }
 
-    return Response.json({
-      success: true,
-      message: `Generated dues for ${duesToday.length} tenants`,
-      tenantsAffected: duesToday.length,
-    })
+    return successResponse(
+      {
+        tenantsAffected: duesToday.length,
+      },
+      `Generated dues for ${duesToday.length} tenants`,
+    )
   } catch (error: any) {
-    console.error("[v0] Error generating monthly dues:", error)
-    return Response.json({ error: error.message }, { status: 500 })
+    return handleApiError(error, "tenants:generate-monthly-dues:POST")
   }
 }

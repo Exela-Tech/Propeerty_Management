@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr"
-import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { logger } from "@/lib/logger"
+import { successResponse, handleApiError } from "@/lib/api-response"
 
 const log = logger.child("api:dashboard:stats")
 
@@ -86,7 +86,7 @@ export async function GET() {
       { month: "Dec", collected: 58000, outstanding: 8800 },
     ]
 
-    return NextResponse.json({
+    return successResponse({
       totalProperties,
       activeProperties,
       totalUnits,
@@ -101,7 +101,6 @@ export async function GET() {
       revenueTrendData,
     })
   } catch (error) {
-    log.error("Dashboard stats error", error)
-    return NextResponse.json({ error: "Failed to fetch dashboard stats" }, { status: 500 })
+    return handleApiError(error, "dashboard:stats:GET")
   }
 }

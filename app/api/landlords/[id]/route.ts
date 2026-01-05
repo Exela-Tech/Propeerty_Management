@@ -1,12 +1,19 @@
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import { logger } from "@/lib/logger"
+import { successResponse, notFoundResponse, handleApiError } from "@/lib/api-response"
+import { validateUUID } from "@/lib/api-validation"
 
 const log = logger.child("api:landlords")
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
+
+    // Validate UUID format
+    if (!validateUUID(id)) {
+      return notFoundResponse("Landlord")
+    }
 
     const cookieStore = await cookies()
     const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -26,12 +33,19 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
     if (error) {
       log.error("Landlord fetch error", error, { landlordId: id })
-      return Response.json({ success: false, error: error.message }, { status: 400 })
+      if (error.code === "PGRST116") {
+        // Not found error from Supabase
+        return notFoundResponse("Landlord")
+      }
+      return handleApiError(error, "landlords:[id]:GET")
     }
 
-    return Response.json({ success: true, data })
+    if (!data) {
+      return notFoundResponse("Landlord")
+    }
+
+    return successResponse(data)
   } catch (err) {
-    log.error("Landlord API error", err, { landlordId: id })
-    return Response.json({ success: false, error: "Failed to fetch landlord" }, { status: 500 })
+    return handleApiError(err, "landlords:[id]:GET")
   }
 }

@@ -1,19 +1,38 @@
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
-import { NextResponse } from "next/server"
 import { logger } from "@/lib/logger"
+import { successResponse, notFoundResponse, badRequestResponse, handleApiError } from "@/lib/api-response"
+import { validateUUID, validateMonth, validateQueryParams, createValidationErrorResponse } from "@/lib/api-validation"
 
 const log = logger.child("api:landlords:payment-note")
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id: landlordId } = await params
+
+    // Validate UUID format
+    if (!validateUUID(landlordId)) {
+      return notFoundResponse("Landlord")
+    }
+
     const { searchParams } = new URL(request.url)
     const propertyId = searchParams.get("propertyId")
     const month = searchParams.get("month") || new Date().toISOString().substring(0, 7)
 
-    if (!propertyId) {
-      return NextResponse.json({ error: "Property ID is required" }, { status: 400 })
+    // Validate required query parameters
+    const queryValidation = validateQueryParams(searchParams, ["propertyId"])
+    if (!queryValidation.valid) {
+      return createValidationErrorResponse(queryValidation)
+    }
+
+    // Validate propertyId UUID format
+    if (propertyId && !validateUUID(propertyId)) {
+      return badRequestResponse("Invalid property ID format")
+    }
+
+    // Validate month format
+    if (month && !validateMonth(month)) {
+      return badRequestResponse("Invalid month format. Expected YYYY-MM")
     }
 
     const cookieStore = await cookies()
@@ -37,22 +56,22 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       .single()
 
     if (landlordError || !landlord) {
-      return NextResponse.json({ error: "Landlord not found" }, { status: 404 })
+      log.error("Landlord not found", landlordError, { landlordId })
+      return notFoundResponse("Landlord")
     }
 
     const landlordCreatedMonth = new Date(landlord.created_at).toISOString().substring(0, 7)
     if (month < landlordCreatedMonth) {
-      return NextResponse.json({
+      return successResponse({
         landlord: { id: landlord.id, name: landlord.name },
-        property: { id: propertyId, name: "" },
+        property: { id: propertyId!, name: "" },
         month,
         tenantDetails: [],
         totalExpectedRent: 0,
         deductions: [],
         totalDeductions: 0,
         netPayout: 0,
-        message: "No data available before landlord creation date",
-      })
+      }, "No data available before landlord creation date")
     }
 
     // Fetch property with management fee
@@ -63,18 +82,23 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       .single()
 
     if (!property) {
-      return NextResponse.json({ error: "Property not found" }, { status: 404 })
+      log.error("Property not found", { propertyId, landlordId })
+      return notFoundResponse("Property")
     }
 
     // Fetch all active tenants for this property
-    const { data: tenants } = await supabase
+    const { data: tenants, error: tenantsError } = await supabase
       .from("tenants")
       .select("id, first_name, last_name, monthly_rent, unit_number")
       .eq("property_id", propertyId)
       .eq("status", "active")
 
+    if (tenantsError) {
+      return handleApiError(tenantsError, "landlords:[id]:payment-note:GET")
+    }
+
     if (!tenants || tenants.length === 0) {
-      return NextResponse.json({
+      return successResponse({
         landlord,
         property,
         month,
@@ -149,7 +173,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       expectedAmount: tenant.monthly_rent || 0,
     }))
 
-    return NextResponse.json({
+    return successResponse({
       landlord,
       property,
       month,
@@ -160,7 +184,6 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       netPayout,
     })
   } catch (error) {
-    log.error("Error in payment note API", error, { landlordId, propertyId, month })
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return handleApiError(error, "landlords:[id]:payment-note:GET")
   }
 }

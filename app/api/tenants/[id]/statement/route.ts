@@ -1,11 +1,20 @@
 import { createServerClient } from "@supabase/ssr"
-import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
+import { successResponse, notFoundResponse, handleApiError } from "@/lib/api-response"
+import { validateUUID } from "@/lib/api-validation"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("api:tenants:statement")
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const resolvedParams = await params
     const tenantId = resolvedParams.id
+
+    // Validate UUID format
+    if (!validateUUID(tenantId)) {
+      return notFoundResponse("Tenant")
+    }
 
     const cookieStore = await cookies()
     const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -42,17 +51,17 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const { data: payments } = paymentsResult
 
     if (tenantError || !tenant) {
-      return NextResponse.json({ error: "Tenant not found" }, { status: 404 })
+      log.error("Tenant not found", tenantError, { tenantId })
+      return notFoundResponse("Tenant")
     }
 
-    return NextResponse.json({
+    return successResponse({
       tenant,
       payments: payments || [],
       property: tenant.property,
       unit: tenant.unit,
     })
   } catch (error) {
-    console.error("Error fetching tenant statement:", error)
-    return NextResponse.json({ error: "Failed to fetch statement" }, { status: 500 })
+    return handleApiError(error, "tenants:[id]:statement:GET")
   }
 }

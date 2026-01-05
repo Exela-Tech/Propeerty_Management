@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js"
-import { NextResponse } from "next/server"
 import { logger } from "@/lib/logger"
+import { successResponse, handleApiError, badRequestResponse } from "@/lib/api-response"
+import { parseJsonBody, validateMonth, validatePositiveNumber } from "@/lib/api-validation"
 
 const log = logger.child("api:payments:reconcile")
 
@@ -25,12 +26,43 @@ function getServiceClient() {
 export async function POST(request: Request) {
   try {
     const supabase = getServiceClient()
-    const body = await request.json().catch(() => ({}))
+    
+    // Parse and validate request body
+    const parseResult = await parseJsonBody(request)
+    if (!parseResult.success) {
+      return parseResult.response
+    }
+
+    const body = parseResult.data as { month?: string | number; year?: string | number; tenantId?: string }
     const { month, year, tenantId } = body
 
+    // Validate month format if provided
+    if (month && typeof month === "string" && !validateMonth(month)) {
+      return badRequestResponse("Invalid month format. Expected YYYY-MM")
+    }
+
+    // Validate year if provided
+    if (year && (!validatePositiveNumber(year) || Number.parseInt(String(year)) < 2000 || Number.parseInt(String(year)) > 2100)) {
+      return badRequestResponse("Invalid year. Must be between 2000 and 2100")
+    }
+
+    // Validate tenantId if provided
+    if (tenantId && typeof tenantId !== "string") {
+      return badRequestResponse("Invalid tenantId format")
+    }
+
     const today = new Date()
-    const targetMonth = month ? Number.parseInt(month) - 1 : today.getMonth() // 0-indexed
-    const targetYear = year ? Number.parseInt(year) : today.getFullYear()
+    let targetMonth: number
+    let targetYear: number
+
+    if (month && typeof month === "string") {
+      const [yearStr, monthStr] = month.split("-")
+      targetYear = Number.parseInt(yearStr, 10)
+      targetMonth = Number.parseInt(monthStr, 10) - 1 // 0-indexed
+    } else {
+      targetMonth = month ? Number.parseInt(String(month)) - 1 : today.getMonth() // 0-indexed
+      targetYear = year ? Number.parseInt(String(year)) : today.getFullYear()
+    }
 
     // Build query
     let query = supabase.from("tenants").select("id, first_name, last_name, monthly_rent, balance, prepaid_balance, rent_due_day, created_at, status, currency")
@@ -44,11 +76,22 @@ export async function POST(request: Request) {
     const { data: tenants, error: tenantsError } = await query
 
     if (tenantsError) {
-      return NextResponse.json({ error: tenantsError.message }, { status: 400 })
+      return handleApiError(tenantsError, "payments:reconcile:POST")
     }
 
     if (!tenants || tenants.length === 0) {
-      return NextResponse.json({ message: "No tenants found", reconciled: [] })
+      return successResponse({
+        month: `${targetYear}-${String(targetMonth + 1).padStart(2, "0")}`,
+        reconciled: [],
+        errors: [],
+        summary: {
+          total: 0,
+          accurate: 0,
+          needsCorrection: 0,
+          skipped: 0,
+        },
+        message: "No tenants found",
+      })
     }
 
     const reconciled = []
@@ -129,8 +172,7 @@ export async function POST(request: Request) {
       }
     }
 
-    return NextResponse.json({
-      success: true,
+    return successResponse({
       month: `${targetYear}-${String(targetMonth + 1).padStart(2, "0")}`,
       reconciled,
       errors,
@@ -142,8 +184,7 @@ export async function POST(request: Request) {
       },
     })
   } catch (error: any) {
-    log.error("Error reconciling monthly rent", error)
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    return handleApiError(error, "payments:reconcile:POST")
   }
 }
 

@@ -1,5 +1,9 @@
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
+import { successResponse, handleApiError } from "@/lib/api-response"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("api:notifications:unread-count")
 
 export async function GET() {
   try {
@@ -21,18 +25,22 @@ export async function GET() {
     } = await supabase.auth.getUser()
 
     if (!user) {
-      return Response.json({ count: 0 })
+      return successResponse({ count: 0 })
     }
 
-    const { count } = await supabase
+    const { count, error } = await supabase
       .from("notifications")
       .select("*", { count: "exact", head: true })
       .eq("user_id", user.id)
       .eq("is_read", false)
 
-    return Response.json({ count: count || 0 })
+    if (error) {
+      log.error("Error fetching unread notifications", error, { userId: user.id })
+      return successResponse({ count: 0 }) // Return 0 on error to prevent UI breaking
+    }
+
+    return successResponse({ count: count || 0 })
   } catch (error) {
-    console.error("[v0] Error fetching unread notifications:", error)
-    return Response.json({ count: 0 })
+    return handleApiError(error, "notifications:unread-count:GET")
   }
 }
