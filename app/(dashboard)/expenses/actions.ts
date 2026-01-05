@@ -2,6 +2,9 @@
 
 import { createClient } from "@supabase/supabase-js"
 import { revalidatePath } from "next/cache"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("expenses:actions")
 
 function getServiceClient() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -17,7 +20,7 @@ export async function getProperties() {
   const { data, error } = await supabase.from("properties").select("id, name, property_type").order("name")
 
   if (error) {
-    console.error("[v0] Error fetching properties:", error)
+    log.error("Error fetching properties", error)
     throw new Error("Failed to fetch properties")
   }
 
@@ -44,16 +47,16 @@ export async function createExpense(formData: FormData) {
     type: "expense",
   }
 
-  console.log("[v0] Creating expense with data:", expenseData)
+  log.debug("Creating expense", { category, amount, currency })
 
   const { data, error } = await supabase.from("transactions").insert([expenseData]).select()
 
   if (error) {
-    console.error("[v0] Error creating expense:", error)
+    log.error("Error creating expense", error)
     throw new Error(error.message)
   }
 
-  console.log("[v0] Expense created successfully:", data)
+  log.info("Expense created successfully", { expenseId: data?.[0]?.id })
 
   revalidatePath("/expenses")
   return { success: true }
@@ -65,10 +68,11 @@ export async function deleteExpense(expenseId: string) {
   const { error } = await supabase.from("transactions").delete().eq("id", expenseId)
 
   if (error) {
-    console.error("[v0] Error deleting expense:", error)
+    log.error("Error deleting expense", error, { expenseId })
     throw new Error(error.message)
   }
 
+  log.info("Expense deleted successfully", { expenseId })
   revalidatePath("/expenses")
 }
 
@@ -93,9 +97,10 @@ export async function updateExpense(expenseId: string, formData: FormData) {
     .eq("id", expenseId)
 
   if (error) {
-    console.error("[v0] Error updating expense:", error)
+    log.error("Error updating expense", error, { expenseId })
     throw new Error(error.message)
   }
 
+  log.info("Expense updated successfully", { expenseId })
   revalidatePath("/expenses")
 }

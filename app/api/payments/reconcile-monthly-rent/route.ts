@@ -1,5 +1,8 @@
 import { createClient } from "@supabase/supabase-js"
 import { NextResponse } from "next/server"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("api:payments:reconcile")
 
 function getServiceClient() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -139,7 +142,7 @@ export async function POST(request: Request) {
       },
     })
   } catch (error: any) {
-    console.error("[v0] Error reconciling monthly rent:", error)
+    log.error("Error reconciling monthly rent", error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

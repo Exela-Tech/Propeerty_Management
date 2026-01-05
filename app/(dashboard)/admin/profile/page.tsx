@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button"
 import { User, Settings } from "lucide-react"
 import Link from "next/link"
 import { AdminProfileForm } from "./admin-profile-form"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("admin:profile")
 
 export default async function AdminProfilePage() {
   const cookieStore = await cookies()
@@ -30,28 +33,28 @@ export default async function AdminProfilePage() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  console.log("[v0] Admin profile - User exists:", !!user)
-  console.log("[v0] Admin profile - User ID:", user?.id)
+  log.debug("User exists", { exists: !!user, userId: user?.id })
 
   if (!user) {
-    console.log("[v0] Admin profile - Redirecting to login: No user found")
+    log.warn("Redirecting to login: No user found")
     redirect("/auth/login")
   }
 
   // Fetch admin profile
   const { data: profile, error } = await supabase.from("profiles").select("*").eq("id", user.id).single()
 
-  console.log("[v0] Admin profile - Profile query error:", error)
-  console.log("[v0] Admin profile - Profile data:", profile)
-  console.log("[v0] Admin profile - Is Admin:", profile?.is_admin)
+  if (error) {
+    log.error("Profile query error", error)
+  }
+  log.debug("Profile data", { isAdmin: profile?.is_admin, hasProfile: !!profile })
 
   if (!profile) {
-    console.log("[v0] Admin profile - Redirecting to dashboard: No profile found")
+    log.warn("Redirecting to dashboard: No profile found")
     redirect("/dashboard")
   }
 
   if (!profile?.is_admin) {
-    console.log("[v0] Admin profile - Redirecting to dashboard: Not an admin")
+    log.warn("Redirecting to dashboard: Not an admin")
     redirect("/dashboard")
   }
 

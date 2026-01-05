@@ -1,6 +1,9 @@
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 import { NextResponse } from "next/server"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("api:landlords:payment-note")
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -88,7 +91,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     monthEnd.setDate(0)
     const monthEndStr = monthEnd.toISOString().substring(0, 10)
 
-    console.log("[v0] Fetching maintenance for month:", month, "property:", propertyId)
+    log.debug("Fetching maintenance for month", { month, propertyId })
 
     const { data: maintenanceRequests } = await supabase
       .from("maintenance_requests")
@@ -96,8 +99,11 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       .eq("property_id", propertyId)
       .eq("deduction_month", month)
 
-    console.log("[v0] Maintenance query - Month: ", month, "Property: ", propertyId)
-    console.log("[v0] Found maintenance requests:", maintenanceRequests)
+    log.debug("Maintenance query result", {
+      month,
+      propertyId,
+      count: maintenanceRequests?.length || 0,
+    })
 
     // Calculate total expected rent
     const totalExpectedRent = tenants.reduce((sum, t) => sum + (t.monthly_rent || 0), 0)
@@ -154,7 +160,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       netPayout,
     })
   } catch (error) {
-    console.error("[v0] Error in payment note API:", error)
+    log.error("Error in payment note API", error, { landlordId, propertyId, month })
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

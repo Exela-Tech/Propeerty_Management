@@ -1,5 +1,8 @@
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("api:landlords")
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -22,13 +25,13 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const { data, error } = await supabase.from("owners").select("*").eq("id", id).single()
 
     if (error) {
-      console.log("[v0] Landlord fetch error:", error)
+      log.error("Landlord fetch error", error, { landlordId: id })
       return Response.json({ success: false, error: error.message }, { status: 400 })
     }
 
     return Response.json({ success: true, data })
   } catch (err) {
-    console.log("[v0] Landlord API error:", err)
+    log.error("Landlord API error", err, { landlordId: id })
     return Response.json({ success: false, error: "Failed to fetch landlord" }, { status: 500 })
   }
 }

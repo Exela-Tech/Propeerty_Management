@@ -2,6 +2,9 @@
 
 import { createClient } from "@supabase/supabase-js"
 import { revalidatePath } from "next/cache"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("tenants:actions")
 
 function getServiceClient() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -19,13 +22,13 @@ export async function getProperties() {
     const { data, error } = await supabase.from("properties").select("id, name, property_type").order("name")
 
     if (error) {
-      console.error("[v0] Error fetching properties:", error)
+      log.error("Error fetching properties", error)
       throw error
     }
 
     return data || []
   } catch (error) {
-    console.error("[v0] getProperties failed:", error)
+    log.error("getProperties failed", error)
     return []
   }
 }
@@ -42,13 +45,13 @@ export async function getVacantUnits(propertyId: string) {
       .order("unit_number")
 
     if (error) {
-      console.error("[v0] Error fetching units:", error)
+      log.error("Error fetching units", error, { propertyId })
       throw error
     }
 
     return data || []
   } catch (error) {
-    console.error("[v0] getVacantUnits failed:", error)
+    log.error("getVacantUnits failed", error, { propertyId })
     return []
   }
 }
@@ -78,7 +81,7 @@ export async function createTenant(formData: FormData) {
     const { data, error } = await supabase.from("tenants").insert([tenantData]).select().single()
 
     if (error) {
-      console.error("[v0] Error creating tenant:", error)
+      log.error("Error creating tenant", error)
       return { success: false, error: error.message }
     }
 
@@ -90,9 +93,10 @@ export async function createTenant(formData: FormData) {
     revalidatePath("/tenants")
     revalidatePath("/dashboard")
 
+    log.info("Tenant created successfully", { tenantId: data?.id })
     return { success: true, data }
   } catch (error: any) {
-    console.error("[v0] createTenant failed:", error)
+    log.error("createTenant failed", error)
     return { success: false, error: error.message || "Failed to create tenant" }
   }
 }
@@ -104,13 +108,13 @@ export async function getTenant(id: string) {
     const { data, error } = await supabase.from("tenants").select("*").eq("id", id).single()
 
     if (error) {
-      console.error("[v0] Error fetching tenant:", error)
+      log.error("Error fetching tenant", error, { tenantId: id })
       throw error
     }
 
     return data
   } catch (error) {
-    console.error("[v0] getTenant failed:", error)
+    log.error("getTenant failed", error, { tenantId: id })
     return null
   }
 }
@@ -155,7 +159,7 @@ export async function updateTenant(id: string, formData: FormData) {
     const { data, error } = await supabase.from("tenants").update(tenantData).eq("id", id).select().single()
 
     if (error) {
-      console.error("[v0] Error updating tenant:", error)
+      log.error("Error updating tenant", error, { tenantId: id })
       return { success: false, error: error.message }
     }
 
@@ -173,9 +177,10 @@ export async function updateTenant(id: string, formData: FormData) {
     revalidatePath("/tenants")
     revalidatePath("/dashboard")
 
+    log.info("Tenant updated successfully", { tenantId: id })
     return { success: true, data }
   } catch (error: any) {
-    console.error("[v0] updateTenant failed:", error)
+    log.error("updateTenant failed", error, { tenantId: id })
     return { success: false, error: error.message || "Failed to update tenant" }
   }
 }
@@ -187,15 +192,16 @@ export async function toggleTenantStatus(tenantId: string, newStatus: "active" |
     const { error } = await supabase.from("tenants").update({ status: newStatus }).eq("id", tenantId)
 
     if (error) {
-      console.error("[v0] Error updating tenant status:", error)
+      log.error("Error updating tenant status", error, { tenantId, newStatus })
       throw new Error(error.message)
     }
 
+    log.info("Tenant status updated", { tenantId, newStatus })
     revalidatePath("/tenants")
     revalidatePath("/reports")
     revalidatePath("/dashboard")
   } catch (error: any) {
-    console.error("[v0] toggleTenantStatus failed:", error)
+    log.error("toggleTenantStatus failed", error, { tenantId, newStatus })
     throw error
   }
 }

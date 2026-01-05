@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertTriangle, Home, ArrowLeft } from "lucide-react"
 import Link from "next/link"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("error-boundary:dashboard")
 
 export default function DashboardError({
   error,
@@ -14,10 +17,8 @@ export default function DashboardError({
   reset: () => void
 }) {
   useEffect(() => {
-    // Log error to console in development
-    if (process.env.NODE_ENV === "development") {
-      console.error("Dashboard error boundary caught an error:", error)
-    }
+    // Log error with proper context
+    log.error("Dashboard error boundary caught an error", error, { digest: error.digest })
   }, [error])
 
   return (

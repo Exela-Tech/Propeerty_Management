@@ -1,6 +1,9 @@
 import { createServerClient } from "@supabase/ssr"
 import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
+import { logger } from "@/lib/logger"
+
+const log = logger.child("api:dashboard:stats")
 
 function getServiceClient(cookieStore: any) {
   return createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -98,7 +101,7 @@ export async function GET() {
       revenueTrendData,
     })
   } catch (error) {
-    console.error("[v0] Dashboard stats error:", error)
+    log.error("Dashboard stats error", error)
     return NextResponse.json({ error: "Failed to fetch dashboard stats" }, { status: 500 })
   }
 }
