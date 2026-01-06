@@ -127,11 +127,13 @@ export default async function LandlordPaymentsPage() {
         }
       }
 
-      const { owed, totalCollected, totalPaidToLandlord, commissionDeducted, netPayout } = await calculateLandlordOwed(
+      const result = await calculateLandlordOwed(
         landlord.id,
         periodStart,
         periodEnd,
       )
+
+      const { owed, totalCollected, totalPaidToLandlord, commissionDeducted = 0, netPayout = 0 } = result
 
       const collectionRate = expectedRent > 0 ? (totalCollected / expectedRent) * 100 : 0
 

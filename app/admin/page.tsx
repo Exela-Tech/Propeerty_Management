@@ -181,10 +181,22 @@ export default async function AdminPage() {
                 <Link href="/admin/accounting">
                   <Button className="w-full">Accounting Dashboard</Button>
                 </Link>
-                <Link href="/admin/accounting/rent-collection">
+                <Link href="/admin/accounting/system">
                   <Button variant="outline" className="w-full bg-transparent">
-                    Rent Collection
+                    Full Accounting System
                   </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Profile & Settings</CardTitle>
+                <CardDescription>Manage your admin profile and settings</CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-4">
+                <Link href="/admin/profile">
+                  <Button className="w-full">Edit Profile</Button>
                 </Link>
               </CardContent>
             </Card>

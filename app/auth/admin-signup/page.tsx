@@ -4,19 +4,23 @@ import type React from "react"
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ShieldCheck, Database, UserPlus } from "lucide-react"
-import { createBrowserClient } from "@/lib/supabase/client"
+import { adminSignUpAction } from "./actions"
+import { useToast } from "@/hooks/use-toast"
 
 export default function AdminSignUpPage() {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
   const [method, setMethod] = useState<"signup" | "sql">("sql")
+  const { toast } = useToast()
+  const router = useRouter()
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -25,59 +29,35 @@ export default function AdminSignUpPage() {
 
     try {
       const formData = new FormData(e.currentTarget)
-      const email = formData.get("email") as string
-      const password = formData.get("password") as string
-      const fullName = formData.get("fullName") as string
-      const [firstName, ...lastNameParts] = fullName.split(" ")
-      const lastName = lastNameParts.join(" ") || firstName
-      const adminSecretKey = formData.get("adminSecretKey") as string
+      const result = await adminSignUpAction(formData)
 
-      // User must use the correct default key: SUPER_ADMIN_SECRET_2024
-      // Or set ADMIN_SECRET_KEY in environment variables (server-side)
-
-      const supabase = createBrowserClient()
-
-      const { data: authData, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-            admin_secret: adminSecretKey, // Pass to trigger function
-          },
-        },
-      })
-
-      if (signUpError) {
-        setError(signUpError.message)
-        setLoading(false)
-        return
-      }
-
-      if (authData.user) {
-        // Attempt to create profile with admin role
-        // This will only succeed if the secret key is valid (checked by database trigger/function)
-        const { error: profileError } = await supabase.from("profiles").upsert({
-          id: authData.user.id,
-          email: email,
-          first_name: firstName,
-          last_name: lastName,
-          role: "admin",
-          is_admin: true,
-        })
-
-        if (profileError) {
-          setError(profileError.message)
-          setLoading(false)
-          return
-        }
-
+      if (result.success) {
         setSuccess(true)
         setError("")
+        toast({
+          title: "Success",
+          description: "Super admin account created successfully!",
+        })
+        // Redirect to login after a short delay
+        setTimeout(() => {
+          router.push("/auth/login")
+        }, 2000)
+      } else {
+        setError(result.error || "Failed to create admin account")
+        toast({
+          title: "Error",
+          description: result.error || "Failed to create admin account",
+          variant: "destructive",
+        })
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred during sign up")
+      const errorMessage = err instanceof Error ? err.message : "An error occurred during sign up"
+      setError(errorMessage)
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      })
     } finally {
       setLoading(false)
     }
@@ -149,7 +129,11 @@ export default function AdminSignUpPage() {
                   <div>
                     <strong>Run the SQL script</strong>
                     <p className="text-muted-foreground">
-                      Open <code className="rounded bg-muted px-1 py-0.5">scripts/002_create_first_admin.sql</code>
+                      Open{" "}
+                      <code className="rounded bg-muted px-1 py-0.5 text-xs">
+                        scripts/002_create_first_admin.sql
+                      </code>{" "}
+                      in your Supabase SQL Editor
                     </p>
                   </div>
                 </div>
@@ -188,8 +172,8 @@ export default function AdminSignUpPage() {
             <form onSubmit={handleSignUp} className="space-y-4">
               <Alert>
                 <AlertDescription className="text-xs">
-                  Note: Direct signup may not work in preview environments due to CORS restrictions. Use the SQL method
-                  instead.
+                  <strong>Note:</strong> Direct signup uses server actions to avoid CORS issues. If you encounter
+                  problems, use the SQL method instead.
                 </AlertDescription>
               </Alert>
               <div className="space-y-2">
@@ -212,8 +196,12 @@ export default function AdminSignUpPage() {
                   type="password"
                   placeholder="Enter admin secret key"
                   required
+                  minLength={8}
                 />
-                <p className="text-xs text-muted-foreground">Contact your system administrator for the secret key</p>
+                <p className="text-xs text-muted-foreground">
+                  Default key: <code className="rounded bg-muted px-1 py-0.5">SUPER_ADMIN_SECRET_2024</code> (or set
+                  ADMIN_SECRET_KEY in environment variables)
+                </p>
               </div>
               {error && (
                 <Alert variant="destructive">
@@ -223,16 +211,12 @@ export default function AdminSignUpPage() {
               {success && (
                 <Alert>
                   <AlertDescription>
-                    Super admin account created successfully! You can now{" "}
-                    <Link href="/auth/login" className="text-primary hover:underline">
-                      log in
-                    </Link>
-                    .
+                    Super admin account created successfully! Redirecting to login...
                   </AlertDescription>
                 </Alert>
               )}
               <Button type="submit" className="w-full" disabled={loading || success}>
-                {loading ? "Creating account..." : "Create Super Admin Account"}
+                {loading ? "Creating account..." : success ? "Account Created!" : "Create Super Admin Account"}
               </Button>
             </form>
           )}

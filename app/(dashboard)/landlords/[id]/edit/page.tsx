@@ -3,7 +3,8 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { useRouter, useParams } from "next/navigation"
+import { useRouter } from "next/navigation"
+import { use } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -14,9 +15,8 @@ import Link from "next/link"
 import { ChevronLeft, Loader2 } from "lucide-react"
 import { updateLandlord } from "../../actions"
 
-export default function EditLandlordPage() {
-  const params = useParams()
-  const id = params.id as string
+export default function EditLandlordPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
   const router = useRouter()
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
