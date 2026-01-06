@@ -64,30 +64,46 @@ async function recordExpenseToGL(
   }
 
   // Map expense category to GL account
+  // Based on chart_of_accounts: 5010=Maintenance, 5020=Salaries, 5030=Utilities, 
+  // 5040=Insurance, 5050=Commission, 5060=Administrative, 5070=Transportation, 5080=Office Rent
   const categoryToAccount: { [key: string]: string } = {
-    salary: "5010",
-    transport: "5020",
-    wage: "5030",
-    internet: "5040",
-    field_expense: "5050",
-    office_rent: "5060",
-    utilities: "5070",
-    cleaning: "5080",
-    maintenance: "5090",
-    other: "5099",
+    maintenance: "5010", // Maintenance & Repairs
+    salary: "5020", // Salaries & Wages
+    wage: "5020", // Salaries & Wages (same as salary)
+    utilities: "5030", // Utilities Expense
+    internet: "5060", // Administrative Expense (communications)
+    cleaning: "5010", // Maintenance & Repairs
+    field_expense: "5070", // Transportation Expense
+    transport: "5070", // Transportation Expense
+    office_rent: "5080", // Office Rent Expense
+    other: "5060", // Administrative Expense (fallback)
   }
 
-  const expenseAccountCode = categoryToAccount[category] || "5099"
+  const expenseAccountCode = categoryToAccount[category] || "5060" // Default to Administrative Expense
 
-  const { data: expenseAccounts } = await supabase
+  const { data: expenseAccounts, error: accountError } = await supabase
     .from("chart_of_accounts")
-    .select("id, account_code")
+    .select("id, account_code, account_name")
     .eq("account_code", expenseAccountCode)
+    .eq("is_active", true)
     .single()
 
-  if (!expenseAccounts) {
-    throw new Error(`Expense GL account ${expenseAccountCode} not found`)
+  if (accountError || !expenseAccounts) {
+    log.error("Expense GL account not found", {
+      accountCode: expenseAccountCode,
+      category,
+      error: accountError,
+    })
+    throw new Error(
+      `Expense GL account ${expenseAccountCode} not found. Please ensure the chart of accounts is properly set up.`
+    )
   }
+
+  log.debug("Found expense GL account", {
+    accountCode: expenseAccountCode,
+    accountName: expenseAccounts.account_name,
+    accountId: expenseAccounts.id,
+  })
 
   const glEntries = [
     {
