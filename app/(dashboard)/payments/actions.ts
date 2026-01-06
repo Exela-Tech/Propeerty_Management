@@ -22,6 +22,53 @@ async function generateReceiptNumber() {
   return String(nextNumber).padStart(4, "0")
 }
 
+async function postPaymentToGL(
+  supabase: any,
+  amount: number,
+  payment_date: string,
+  tenant_id: string,
+  payment_type: string,
+  reference_id: string,
+) {
+  // Debit: Undeposited Funds (1015)
+  // Credit: Rental Income (4010)
+
+  const { data: accounts } = await supabase
+    .from("chart_of_accounts")
+    .select("id, account_code")
+    .in("account_code", ["1015", "4010"])
+
+  if (!accounts || accounts.length < 2) {
+    console.error("[v0] Missing GL accounts for payment posting")
+    return
+  }
+
+  const undeposited = accounts.find((a: any) => a.account_code === "1015")
+  const rentalIncome = accounts.find((a: any) => a.account_code === "4010")
+
+  // Debit: Undeposited Funds (Asset increases)
+  await supabase.from("general_ledger").insert({
+    account_id: undeposited.id,
+    debit: amount,
+    credit: 0,
+    transaction_date: payment_date,
+    description: `Tenant payment received - ${payment_type}`,
+    reference_type: "tenant_payment",
+    reference_id: reference_id,
+  })
+
+  // Credit: Rental Income (Revenue increases)
+  await supabase.from("general_ledger").insert({
+    account_id: rentalIncome.id,
+    debit: 0,
+    credit: amount,
+    transaction_date: payment_date,
+    description: `Rent income from tenant`,
+    reference_type: "tenant_payment",
+    reference_id: reference_id,
+  })
+}
+
 export async function getTenants() {
   const supabase = getServiceClient()
 
@@ -80,21 +127,27 @@ export async function recordPayment(formData: FormData) {
   const newBalance = currentBalance - amountTowardsCurrent
   const overpayment = Math.max(0, amountAfterPrepaid - amountTowardsCurrent)
 
-  const { error: paymentError } = await supabase.from("tenant_payments").insert({
-    tenant_id,
-    amount,
-    payment_date,
-    payment_method,
-    payment_period,
-    status: "completed",
-    receipt_number,
-    overpayment_credit: overpayment,
-  })
+  const { data: paymentRecord, error: paymentError } = await supabase
+    .from("tenant_payments")
+    .insert({
+      tenant_id,
+      amount,
+      payment_date,
+      payment_method,
+      payment_period,
+      status: "completed",
+      receipt_number,
+      overpayment_credit: overpayment,
+    })
+    .select()
+    .single()
 
   if (paymentError) {
     console.error("Error recording payment:", paymentError)
     return { success: false, error: paymentError.message }
   }
+
+  await postPaymentToGL(supabase, amount, payment_date, tenant_id, "tenant_payment", paymentRecord.id)
 
   const newTotalPaid = (tenant?.total_paid || 0) + amount
   const { error: updateError } = await supabase

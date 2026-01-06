@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import type React from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Plus } from "lucide-react"
 import { recordLandlordPayment } from "@/app/(dashboard)/landlords/payment-actions"
+import { getBankAccounts } from "@/app/(dashboard)/accounting/actions"
 
 interface LandlordWithPaymentInfo {
   id: string
@@ -21,6 +22,14 @@ interface LandlordWithPaymentInfo {
   totalPaidToLandlord: number
 }
 
+interface BankAccount {
+  id: string
+  account_name: string
+  bank_name: string
+  currency: string
+  current_balance: number
+}
+
 export function RecordPaymentDialog({
   landlord,
   periodStart,
@@ -29,7 +38,20 @@ export function RecordPaymentDialog({
   const [open, setOpen] = useState(false)
   const [amount, setAmount] = useState(landlord.owed.toString())
   const [paymentMethod, setPaymentMethod] = useState("bank_transfer")
+  const [bankAccountId, setBankAccountId] = useState("")
+  const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([])
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (open) {
+      getBankAccounts().then((accounts) => {
+        setBankAccounts(accounts)
+        if (accounts.length > 0) {
+          setBankAccountId(accounts[0].id)
+        }
+      })
+    }
+  }, [open])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,6 +65,7 @@ export function RecordPaymentDialog({
       formData.append("payment_method", paymentMethod)
       formData.append("period_start", periodStart)
       formData.append("period_end", periodEnd)
+      formData.append("bank_account_id", bankAccountId)
 
       const result = await recordLandlordPayment(formData)
 
@@ -83,6 +106,25 @@ export function RecordPaymentDialog({
               step="1"
               required
             />
+          </div>
+          <div>
+            <Label htmlFor="bank_account">Pay From Bank</Label>
+            <Select value={bankAccountId} onValueChange={setBankAccountId} required>
+              <SelectTrigger>
+                <SelectValue placeholder="Select bank account" />
+              </SelectTrigger>
+              <SelectContent>
+                {bankAccounts.map((account) => (
+                  <SelectItem key={account.id} value={account.id}>
+                    {account.bank_name} - {account.account_name} (Balance: {account.currency}{" "}
+                    {account.current_balance.toLocaleString()})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground mt-1">
+              Select which bank account to use for this payment. The bank balance will be reduced.
+            </p>
           </div>
           <div>
             <Label htmlFor="payment_method">Payment Method</Label>

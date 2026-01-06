@@ -5,6 +5,8 @@
 -- 1. Sign up normally at /auth/sign-up
 -- 2. Replace 'your-email@example.com' below with your actual email
 -- 3. Run this script in your Supabase SQL Editor
+--
+-- Note: Updated to use 'admin' role instead of 'super_admin' to match database constraints
 
 -- Update user role to admin
 UPDATE public.profiles
@@ -18,7 +20,8 @@ WHERE email = 'your-email@example.com';
 SELECT 
   id,
   email,
-  full_name,
+  first_name,
+  last_name,
   role,
   is_admin,
   created_at

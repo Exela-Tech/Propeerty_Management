@@ -11,20 +11,22 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import { createExpense, getProperties } from "../actions"
+import { createExpense, getProperties, getBankAccounts } from "../actions"
 import { useToast } from "@/hooks/use-toast"
 
 export default function NewExpensePage() {
   const [loading, setLoading] = useState(false)
   const [dataLoading, setDataLoading] = useState(true)
   const [properties, setProperties] = useState<any[]>([])
+  const [bankAccounts, setBankAccounts] = useState<any[]>([]) // Added bank accounts state
   const { toast } = useToast()
 
   useEffect(() => {
     async function loadData() {
       try {
-        const props = await getProperties()
+        const [props, banks] = await Promise.all([getProperties(), getBankAccounts()]) // Load bank accounts
         setProperties(props)
+        setBankAccounts(banks)
       } catch (error: any) {
         toast({
           title: "Error",
@@ -109,6 +111,25 @@ export default function NewExpensePage() {
                   <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="bank_account_id">Pay From Bank *</Label>
+              <Select name="bank_account_id" required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select bank account to pay from" />
+                </SelectTrigger>
+                <SelectContent>
+                  {bankAccounts.map((bank) => (
+                    <SelectItem key={bank.id} value={bank.id}>
+                      {bank.account_name} - {bank.bank_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-sm text-muted-foreground">
+                This bank account will be credited (balance reduced) when expense is posted
+              </p>
             </div>
 
             <div className="space-y-2">

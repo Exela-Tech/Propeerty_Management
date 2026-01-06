@@ -158,27 +158,40 @@ export async function recordLandlordPayment(formData: FormData) {
   const period_start = formData.get("period_start") as string
   const period_end = formData.get("period_end") as string
   const notes = formData.get("notes") as string
+  const bank_account_id = formData.get("bank_account_id") as string
   const receipt_number = await generateLandlordReceiptNumber()
 
-  const { error } = await supabase.from("landlord_payments").insert({
-    landlord_id,
-    amount,
-    payment_date,
-    payment_method,
-    period_start,
-    period_end,
-    receipt_number,
-    notes,
-    status: "completed",
-  })
+  if (!bank_account_id) {
+    return { success: false, error: "Bank account selection is required" }
+  }
+
+  const { data: paymentRecord, error } = await supabase
+    .from("landlord_payments")
+    .insert({
+      landlord_id,
+      amount,
+      payment_date,
+      payment_method,
+      period_start,
+      period_end,
+      receipt_number,
+      notes,
+      status: "completed",
+      bank_account_id,
+    })
+    .select()
+    .single()
 
   if (error) {
     console.error("[v0] Error recording landlord payment:", error)
     return { success: false, error: error.message }
   }
 
+  await postLandlordPaymentToGL(supabase, amount, payment_date, landlord_id, paymentRecord.id, bank_account_id)
+
   revalidatePath("/landlords/payments")
   revalidatePath("/dashboard")
+  revalidatePath("/accounting/cash-management")
 
   return { success: true, receipt_number }
 }
@@ -198,4 +211,71 @@ export async function getLandlordPayments(landlordId: string) {
   }
 
   return payments || []
+}
+
+async function postLandlordPaymentToGL(
+  supabase: any,
+  amount: number,
+  payment_date: string,
+  landlord_id: string,
+  reference_id: string,
+  bank_account_id: string,
+) {
+  const { data: bankAccount, error: bankError } = await supabase
+    .from("bank_accounts")
+    .select("gl_account_id, account_name")
+    .eq("id", bank_account_id)
+    .single()
+
+  if (bankError || !bankAccount?.gl_account_id) {
+    console.error("[v0] Bank account GL linkage not found:", bankError)
+    throw new Error("Bank account must be linked to a GL account")
+  }
+
+  const { data: accounts } = await supabase
+    .from("chart_of_accounts")
+    .select("id, account_code")
+    .eq("account_code", "5020")
+    .single()
+
+  if (!accounts) {
+    console.error("[v0] Missing Landlord Payout Expense account (5020)")
+    throw new Error("Landlord expense account not found in chart of accounts")
+  }
+
+  const { data: landlord } = await supabase.from("owners").select("name").eq("id", landlord_id).single()
+
+  const landlordName = landlord?.name || "Landlord"
+
+  const { error: debitError } = await supabase.from("general_ledger").insert({
+    account_id: accounts.id,
+    debit: amount,
+    credit: 0,
+    transaction_date: payment_date,
+    description: `Landlord payout to ${landlordName}`,
+    reference_type: "landlord_payment",
+    reference_id: reference_id,
+  })
+
+  if (debitError) {
+    console.error("[v0] Failed to create debit GL entry:", debitError)
+    throw new Error("Failed to post landlord expense to GL")
+  }
+
+  const { error: creditError } = await supabase.from("general_ledger").insert({
+    account_id: bankAccount.gl_account_id,
+    debit: 0,
+    credit: amount,
+    transaction_date: payment_date,
+    description: `Payment to ${landlordName} via ${bankAccount.account_name}`,
+    reference_type: "landlord_payment",
+    reference_id: reference_id,
+  })
+
+  if (creditError) {
+    console.error("[v0] Failed to create credit GL entry:", creditError)
+    throw new Error("Failed to reduce bank balance in GL")
+  }
+
+  console.log("[v0] Landlord payment GL entries created successfully")
 }
