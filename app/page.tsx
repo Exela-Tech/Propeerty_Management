@@ -9,7 +9,7 @@ export default function HomePage() {
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-2">
             <Building2 className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold text-primary">PropertyPro</span>
+            <span className="text-xl font-bold text-primary">Exela PMS</span>
           </div>
           <div className="flex items-center gap-4">
             <Button asChild variant="ghost" className="text-primary hover:bg-blue-50 dark:hover:bg-blue-950/20">
@@ -102,7 +102,7 @@ export default function HomePage() {
 
       <footer className="border-t border-border py-8 bg-white/50 dark:bg-slate-900/50">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          © 2025 PropertyPro. All rights reserved.
+          © 2025 Exela PMS. All rights reserved.
         </div>
       </footer>
     </div>

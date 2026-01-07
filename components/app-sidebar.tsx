@@ -178,7 +178,7 @@ export function AppSidebar({ userProfile }: AppSidebarProps) {
       <SidebarHeader>
         <div className="flex items-center gap-2 px-4 py-2">
           <Home className="h-6 w-6 text-primary" />
-          <span className="text-xl font-bold">PropertyPro</span>
+          <span className="text-xl font-bold">Exela PMS</span>
         </div>
       </SidebarHeader>
       <SidebarContent>
