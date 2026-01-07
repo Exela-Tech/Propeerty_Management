@@ -45,7 +45,7 @@ export async function ensureUserProfile(): Promise<UserProfile | null> {
       .single()
 
     if (error) {
-      console.error("[v0] Failed to create profile:", error.message)
+      console.error(" Failed to create profile:", error.message)
       return null
     }
 

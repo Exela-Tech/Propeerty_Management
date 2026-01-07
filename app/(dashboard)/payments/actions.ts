@@ -39,7 +39,7 @@ async function postPaymentToGL(
     .in("account_code", ["1015", "4010"])
 
   if (!accounts || accounts.length < 2) {
-    console.error("[v0] Missing GL accounts for payment posting")
+    console.error(" Missing GL accounts for payment posting")
     return
   }
 
@@ -185,7 +185,7 @@ export async function deletePayment(paymentId: string) {
     .single()
 
   if (fetchError || !payment) {
-    console.error("[v0] Error fetching payment:", fetchError)
+    console.error(" Error fetching payment:", fetchError)
     throw new Error("Payment not found")
   }
 
@@ -202,7 +202,7 @@ export async function deletePayment(paymentId: string) {
   const { error: deleteError } = await supabase.from("tenant_payments").delete().eq("id", paymentId)
 
   if (deleteError) {
-    console.error("[v0] Error deleting payment:", deleteError)
+    console.error(" Error deleting payment:", deleteError)
     throw new Error(deleteError.message)
   }
 
@@ -221,7 +221,7 @@ export async function deletePayment(paymentId: string) {
     .eq("id", payment.tenant_id)
 
   if (updateError) {
-    console.error("[v0] Error updating tenant after deletion:", updateError)
+    console.error(" Error updating tenant after deletion:", updateError)
     throw new Error(updateError.message)
   }
 

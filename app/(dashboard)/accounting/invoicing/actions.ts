@@ -62,7 +62,7 @@ export async function createInvoice(
     .single()
 
   if (invoiceError) {
-    console.error("[v0] Error creating invoice:", invoiceError)
+    console.error(" Error creating invoice:", invoiceError)
     throw new Error("Failed to create invoice")
   }
 
@@ -133,7 +133,7 @@ export async function getInvoices(status?: string, tenantId?: string) {
   const { data, error } = await query.order("invoice_date", { ascending: false })
 
   if (error) {
-    console.error("[v0] Error fetching invoices:", error)
+    console.error(" Error fetching invoices:", error)
     throw new Error("Failed to fetch invoices")
   }
 
@@ -146,7 +146,7 @@ export async function updateInvoiceStatus(invoiceId: string, status: string) {
   const { error } = await supabase.from("invoices").update({ status }).eq("id", invoiceId)
 
   if (error) {
-    console.error("[v0] Error updating invoice status:", error)
+    console.error(" Error updating invoice status:", error)
     throw new Error("Failed to update invoice status")
   }
 
@@ -178,7 +178,7 @@ export async function createRecurringInvoice(recurringData: {
     .single()
 
   if (error) {
-    console.error("[v0] Error creating recurring invoice:", error)
+    console.error(" Error creating recurring invoice:", error)
     throw new Error("Failed to create recurring invoice")
   }
 
@@ -258,7 +258,7 @@ export async function getOverdueInvoices() {
     .order("due_date")
 
   if (error) {
-    console.error("[v0] Error fetching overdue invoices:", error)
+    console.error(" Error fetching overdue invoices:", error)
     throw new Error("Failed to fetch overdue invoices")
   }
 

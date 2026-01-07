@@ -30,7 +30,7 @@ export function DashboardHeader() {
           setUnreadMessages(messageData.count || 0)
         }
       } catch (error) {
-        console.error("[v0] Error fetching counts:", error)
+        console.error(" Error fetching counts:", error)
       }
     }
 

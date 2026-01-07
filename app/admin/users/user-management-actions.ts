@@ -15,7 +15,7 @@ export async function getPendingRegistrations() {
     .order("created_at", { ascending: false })
 
   if (error) {
-    console.error("[v0] Error fetching registrations:", error)
+    console.error(" Error fetching registrations:", error)
     return []
   }
 
@@ -56,7 +56,7 @@ export async function approveRegistration(registrationId: string, assignedRole: 
   })
 
   if (authError) {
-    console.error("[v0] Auth creation error:", authError)
+    console.error(" Auth creation error:", authError)
     return { error: "Failed to create user account" }
   }
 
@@ -76,7 +76,7 @@ export async function approveRegistration(registrationId: string, assignedRole: 
   })
 
   if (profileError) {
-    console.error("[v0] Profile creation error:", profileError)
+    console.error(" Profile creation error:", profileError)
     return { error: "Failed to create user profile" }
   }
 
@@ -164,7 +164,7 @@ export async function createUserManually(formData: {
   })
 
   if (authError) {
-    console.error("[v0] Auth creation error:", authError)
+    console.error(" Auth creation error:", authError)
     return { error: "Failed to create user account" }
   }
 
@@ -184,7 +184,7 @@ export async function createUserManually(formData: {
   })
 
   if (profileError) {
-    console.error("[v0] Profile creation error:", profileError)
+    console.error(" Profile creation error:", profileError)
     return { error: "Failed to create user profile" }
   }
 
@@ -337,7 +337,7 @@ export async function getAllUsers() {
   const { data, error } = await supabase.from("profiles").select("*").order("created_at", { ascending: false })
 
   if (error) {
-    console.error("[v0] Error fetching users:", error)
+    console.error(" Error fetching users:", error)
     return []
   }
 

@@ -46,7 +46,7 @@ export default function NotificationsPage() {
       if (error) throw error
       setNotifications(data || [])
     } catch (error) {
-      console.error("[v0] Error fetching notifications:", error)
+      console.error(" Error fetching notifications:", error)
     } finally {
       setLoading(false)
     }
@@ -63,7 +63,7 @@ export default function NotificationsPage() {
 
       setNotifications(notifications.map((n) => (n.id === id ? { ...n, is_read: true } : n)))
     } catch (error) {
-      console.error("[v0] Error marking as read:", error)
+      console.error(" Error marking as read:", error)
     }
   }
 

@@ -38,7 +38,7 @@ export async function createBudget(budgetData: {
     .single()
 
   if (error) {
-    console.error("[v0] Error creating budget:", error)
+    console.error(" Error creating budget:", error)
     throw new Error("Failed to create budget")
   }
 
@@ -68,7 +68,7 @@ export async function addBudgetLineItem(budgetId: string, categoryId: string, bu
     .single()
 
   if (error) {
-    console.error("[v0] Error adding budget line item:", error)
+    console.error(" Error adding budget line item:", error)
     throw new Error("Failed to add budget line item")
   }
 
@@ -88,7 +88,7 @@ export async function getBudgets(year: number, propertyId?: string) {
   const { data, error } = await query.order("created_at", { ascending: false })
 
   if (error) {
-    console.error("[v0] Error fetching budgets:", error)
+    console.error(" Error fetching budgets:", error)
     throw new Error("Failed to fetch budgets")
   }
 
@@ -105,7 +105,7 @@ export async function getBudgetDetails(budgetId: string) {
     .single()
 
   if (error) {
-    console.error("[v0] Error fetching budget details:", error)
+    console.error(" Error fetching budget details:", error)
     throw new Error("Failed to fetch budget details")
   }
 
@@ -179,7 +179,7 @@ export async function getVarianceAnalysis(budgetId: string) {
     .order("created_at", { ascending: false })
 
   if (error) {
-    console.error("[v0] Error fetching variance analysis:", error)
+    console.error(" Error fetching variance analysis:", error)
     throw new Error("Failed to fetch variance analysis")
   }
 
@@ -216,7 +216,7 @@ export async function approveBudget(budgetId: string) {
     .eq("id", budgetId)
 
   if (error) {
-    console.error("[v0] Error approving budget:", error)
+    console.error(" Error approving budget:", error)
     throw new Error("Failed to approve budget")
   }
 
@@ -229,7 +229,7 @@ export async function activateBudget(budgetId: string) {
   const { error } = await supabase.from("budgets").update({ status: "active" }).eq("id", budgetId)
 
   if (error) {
-    console.error("[v0] Error activating budget:", error)
+    console.error(" Error activating budget:", error)
     throw new Error("Failed to activate budget")
   }
 
@@ -251,7 +251,7 @@ export async function getBudgetComparison(year: number, propertyId?: string) {
   const { data: budgets, error } = await query
 
   if (error) {
-    console.error("[v0] Error fetching budget comparison:", error)
+    console.error(" Error fetching budget comparison:", error)
     throw new Error("Failed to fetch budget comparison")
   }
 
@@ -283,7 +283,7 @@ export async function getVarianceReport(year: number, propertyId?: string) {
   const { data: variances, error } = await query
 
   if (error) {
-    console.error("[v0] Error fetching variance report:", error)
+    console.error(" Error fetching variance report:", error)
     throw new Error("Failed to fetch variance report")
   }
 

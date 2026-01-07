@@ -26,43 +26,43 @@ export default function DashboardLayout({
     const fetchProfile = async () => {
       const supabase = createBrowserClient()
 
-      console.log("[v0] Fetching user in layout...")
+      console.log(" Fetching user in layout...")
       const {
         data: { user },
       } = await supabase.auth.getUser()
 
-      console.log("[v0] User in layout:", user?.id, user?.email)
+      console.log(" User in layout:", user?.id, user?.email)
 
       if (user) {
-        console.log("[v0] Querying profile for user:", user.id)
+        console.log(" Querying profile for user:", user.id)
         const { data: profile, error } = await supabase
           .from("profiles")
           .select("first_name, last_name, email, role")
           .eq("id", user.id)
           .maybeSingle()
 
-        console.log("[v0] Profile query result:", profile)
-        console.log("[v0] Profile query error:", error)
+        console.log(" Profile query result:", profile)
+        console.log(" Profile query error:", error)
 
         if (profile) {
           const profileWithAdmin = {
             ...profile,
             is_admin: profile.role === "admin" || profile.role === "super_admin",
           }
-          console.log("[v0] Setting profile with is_admin:", profileWithAdmin)
+          console.log(" Setting profile with is_admin:", profileWithAdmin)
           setUserProfile(profileWithAdmin)
         } else {
-          console.log("[v0] Profile not found, using fallback")
+          console.log(" Profile not found, using fallback")
           const fallbackProfile = {
             email: user.email,
             role: "admin",
             is_admin: true,
           }
-          console.log("[v0] Setting fallback profile:", fallbackProfile)
+          console.log(" Setting fallback profile:", fallbackProfile)
           setUserProfile(fallbackProfile)
         }
       } else {
-        console.log("[v0] No user found in layout")
+        console.log(" No user found in layout")
       }
     }
 
@@ -70,7 +70,7 @@ export default function DashboardLayout({
   }, [])
 
   useEffect(() => {
-    console.log("[v0] Layout userProfile state changed:", userProfile)
+    console.log(" Layout userProfile state changed:", userProfile)
   }, [userProfile])
 
   return (

@@ -18,7 +18,7 @@ export async function submitRegistration(formData: {
     .maybeSingle()
 
   if (checkError && checkError.code !== "PGRST116") {
-    console.error("[v0] Error checking existing registration:", checkError)
+    console.error(" Error checking existing registration:", checkError)
     return { error: "Failed to check existing registration. Please ensure the database is set up correctly." }
   }
 
@@ -37,7 +37,7 @@ export async function submitRegistration(formData: {
   })
 
   if (error) {
-    console.error("[v0] Registration error:", error)
+    console.error(" Registration error:", error)
     return { error: "Failed to submit registration" }
   }
 

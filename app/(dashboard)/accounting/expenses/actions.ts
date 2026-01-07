@@ -24,7 +24,7 @@ export async function getExpenseCategories() {
     .order("category_name")
 
   if (error) {
-    console.error("[v0] Error fetching expense categories:", error)
+    console.error(" Error fetching expense categories:", error)
     throw new Error("Failed to fetch expense categories")
   }
 
@@ -52,7 +52,7 @@ export async function createExpenseCategory(
     .single()
 
   if (error) {
-    console.error("[v0] Error creating expense category:", error)
+    console.error(" Error creating expense category:", error)
     throw new Error("Failed to create expense category")
   }
 
@@ -97,7 +97,7 @@ export async function recordExpense(expenseData: {
     .single()
 
   if (error) {
-    console.error("[v0] Error recording expense:", error)
+    console.error(" Error recording expense:", error)
     throw new Error("Failed to record expense")
   }
 
@@ -142,7 +142,7 @@ export async function getExpenses(categoryId?: string, startDate?: string, endDa
   const { data, error } = await query.order("expense_date", { ascending: false })
 
   if (error) {
-    console.error("[v0] Error fetching expenses:", error)
+    console.error(" Error fetching expenses:", error)
     throw new Error("Failed to fetch expenses")
   }
 
@@ -165,7 +165,7 @@ export async function getExpenseReport(startDate: string, endDate: string, prope
   const { data: expenses, error } = await query
 
   if (error) {
-    console.error("[v0] Error fetching expense report:", error)
+    console.error(" Error fetching expense report:", error)
     throw new Error("Failed to fetch expense report")
   }
 
@@ -252,7 +252,7 @@ export async function getMonthlyExpenseTrend(propertyId?: string) {
   const { data: expenses, error } = await query
 
   if (error) {
-    console.error("[v0] Error fetching expense trend:", error)
+    console.error(" Error fetching expense trend:", error)
     throw new Error("Failed to fetch expense trend")
   }
 
@@ -273,7 +273,7 @@ export async function approveExpense(expenseId: string) {
   const { error } = await supabase.from("expenses").update({ status: "approved" }).eq("id", expenseId)
 
   if (error) {
-    console.error("[v0] Error approving expense:", error)
+    console.error(" Error approving expense:", error)
     throw new Error("Failed to approve expense")
   }
 
@@ -286,7 +286,7 @@ export async function rejectExpense(expenseId: string, reason?: string) {
   const { error } = await supabase.from("expenses").update({ status: "rejected", notes: reason }).eq("id", expenseId)
 
   if (error) {
-    console.error("[v0] Error rejecting expense:", error)
+    console.error(" Error rejecting expense:", error)
     throw new Error("Failed to reject expense")
   }
 

@@ -52,7 +52,7 @@ export default function EditTenantPage({ params }: { params: Promise<{ id: strin
           setUnits(unitsData)
         }
       } catch (error) {
-        console.error("[v0] Error loading data:", error)
+        console.error(" Error loading data:", error)
         toast({
           title: "Error",
           description: "Failed to load tenant data",

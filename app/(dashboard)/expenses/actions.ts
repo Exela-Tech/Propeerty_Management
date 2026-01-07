@@ -36,7 +36,7 @@ export async function getBankAccounts() {
     .order("account_name", { ascending: true })
 
   if (error) {
-    console.error("[v0] Error fetching bank accounts:", error)
+    console.error(" Error fetching bank accounts:", error)
     return []
   }
 
@@ -129,7 +129,7 @@ async function recordExpenseToGL(
   const { error } = await supabase.from("general_ledger").insert(glEntries)
 
   if (error) {
-    console.error("[v0] Error posting expense to GL:", error)
+    console.error(" Error posting expense to GL:", error)
     throw new Error("Failed to post expense to general ledger")
   }
 }
@@ -174,9 +174,9 @@ export async function createExpense(formData: FormData) {
     const expenseId = data[0].id
     try {
       await recordExpenseToGL(expenseId, category, amount, description, transactionDate, bankAccountId)
-      console.log("[v0] Expense posted to GL successfully")
+      console.log(" Expense posted to GL successfully")
     } catch (glError) {
-      console.error("[v0] Failed to post expense to GL:", glError)
+      console.error(" Failed to post expense to GL:", glError)
       // Rollback the expense
       await supabase.from("transactions").delete().eq("id", expenseId)
       throw glError

@@ -49,7 +49,7 @@ export default function BankManagementPage() {
       setBankAccounts(accounts)
       setGlAccounts(glAccts)
     } catch (error) {
-      console.error("[v0] Error loading data:", error)
+      console.error(" Error loading data:", error)
     } finally {
       setLoading(false)
     }
@@ -71,7 +71,7 @@ export default function BankManagementPage() {
       })
       await loadData()
     } catch (error) {
-      console.error("[v0] Error adding bank:", error)
+      console.error(" Error adding bank:", error)
     }
   }
 
@@ -88,7 +88,7 @@ export default function BankManagementPage() {
       setShowEditDialog(false)
       await loadData()
     } catch (error) {
-      console.error("[v0] Error updating bank:", error)
+      console.error(" Error updating bank:", error)
     }
   }
 
@@ -99,7 +99,7 @@ export default function BankManagementPage() {
       setTransactions(data.transactions)
       setShowTransactionsDialog(true)
     } catch (error) {
-      console.error("[v0] Error loading transactions:", error)
+      console.error(" Error loading transactions:", error)
     }
   }
 

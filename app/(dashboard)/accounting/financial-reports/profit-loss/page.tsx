@@ -20,7 +20,7 @@ export default function ProfitLossPage() {
     try {
       const data = await getProfitAndLossStatement(startDate, endDate)
       setReport(data)
-      console.log("[v0] P&L Report:", data)
+      console.log(" P&L Report:", data)
     } catch (error) {
       console.error("Error generating report:", error)
     } finally {

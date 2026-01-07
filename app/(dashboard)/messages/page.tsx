@@ -55,7 +55,7 @@ export default function MessagesPage() {
         setCurrentUser(data)
       }
     } catch (error) {
-      console.error("[v0] Error fetching user:", error)
+      console.error(" Error fetching user:", error)
     }
   }
 
@@ -76,7 +76,7 @@ export default function MessagesPage() {
       if (error) throw error
       setMessages(data || [])
     } catch (error) {
-      console.error("[v0] Error fetching messages:", error)
+      console.error(" Error fetching messages:", error)
     } finally {
       setLoading(false)
     }
@@ -109,7 +109,7 @@ export default function MessagesPage() {
       setNewMessage("")
       fetchMessages()
     } catch (error) {
-      console.error("[v0] Error sending message:", error)
+      console.error(" Error sending message:", error)
     }
   }
 

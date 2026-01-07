@@ -20,7 +20,7 @@ export default async function EditPropertyPage({ params }: { params: Promise<{ i
         try {
           cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
         } catch (error) {
-          console.error("[v0] Error setting cookies:", error)
+          console.error(" Error setting cookies:", error)
         }
       },
     },

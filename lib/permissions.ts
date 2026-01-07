@@ -17,7 +17,7 @@ export async function getUserPermissions(role: string): Promise<Permission[]> {
   const { data, error } = await supabase.from("role_permissions").select("*").eq("role", role)
 
   if (error) {
-    console.error("[v0] Error fetching permissions:", error)
+    console.error(" Error fetching permissions:", error)
     return []
   }
 

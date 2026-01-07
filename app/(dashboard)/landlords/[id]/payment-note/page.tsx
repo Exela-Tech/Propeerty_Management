@@ -69,7 +69,7 @@ export default function PaymentNotePage() {
           }
         }
       } catch (err) {
-        console.error("[v0] Error fetching properties:", err)
+        console.error(" Error fetching properties:", err)
       }
     }
 
@@ -91,7 +91,7 @@ export default function PaymentNotePage() {
         const result = await response.json()
         setData(result)
       } catch (err) {
-        console.error("[v0] Error fetching payment note:", err)
+        console.error(" Error fetching payment note:", err)
       } finally {
         setLoading(false)
       }

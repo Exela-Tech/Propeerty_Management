@@ -45,7 +45,7 @@ export default function CashManagementPage() {
           setSelectedBankForView(accounts[0].id)
         }
       } catch (error) {
-        console.error("[v0] Error loading cash management:", error)
+        console.error(" Error loading cash management:", error)
       } finally {
         setLoading(false)
       }
@@ -63,7 +63,7 @@ export default function CashManagementPage() {
         setBankTransactions(result.transactions)
         setSelectedBankInfo(result.bankAccount)
       } catch (error) {
-        console.error("[v0] Error loading bank transactions:", error)
+        console.error(" Error loading bank transactions:", error)
       } finally {
         setLoadingTransactions(false)
       }
@@ -97,7 +97,7 @@ export default function CashManagementPage() {
         setBankTransactions(result.transactions)
       }
     } catch (error) {
-      console.error("[v0] Error creating deposit:", error)
+      console.error(" Error creating deposit:", error)
       alert("Failed to create deposit")
     }
   }
