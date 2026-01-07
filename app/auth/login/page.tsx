@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { createClient } from "@/lib/supabase/client"
+import { createBrowserClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -21,7 +21,7 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    const supabase = createClient()
+    const supabase = createBrowserClient()
     setIsLoading(true)
     setError(null)
 
@@ -33,8 +33,46 @@ export default function LoginPage() {
 
       if (error) throw error
 
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role, is_active, requires_password_change, status")
+        .eq("id", data.user?.id)
+        .single()
+
+      // Check if account is disabled
+      if (!profile?.is_active || profile?.status === "disabled") {
+        await supabase.auth.signOut()
+        setError("Your account has been disabled. Please contact an administrator.")
+        setIsLoading(false)
+        return
+      }
+
+      // Check if password change is required
+      if (profile?.requires_password_change) {
+        router.push("/auth/change-password")
+        return
+      }
+
+      // Update last login
+      await supabase.from("profiles").update({ last_login_at: new Date().toISOString() }).eq("id", data.user.id)
+
       setTimeout(() => {
-        router.push("/dashboard")
+        // Redirect based on role
+        if (
+          profile?.role === "team_member" ||
+          profile?.role === "property_manager" ||
+          profile?.role === "accountant" ||
+          profile?.role === "support_staff"
+        ) {
+          router.push("/team-member/dashboard")
+        } else if (profile?.role === "tenant") {
+          router.push("/tenant/dashboard")
+        } else if (profile?.role === "landlord") {
+          router.push("/landlord/dashboard")
+        } else {
+          // Admin or other roles
+          router.push("/dashboard")
+        }
       }, 100)
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred")
@@ -64,7 +102,7 @@ export default function LoginPage() {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="landlord@example.com"
+                    placeholder="user@example.com"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -84,7 +122,7 @@ export default function LoginPage() {
                     className="hover:border-blue-400 focus:border-blue-600 dark:hover:border-blue-500 dark:focus:border-blue-400 transition-colors"
                   />
                 </div>
-                {error && <p className="text-sm text-destructive">{error}</p>}
+                {error && <p className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">{error}</p>}
                 <Button
                   type="submit"
                   className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-200"
@@ -96,10 +134,10 @@ export default function LoginPage() {
               <div className="mt-4 text-center text-sm text-muted-foreground">
                 Don&apos;t have an account?{" "}
                 <Link
-                  href="/auth/sign-up"
+                  href="/auth/register"
                   className="text-blue-600 dark:text-blue-400 underline underline-offset-4 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
                 >
-                  Create account
+                  Register here
                 </Link>
               </div>
               <div className="mt-2 text-center text-xs text-muted-foreground">
@@ -109,15 +147,6 @@ export default function LoginPage() {
                   className="text-blue-600 dark:text-blue-400 underline underline-offset-4 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
                 >
                   Admin signup
-                </Link>
-              </div>
-              <div className="mt-2 text-center text-xs text-muted-foreground">
-                Team member?{" "}
-                <Link
-                  href="/auth/team-member-signup"
-                  className="text-blue-600 dark:text-blue-400 underline underline-offset-4 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
-                >
-                  Accept invitation
                 </Link>
               </div>
             </form>
