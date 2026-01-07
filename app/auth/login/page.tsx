@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import Image from "next/image"
 
 import { createBrowserClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
@@ -83,10 +84,19 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-slate-800 p-6">
       <div className="w-full max-w-md">
-        <div className="mb-8 flex items-center justify-center gap-2">
-          <Building2 className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-          <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400">PropertyPro</h1>
-        </div>
+        <div className="mb-8 flex flex-col items-center justify-center gap-3">
+  <Image
+    src="/Exela.png"
+    alt="Exela Property Management Software"
+    width={80}
+    height={80}
+    priority
+  />
+  <h1 className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+    EXELA PMS
+  </h1>
+</div>
+
         <Card className="border-0 shadow-xl">
           <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-750 rounded-t-lg border-b border-border">
             <CardTitle className="text-2xl text-blue-600 dark:text-blue-400">Welcome back</CardTitle>

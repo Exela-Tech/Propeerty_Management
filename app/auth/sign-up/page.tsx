@@ -67,7 +67,7 @@ export default function SignUpPage() {
       <div className="w-full max-w-md">
         <div className="mb-8 flex items-center justify-center gap-2">
           <Building2 className="h-8 w-8" />
-          <h1 className="text-2xl font-bold">PropertyPro</h1>
+          <h1 className="text-2xl font-bold">Exela PMS</h1>
         </div>
         <Card>
           <CardHeader>
