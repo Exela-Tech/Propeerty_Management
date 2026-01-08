@@ -1,22 +1,9 @@
-import { createServerClient } from "@supabase/ssr"
-import { cookies } from "next/headers"
+import { getServiceClient } from "@/lib/supabase/server"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Building2, Users, Wrench, DollarSign, Building, UserCircle } from "lucide-react"
 
 export default async function DashboardPage() {
-  const cookieStore = await cookies()
-  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll()
-      },
-      setAll(cookiesToSet: any) {
-        try {
-          cookiesToSet.forEach((cookie: any) => cookieStore.set(cookie.name, cookie.value, cookie.options))
-        } catch {}
-      },
-    },
-  })
+  const supabase = getServiceClient()
 
   const [
     { count: propertiesCount },
