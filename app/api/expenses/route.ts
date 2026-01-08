@@ -1,5 +1,4 @@
-import { createServerClient } from "@supabase/ssr"
-import { cookies } from "next/headers"
+import { getServiceClient } from "@/lib/supabase/server"
 import { successResponse, handleApiError } from "@/lib/api-response"
 import { validateQueryParams, validatePagination, createValidationErrorResponse } from "@/lib/api-validation"
 
@@ -10,6 +9,10 @@ export async function GET(request: Request) {
     // Validate pagination parameters
     const page = searchParams.get("page")
     const limit = searchParams.get("limit")
+    const startDate = searchParams.get("startDate")
+    const endDate = searchParams.get("endDate")
+    const category = searchParams.get("category")
+    const propertyId = searchParams.get("propertyId")
     
     if (page || limit) {
       const paginationResult = validatePagination(page || undefined, limit || undefined)
@@ -18,30 +21,34 @@ export async function GET(request: Request) {
       }
     }
 
-    const cookieStore = await cookies()
-    const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet: any) {
-          try {
-            cookiesToSet.forEach((cookie: any) => cookieStore.set(cookie.name, cookie.value, cookie.options))
-          } catch {}
-        },
-      },
-    })
+    const supabase = getServiceClient()
 
     const pageNum = page ? Number.parseInt(page, 10) : 1
     const limitNum = limit ? Number.parseInt(limit, 10) : 100
     const offset = (pageNum - 1) * limitNum
 
-    const { data: expenses, error } = await supabase
+    let query = supabase
       .from("transactions")
       .select("id, amount, currency, category, transaction_date, description, property:property_id(id, name)", {
         count: "exact",
       })
       .eq("type", "expense")
+
+    // Apply filters
+    if (startDate) {
+      query = query.gte("transaction_date", startDate)
+    }
+    if (endDate) {
+      query = query.lte("transaction_date", endDate)
+    }
+    if (category) {
+      query = query.eq("category", category)
+    }
+    if (propertyId) {
+      query = query.eq("property_id", propertyId)
+    }
+
+    const { data: expenses, error } = await query
       .order("transaction_date", { ascending: false })
       .range(offset, offset + limitNum - 1)
 
