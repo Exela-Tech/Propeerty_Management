@@ -1,29 +1,12 @@
-import { createServerClient } from "@supabase/ssr"
-import { cookies } from "next/headers"
+import { getServiceClient } from "@/lib/supabase/server"
 import { logger } from "@/lib/logger"
 import { successResponse, handleApiError } from "@/lib/api-response"
 
 const log = logger.child("api:dashboard:stats")
 
-function getServiceClient(cookieStore: any) {
-  return createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll()
-      },
-      setAll(cookiesToSet: any) {
-        try {
-          cookiesToSet.forEach((cookie: any) => cookieStore.set(cookie.name, cookie.value, cookie.options))
-        } catch {}
-      },
-    },
-  })
-}
-
 export async function GET() {
   try {
-    const cookieStore = await cookies()
-    const supabase = getServiceClient(cookieStore)
+    const supabase = getServiceClient()
 
     const [{ count: propertiesCount }, { data: unitsStats }, { data: tenantsStats }] = await Promise.all([
       // Get property count efficiently
