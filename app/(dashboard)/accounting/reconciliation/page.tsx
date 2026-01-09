@@ -26,6 +26,7 @@ export default function ReconciliationPage() {
   useEffect(() => {
     const loadInitialData = async () => {
       try {
+        setIsLoading(true)
         const [bankData, accountData] = await Promise.all([
           getBankReconciliationSummary(),
           getAccountReconciliationSummary(),
@@ -42,6 +43,9 @@ export default function ReconciliationPage() {
         }
       } catch (error) {
         console.error("Error loading reconciliation data:", error)
+        // Set empty arrays on error to show proper empty state
+        setBankList([])
+        setAccountList([])
       } finally {
         setIsLoading(false)
       }
@@ -50,12 +54,19 @@ export default function ReconciliationPage() {
   }, [])
 
   const handleBankReconciliation = async () => {
-    if (!selectedBank) return
+    if (!selectedBank) {
+      alert("Please select a bank account")
+      return
+    }
     try {
+      setIsLoading(true)
       const data = await getBankReconciliation(selectedBank, statementDate)
       setBankReconciliation(data)
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error reconciling bank account:", error)
+      alert(error.message || "Failed to reconcile bank account. Please try again.")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -98,11 +109,17 @@ export default function ReconciliationPage() {
                       <SelectValue placeholder="Select bank account" />
                     </SelectTrigger>
                     <SelectContent>
-                      {bankList.map((bank) => (
-                        <SelectItem key={bank.id} value={bank.id}>
-                          {bank.name}
+                      {bankList.length > 0 ? (
+                        bankList.map((bank) => (
+                          <SelectItem key={bank.id} value={bank.id}>
+                            {bank.name}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="no-banks" disabled>
+                          No bank accounts found
                         </SelectItem>
-                      ))}
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
