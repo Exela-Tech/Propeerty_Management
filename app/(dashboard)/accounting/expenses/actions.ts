@@ -173,12 +173,14 @@ export async function getExpenseReport(startDate: string, endDate: string, prope
   const expensesByCategory: Record<string, { total: number; budget: number; variance: number }> = {}
 
   for (const expense of expenses || []) {
-    const categoryName = expense.category?.category_name || "Uncategorized"
+    // Handle both array and object responses from Supabase
+    const category = Array.isArray(expense.category) ? expense.category[0] : expense.category
+    const categoryName = category?.category_name || "Uncategorized"
 
     if (!expensesByCategory[categoryName]) {
       expensesByCategory[categoryName] = {
         total: 0,
-        budget: expense.category?.budget_limit || 0,
+        budget: category?.budget_limit || 0,
         variance: 0,
       }
     }
@@ -264,7 +266,10 @@ export async function getMonthlyExpenseTrend(propertyId?: string) {
     monthlyTotals[monthKey] = (monthlyTotals[monthKey] || 0) + expense.amount
   }
 
-  return Object.entries(monthlyTotals).map(([month, total]) => ({ month, total }))
+  // Return unique months sorted by date
+  return Object.entries(monthlyTotals)
+    .map(([month, total]) => ({ month, total }))
+    .sort((a, b) => a.month.localeCompare(b.month))
 }
 
 export async function approveExpense(expenseId: string) {
