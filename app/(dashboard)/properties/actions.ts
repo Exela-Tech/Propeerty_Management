@@ -1,6 +1,6 @@
 "use server"
 
-import { createServerClient } from "@supabase/ssr"
+import { getServiceClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { logger } from "@/lib/logger"
@@ -8,25 +8,7 @@ import { logger } from "@/lib/logger"
 const log = logger.child("properties:actions")
 
 export async function createProperty(formData: FormData) {
-  const { cookies } = await import("next/headers")
-  const cookieStore = await cookies()
-
-  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll()
-      },
-      setAll(cookiesToSet) {
-        try {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options)
-          })
-        } catch {
-          // Handle errors when setting cookies
-        }
-      },
-    },
-  })
+  const supabase = getServiceClient()
 
   const location = formData.get("location") as string
 
@@ -58,25 +40,7 @@ export async function createProperty(formData: FormData) {
 }
 
 export async function updateProperty(formData: FormData) {
-  const { cookies } = await import("next/headers")
-  const cookieStore = await cookies()
-
-  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll()
-      },
-      setAll(cookiesToSet) {
-        try {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options)
-          })
-        } catch {
-          // Handle errors when setting cookies
-        }
-      },
-    },
-  })
+  const supabase = getServiceClient()
 
   const id = formData.get("id") as string
   const location = formData.get("location") as string
@@ -109,25 +73,7 @@ export async function updateProperty(formData: FormData) {
 }
 
 export async function deleteProperty(propertyId: string) {
-  const { cookies } = await import("next/headers")
-  const cookieStore = await cookies()
-
-  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll()
-      },
-      setAll(cookiesToSet) {
-        try {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options)
-          })
-        } catch {
-          // Handle errors when setting cookies
-        }
-      },
-    },
-  })
+  const supabase = getServiceClient()
 
   const { error } = await supabase.from("properties").delete().eq("id", propertyId)
 
