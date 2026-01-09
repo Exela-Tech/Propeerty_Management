@@ -749,23 +749,43 @@ export async function recordTaxTransaction(taxType: string, amount: number, desc
 export async function getBankReconciliation(bankAccountId: string, statementDate: string) {
   const supabase = getServiceClient()
 
-  const { data: glEntries } = await supabase
+  // First get the bank account to retrieve its GL account ID
+  const { data: bankAccount, error: bankError } = await supabase
+    .from("bank_accounts")
+    .select("id, balance, gl_account_id, account_name, bank_name")
+    .eq("id", bankAccountId)
+    .single()
+
+  if (bankError || !bankAccount) {
+    throw new Error("Bank account not found")
+  }
+
+  if (!bankAccount.gl_account_id) {
+    throw new Error("Bank account is not linked to a GL account")
+  }
+
+  // Get GL entries for the bank's GL account
+  const { data: glEntries, error: glError } = await supabase
     .from("general_ledger")
     .select("*")
-    .eq("account_id", bankAccountId)
+    .eq("account_id", bankAccount.gl_account_id)
     .lte("transaction_date", statementDate)
-    .order("transaction_date")
+    .order("transaction_date", { ascending: true })
 
-  const { data: bankAccount } = await supabase.from("bank_accounts").select("balance").eq("id", bankAccountId).single()
+  if (glError) {
+    console.error("Error fetching GL entries:", glError)
+    throw new Error("Failed to fetch general ledger entries")
+  }
 
   const glBalance = (glEntries || []).reduce((sum, entry) => sum + (entry.debit || 0) - (entry.credit || 0), 0) || 0
 
-  const discrepancy = (bankAccount?.balance || 0) - glBalance
+  const discrepancy = (bankAccount.balance || 0) - glBalance
 
   return {
     bankAccountId,
+    bankAccountName: `${bankAccount.bank_name} - ${bankAccount.account_name}`,
     statementDate,
-    bankStatement: bankAccount?.balance || 0,
+    bankStatement: bankAccount.balance || 0,
     glBalance,
     discrepancy,
     isReconciled: Math.abs(discrepancy) < 0.01,
@@ -882,7 +902,19 @@ export async function getAccountingDashboard() {
 export async function getBankReconciliationSummary() {
   const supabase = getServiceClient()
 
-  const { data: banks } = await supabase.from("bank_accounts").select("id, account_name, bank_name, current_balance")
+  const { data: banks, error } = await supabase
+    .from("bank_accounts")
+    .select("id, account_name, bank_name, balance, gl_account_id")
+    .order("account_name", { ascending: true })
+
+  if (error) {
+    console.error("Error fetching bank accounts for reconciliation:", error)
+    return {
+      accounts: [],
+      totalBalance: 0,
+      isReconciled: false,
+    }
+  }
 
   if (!banks || banks.length === 0) {
     return {
@@ -896,9 +928,9 @@ export async function getBankReconciliationSummary() {
     accounts: banks.map((bank) => ({
       id: bank.id,
       name: `${bank.bank_name} - ${bank.account_name}`,
-      balance: bank.current_balance,
+      balance: bank.balance || 0,
     })),
-    totalBalance: banks.reduce((sum, b) => sum + (b.current_balance || 0), 0),
+    totalBalance: banks.reduce((sum, b) => sum + (b.balance || 0), 0),
     isReconciled: true,
   }
 }
