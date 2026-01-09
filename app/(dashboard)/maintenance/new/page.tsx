@@ -194,7 +194,7 @@ export default function NewMaintenanceRequestPage() {
                     const monthValue = date.toISOString().slice(0, 7)
                     const monthLabel = date.toLocaleString("default", { month: "long", year: "numeric" })
                     return (
-                      <SelectItem key={monthValue} value={monthValue}>
+                      <SelectItem key={`month-${i}-${monthValue}`} value={monthValue}>
                         {monthLabel}
                       </SelectItem>
                     )
