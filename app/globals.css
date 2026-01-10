@@ -122,3 +122,40 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Print styles for statements */
+@media print {
+  @page {
+    margin: 1cm;
+    size: A4;
+  }
+
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Ensure tables don't break across pages */
+  table {
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tfoot {
+    display: table-footer-group;
+  }
+
+  /* Hide non-essential elements when printing */
+  button:not([class*="print"]),
+  .no-print {
+    display: none !important;
+  }
+}

@@ -17,12 +17,12 @@ export const metadata: Metadata = {
   title: "Exela Property Management Software",
   description:
     "Complete property management solution for landlords. Track tenants, manage maintenance requests, collect payments, and streamline operations.",
- icons: {
+  icons: {
   icon: [
-    { url: "/Exela-Logo.png", sizes: "32x32", type: "image/png" },
-    { url: "/Exela-Logo.png", sizes: "192x192", type: "image/png" },
+    { url: "/Exela-logo.png", sizes: "32x32", type: "image/png" },
+    { url: "/Exela-logo.png", sizes: "192x192", type: "image/png" },
   ],
-  apple: "/Exela-Logo.png", // white background is okay for Apple
+  apple: "/Exela-logo.png", // white background is okay for Apple
 }
 
 }
