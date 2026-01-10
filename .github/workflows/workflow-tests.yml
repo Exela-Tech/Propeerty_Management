@@ -1,0 +1,163 @@
+name: Workflow System Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+      - 'feature/**'
+    paths:
+      - 'app/(dashboard)/workflows/**'
+      - 'scripts/060_create_workflow_system.sql'
+      - '.github/workflows/workflow-tests.yml'
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'app/(dashboard)/workflows/**'
+      - 'scripts/060_create_workflow_system.sql'
+
+jobs:
+  workflow-schema-validation:
+    name: Validate Workflow Schema
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Validate SQL Schema
+        run: |
+          echo "Validating workflow system SQL schema..."
+          # Check for required tables
+          required_tables=(
+            "workflow_definitions"
+            "workflow_instances"
+            "workflow_transitions"
+            "workflow_approvals"
+            "workflow_rules"
+            "workflow_notifications"
+          )
+          
+          for table in "${required_tables[@]}"; do
+            if ! grep -q "CREATE TABLE.*$table" scripts/060_create_workflow_system.sql; then
+              echo "Error: Required table '$table' not found in schema"
+              exit 1
+            fi
+            echo "✓ Table '$table' found"
+          done
+          
+          # Check for required functions
+          required_functions=(
+            "get_pending_approvals"
+            "transition_workflow_stage"
+          )
+          
+          for func in "${required_functions[@]}"; do
+            if ! grep -q "CREATE.*FUNCTION.*$func" scripts/060_create_workflow_system.sql; then
+              echo "Error: Required function '$func' not found in schema"
+              exit 1
+            fi
+            echo "✓ Function '$func' found"
+          done
+          
+          echo "Schema validation passed!"
+
+  workflow-actions-validation:
+    name: Validate Workflow Actions
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check workflow actions
+        run: |
+          echo "Type checking workflow actions..."
+          npx tsc --noEmit app/(dashboard)/workflows/actions.ts
+          echo "Type check passed!"
+
+      - name: Check for required exports
+        run: |
+          echo "Checking for required workflow action exports..."
+          required_exports=(
+            "getWorkflowDefinitions"
+            "getWorkflowInstances"
+            "createWorkflowInstance"
+            "transitionWorkflowStage"
+            "approveWorkflowStage"
+            "rejectWorkflowStage"
+            "getPendingApprovals"
+          )
+          
+          for export_name in "${required_exports[@]}"; do
+            if ! grep -q "export.*$export_name" app/(dashboard)/workflows/actions.ts; then
+              echo "Error: Required export '$export_name' not found"
+              exit 1
+            fi
+            echo "✓ Export '$export_name' found"
+          done
+          
+          echo "All required exports found!"
+
+  workflow-ui-validation:
+    name: Validate Workflow UI Components
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check workflow UI components
+        run: |
+          echo "Type checking workflow UI components..."
+          npx tsc --noEmit app/(dashboard)/workflows/**/*.tsx
+          echo "Type check passed!"
+
+      - name: Check for required UI files
+        run: |
+          echo "Checking for required UI components..."
+          required_files=(
+            "app/(dashboard)/workflows/page.tsx"
+            "app/(dashboard)/workflows/[id]/page.tsx"
+            "app/(dashboard)/workflows/actions.ts"
+          )
+          
+          for file in "${required_files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "Error: Required file '$file' not found"
+              exit 1
+            fi
+            echo "✓ File '$file' found"
+          done
+          
+          echo "All required UI files found!"
