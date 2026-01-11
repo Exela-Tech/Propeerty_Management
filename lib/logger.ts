@@ -170,6 +170,8 @@ class Logger {
         // eslint-disable-next-line no-console
         console.error(logMessage, ...sanitizedArgs)
         break
+      default:
+        break
     }
   }
 

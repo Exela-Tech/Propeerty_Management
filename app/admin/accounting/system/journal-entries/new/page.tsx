@@ -19,6 +19,7 @@ interface Account {
   account_name: string
   account_type: string
   normal_balance: string
+  is_active?: boolean
 }
 
 interface JournalLine {
@@ -80,10 +81,10 @@ export default function NewJournalEntryPage() {
     newLines[index] = { ...newLines[index], [field]: value }
     
     // If debit is entered, clear credit and vice versa
-    if (field === "debit_amount" && value > 0) {
+    if (field === "debit_amount" && typeof value === "number" && value > 0) {
       newLines[index].credit_amount = 0
     }
-    if (field === "credit_amount" && value > 0) {
+    if (field === "credit_amount" && typeof value === "number" && value > 0) {
       newLines[index].debit_amount = 0
     }
     

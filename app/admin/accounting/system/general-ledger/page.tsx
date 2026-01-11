@@ -40,6 +40,7 @@ interface Account {
   id: string
   account_code: string
   account_name: string
+  is_active?: boolean
 }
 
 export default function GeneralLedgerPage() {

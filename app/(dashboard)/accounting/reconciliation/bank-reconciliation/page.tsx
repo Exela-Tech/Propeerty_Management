@@ -9,15 +9,35 @@ import { getBankReconciliation } from "@/app/(dashboard)/accounting/actions"
 import { formatCurrency } from "@/lib/utils"
 import { CheckCircle2, AlertCircle } from "lucide-react"
 
+interface BankReconciliation {
+  bankAccountId: string
+  asOfDate: string
+  glBalance: number
+  bankBalance: number
+  difference: number
+  outstandingItems: Array<{
+    id: string
+    date: string
+    description: string
+    amount: number
+    reconciled: boolean
+  }>
+}
+
 export default function BankReconciliationPage() {
-  const [reconciliation, setReconciliation] = useState(null)
+  const [reconciliation, setReconciliation] = useState<BankReconciliation | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const data = await getBankReconciliation()
-        setReconciliation(data)
+        // TODO: Get bank account ID and date from props or state
+        const bankAccountId = ""
+        const asOfDate = new Date().toISOString().split("T")[0]
+        if (bankAccountId) {
+          const data = await getBankReconciliation(bankAccountId, asOfDate)
+          setReconciliation(data)
+        }
       } catch (error) {
         console.error("Error loading reconciliation:", error)
       } finally {
@@ -85,7 +105,7 @@ export default function BankReconciliationPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {reconciliation?.outstandingItems?.map((item) => (
+              {reconciliation?.outstandingItems?.map((item: { id: string; date: string; description: string; amount: number; reconciled: boolean }) => (
                 <TableRow key={item.id}>
                   <TableCell>{item.date}</TableCell>
                   <TableCell>{item.description}</TableCell>

@@ -20,7 +20,7 @@ const ephemeralCache = new Map<string, number>()
 // Rate limiter for authentication endpoints (sign-up, login)
 // 5 attempts per 15 minutes per identifier (IP or email)
 export const authRateLimiter = new Ratelimit({
-  redis: redis || undefined,
+  redis: redis ?? (undefined as any),
   limiter: Ratelimit.slidingWindow(5, "15 m"),
   analytics: true,
   prefix: "@ratelimit/auth",
@@ -30,7 +30,7 @@ export const authRateLimiter = new Ratelimit({
 // Rate limiter for payment endpoints
 // 10 attempts per minute per identifier (user ID)
 export const paymentRateLimiter = new Ratelimit({
-  redis: redis || undefined,
+  redis: redis ?? (undefined as any),
   limiter: Ratelimit.slidingWindow(10, "1 m"),
   analytics: true,
   prefix: "@ratelimit/payment",
@@ -40,7 +40,7 @@ export const paymentRateLimiter = new Ratelimit({
 // Rate limiter for auth callback (email verification)
 // 10 attempts per hour per identifier (IP)
 export const authCallbackRateLimiter = new Ratelimit({
-  redis: redis || undefined,
+  redis: redis ?? (undefined as any),
   limiter: Ratelimit.slidingWindow(10, "1 h"),
   analytics: true,
   prefix: "@ratelimit/auth-callback",

@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -26,16 +26,7 @@ export function TeamMemberSignupForm() {
   const searchParams = useSearchParams()
   const router = useRouter()
 
-  useEffect(() => {
-    // Get token from URL params
-    const urlToken = searchParams.get("token")
-    if (urlToken) {
-      setToken(urlToken)
-      verifyToken(urlToken)
-    }
-  }, [searchParams])
-
-  const verifyToken = async (tokenValue: string) => {
+  const verifyToken = useCallback(async (tokenValue: string) => {
     setVerifyingToken(true)
     const result = await verifyInvitationToken(tokenValue)
     if (result.error) {
@@ -44,7 +35,16 @@ export function TeamMemberSignupForm() {
       setInvitationData(result.data)
     }
     setVerifyingToken(false)
-  }
+  }, [])
+
+  useEffect(() => {
+    // Get token from URL params
+    const urlToken = searchParams.get("token")
+    if (urlToken) {
+      setToken(urlToken)
+      verifyToken(urlToken)
+    }
+  }, [searchParams, verifyToken])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

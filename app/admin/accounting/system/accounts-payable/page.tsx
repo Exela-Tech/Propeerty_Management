@@ -59,7 +59,7 @@ export default function AccountsPayablePage() {
         </Badge>
       )
     }
-    const badges: Record<string, JSX.Element> = {
+    const badges: Record<string, React.JSX.Element> = {
       OPEN: <Badge variant="default">Open</Badge>,
       PARTIAL: <Badge variant="secondary">Partial</Badge>,
       PAID: <Badge variant="outline">Paid</Badge>,

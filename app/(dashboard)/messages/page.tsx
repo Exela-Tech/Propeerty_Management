@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { createBrowserClient } from "@supabase/ssr"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -29,11 +29,6 @@ export default function MessagesPage() {
   const [selectedChannel, setSelectedChannel] = useState("general")
   const [currentUser, setCurrentUser] = useState<Profile | null>(null)
 
-  useEffect(() => {
-    fetchMessages()
-    fetchCurrentUser()
-  }, [selectedChannel])
-
   async function fetchCurrentUser() {
     try {
       const supabase = createBrowserClient(
@@ -59,7 +54,7 @@ export default function MessagesPage() {
     }
   }
 
-  async function fetchMessages() {
+  const fetchMessages = useCallback(async () => {
     try {
       const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -80,7 +75,12 @@ export default function MessagesPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [selectedChannel])
+
+  useEffect(() => {
+    fetchMessages()
+    fetchCurrentUser()
+  }, [fetchMessages])
 
   async function sendMessage() {
     if (!newMessage.trim()) return

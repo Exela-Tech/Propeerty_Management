@@ -44,7 +44,7 @@ export function RecordPaymentDialog({
 
   useEffect(() => {
     if (open) {
-      getBankAccounts().then((accounts) => {
+      getBankAccounts().then((accounts: BankAccount[]) => {
         setBankAccounts(accounts)
         if (accounts.length > 0) {
           setBankAccountId(accounts[0].id)

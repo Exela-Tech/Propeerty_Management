@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -17,16 +17,17 @@ import { useToast } from "@/hooks/use-toast"
 export default function NewPropertyPage() {
   const [loading, setLoading] = useState(false)
   const [landlords, setLandlords] = useState<any[]>([])
-  const supabase = createClient()
   const { toast } = useToast()
 
-  useEffect(() => {
-    async function loadData() {
-      const { data } = await supabase.from("owners").select("*").order("name")
-      if (data) setLandlords(data)
-    }
-    loadData()
+  const loadData = useCallback(async () => {
+    const supabase = createClient()
+    const { data } = await supabase.from("owners").select("*").order("name")
+    if (data) setLandlords(data)
   }, [])
+
+  useEffect(() => {
+    loadData()
+  }, [loadData])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()

@@ -232,8 +232,6 @@ export default function DashboardPage() {
                   data={occupancyData}
                   cx="50%"
                   cy="50%"
-                  labelLine={false}
-                  label={({ name, value }) => `${name}: ${value}`}
                   outerRadius={80}
                 >
                   {occupancyData.map((entry, index) => (
