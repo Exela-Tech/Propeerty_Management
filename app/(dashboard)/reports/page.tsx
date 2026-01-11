@@ -38,7 +38,10 @@ export default function ReportsPage() {
   const [properties, setProperties] = useState<any[]>([])
   const [landlords, setLandlords] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
-  const [selectedMonth, setSelectedMonth] = useState("")
+  const [selectedMonth, setSelectedMonth] = useState(() => {
+    const today = new Date()
+    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`
+  })
   const [monthlyStatusFilter, setMonthlyStatusFilter] = useState("all")
   const [monthlySearchTenant, setMonthlySearchTenant] = useState("")
 
@@ -64,13 +67,6 @@ export default function ReportsPage() {
     return months
   }, [])
 
-  useEffect(() => {
-    if (availableMonths.length > 0 && !selectedMonth) {
-      const today = new Date()
-      const currentMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`
-      setSelectedMonth(currentMonth)
-    }
-  }, [availableMonths, selectedMonth])
 
   useEffect(() => {
     const loadData = async () => {

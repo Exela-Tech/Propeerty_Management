@@ -173,7 +173,7 @@ export function ExistingUsersTable({ users }: { users: User[] }) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Update User Role</DialogTitle>
-            <DialogDescription>Change the user's role and permissions</DialogDescription>
+            <DialogDescription>Change the user&apos;s role and permissions</DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
             <Label htmlFor="role">Select New Role</Label>

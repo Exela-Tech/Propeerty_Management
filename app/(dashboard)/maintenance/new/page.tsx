@@ -40,7 +40,7 @@ export default function NewMaintenanceRequestPage() {
       }
     }
     loadData()
-  }, [])
+  }, [toast])
 
   useEffect(() => {
     if (selectedProperty) {

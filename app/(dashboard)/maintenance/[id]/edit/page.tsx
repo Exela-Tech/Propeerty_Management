@@ -39,7 +39,7 @@ export default function EditMaintenanceRequestPage() {
       }
     }
     loadRequest()
-  }, [id])
+  }, [id, toast])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
