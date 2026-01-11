@@ -18,7 +18,16 @@ import { getAccountingDashboard } from "@/app/(dashboard)/accounting/actions"
 import { formatCurrency } from "@/lib/utils"
 
 export default function AccountingDashboardPage() {
-  const [data, setData] = useState({
+  const [data, setData] = useState<{
+    metrics: {
+      totalIncome: number
+      totalExpenses: number
+      netProfit: number
+      trustBalance: number
+    }
+    chartData: Array<{ month: string; income: number; expenses: number }>
+    expensesByCategory: Array<{ category: string; amount: number }>
+  }>({
     metrics: {
       totalIncome: 0,
       totalExpenses: 0,
@@ -105,7 +114,12 @@ export default function AccountingDashboardPage() {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
-                  <Tooltip formatter={(value) => formatCurrency(value)} />
+                  <Tooltip formatter={(value: string | number | (string | number)[]) => {
+                    if (typeof value === 'number' || typeof value === 'string') {
+                      return formatCurrency(Number(value))
+                    }
+                    return value
+                  }} />
                   <Legend />
                   <Line type="monotone" dataKey="income" stroke="#10b981" />
                   <Line type="monotone" dataKey="expenses" stroke="#ef4444" />
@@ -128,7 +142,12 @@ export default function AccountingDashboardPage() {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="category" />
                   <YAxis />
-                  <Tooltip formatter={(value) => formatCurrency(value)} />
+                  <Tooltip formatter={(value: string | number | (string | number)[]) => {
+                    if (typeof value === 'number' || typeof value === 'string') {
+                      return formatCurrency(Number(value))
+                    }
+                    return value
+                  }} />
                   <Bar dataKey="amount" fill="#3b82f6" />
                 </BarChart>
               </ResponsiveContainer>

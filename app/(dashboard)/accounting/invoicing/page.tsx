@@ -8,17 +8,35 @@ import { FileText, Plus, Clock, CheckCircle } from "lucide-react"
 import { getInvoiceSummary, getInvoices } from "@/app/(dashboard)/accounting/invoicing/actions"
 import { formatCurrency } from "@/lib/utils"
 
+interface Invoice {
+  id: string
+  invoiceNumber: string
+  clientName: string
+  amount: number
+  status: string
+}
+
+interface InvoiceSummary {
+  draft: number
+  sent: number
+  paid: number
+  overdue: number
+  cancelled: number
+  totalRevenue: number
+  pending?: number
+}
+
 export default function InvoicingPage() {
-  const [summary, setSummary] = useState({ draft: 0, pending: 0, paid: 0, totalRevenue: 0 })
-  const [invoices, setInvoices] = useState([])
+  const [summary, setSummary] = useState<InvoiceSummary>({ draft: 0, sent: 0, paid: 0, overdue: 0, cancelled: 0, totalRevenue: 0 })
+  const [invoices, setInvoices] = useState<Invoice[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const loadData = async () => {
       try {
         const [summaryData, invoicesData] = await Promise.all([getInvoiceSummary(), getInvoices()])
-        setSummary(summaryData)
-        setInvoices(invoicesData)
+        setSummary(summaryData as InvoiceSummary)
+        setInvoices(invoicesData as Invoice[])
       } catch (error) {
         console.error("Error loading invoices:", error)
       } finally {
@@ -62,7 +80,7 @@ export default function InvoicingPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{summary.pending}</p>
+            <p className="text-2xl font-bold">{summary.pending ?? summary.sent}</p>
           </CardContent>
         </Card>
 

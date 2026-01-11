@@ -88,13 +88,18 @@ export function errorResponse(
   code?: string,
   details?: unknown,
 ): NextResponse<ApiErrorResponse> {
+  const error: ApiError = {
+    message,
+  }
+  if (code) {
+    error.code = code
+  }
+  if (details) {
+    error.details = details
+  }
   const response: ApiErrorResponse = {
     success: false,
-    error: {
-      message,
-      ...(code && { code }),
-      ...(details && { details }),
-    },
+    error,
   }
 
   // Log error for monitoring

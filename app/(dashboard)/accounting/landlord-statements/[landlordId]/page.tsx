@@ -34,7 +34,7 @@ export default async function LandlordStatementDetailPage({ params }: { params: 
   const landlordName = subledger[0]?.landlord_id
 
   const summary = subledger.reduce(
-    (acc, row) => ({
+    (acc: { totalRent: number; totalFees: number; totalExpenses: number; totalCommissions: number; totalPaid: number }, row: any) => ({
       totalRent: acc.totalRent + (row.rent_collected || 0),
       totalFees: acc.totalFees + (row.management_fee_deducted || 0),
       totalExpenses: acc.totalExpenses + (row.expense_deducted || 0),

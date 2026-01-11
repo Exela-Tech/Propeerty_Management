@@ -13,15 +13,43 @@ import {
   getAccountReconciliation,
 } from "@/app/(dashboard)/accounting/actions"
 
+interface BankReconciliationData {
+  accounts?: Array<{ id: string; account_name: string; bank_name: string; current_balance: number; gl_account_id: string }>
+  bankAccountId?: string
+  asOfDate?: string
+  glBalance?: number
+  bankBalance?: number
+  difference?: number
+  outstandingItems?: Array<{ id: string; date: string; description: string; amount: number; reconciled: boolean }>
+  isReconciled?: boolean
+  discrepancy?: number
+  bankStatement?: number
+}
+
+interface AccountReconciliationData {
+  accounts?: Array<{ id: string; account_code: string; account_name: string; account_type: string }>
+  accountId?: string
+  accountName?: string
+  accountCode?: string
+  asOfDate?: string
+  totalDebits?: number
+  totalCredits?: number
+  balance?: number
+  entries?: Array<{ id: string; debit: number; credit: number; transaction_date: string; description: string }>
+  isReconciled?: boolean
+  discrepancy?: number
+  bankStatement?: number
+}
+
 export default function ReconciliationPage() {
-  const [bankReconciliation, setBankReconciliation] = useState(null)
-  const [accountReconciliation, setAccountReconciliation] = useState(null)
+  const [bankReconciliation, setBankReconciliation] = useState<BankReconciliationData | null>(null)
+  const [accountReconciliation, setAccountReconciliation] = useState<AccountReconciliationData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [selectedBank, setSelectedBank] = useState("")
   const [selectedAccount, setSelectedAccount] = useState("")
   const [statementDate, setStatementDate] = useState(new Date().toISOString().split("T")[0])
-  const [bankList, setBankList] = useState([])
-  const [accountList, setAccountList] = useState([])
+  const [bankList, setBankList] = useState<Array<{ id: string; account_name: string; bank_name: string; current_balance: number; gl_account_id: string }>>([])
+  const [accountList, setAccountList] = useState<Array<{ id: string; account_code: string; account_name: string; account_type: string }>>([])
 
   useEffect(() => {
     const loadInitialData = async () => {
@@ -74,7 +102,10 @@ export default function ReconciliationPage() {
     if (!selectedAccount) return
     try {
       const data = await getAccountReconciliation(selectedAccount, statementDate)
-      setAccountReconciliation(data)
+      setAccountReconciliation({ 
+        ...data, 
+        accounts: accountList,
+      } as unknown as AccountReconciliationData)
     } catch (error) {
       console.error("Error reconciling account:", error)
     }
@@ -112,7 +143,7 @@ export default function ReconciliationPage() {
                       {bankList.length > 0 ? (
                         bankList.map((bank) => (
                           <SelectItem key={bank.id} value={bank.id}>
-                            {bank.name}
+                            {bank.account_name}
                           </SelectItem>
                         ))
                       ) : (

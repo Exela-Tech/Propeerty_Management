@@ -220,9 +220,8 @@ export async function getAvailableMonths() {
   const { data: payments } = await supabase
     .from("tenant_payments")
     .select("payment_period")
-    .distinct()
     .not("payment_period", "is", null)
     .order("payment_period", { ascending: false })
 
-  return [...new Set(payments?.map((p) => p.payment_period) || [])].filter((m) => m)
+  return [...new Set(payments?.map((p: { payment_period: string }) => p.payment_period) || [])].filter((m) => m)
 }

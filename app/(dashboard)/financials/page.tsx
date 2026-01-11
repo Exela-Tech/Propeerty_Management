@@ -17,15 +17,27 @@ import {
   ResponsiveContainer,
 } from "recharts"
 
+interface LandlordFinancial {
+  landlord: { name: string; id: string }
+  properties: number
+  tenants: number
+  totalMonthlyRent: number
+  totalPaid: number
+  totalBalance: number
+  commission: number
+  landlordPayout: number
+  tenantDetails: any[]
+}
+
 export default function FinancialsPage() {
-  const [landlordFinancials, setLandlordFinancials] = useState([])
+  const [landlordFinancials, setLandlordFinancials] = useState<LandlordFinancial[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const loadData = async () => {
       try {
         const landlords = await getLandlordFinancials()
-        setLandlordFinancials(landlords)
+        setLandlordFinancials(landlords as LandlordFinancial[])
       } catch (error) {
         console.error("Error loading financials:", error)
       } finally {
@@ -39,11 +51,11 @@ export default function FinancialsPage() {
     return <div className="p-8">Loading...</div>
   }
 
-  const totalRevenue = landlordFinancials.reduce((sum, l) => sum + l.totalMonthlyRent, 0)
-  const totalCommission = landlordFinancials.reduce((sum, l) => sum + l.commission, 0)
-  const totalLandlordPayouts = landlordFinancials.reduce((sum, l) => sum + l.landlordPayout, 0)
-  const totalBalance = landlordFinancials.reduce((sum, l) => sum + l.totalBalance, 0)
-  const totalPaid = landlordFinancials.reduce((sum, l) => sum + l.totalPaid, 0)
+  const totalRevenue = landlordFinancials.reduce((sum: number, l: LandlordFinancial) => sum + l.totalMonthlyRent, 0)
+  const totalCommission = landlordFinancials.reduce((sum: number, l: LandlordFinancial) => sum + l.commission, 0)
+  const totalLandlordPayouts = landlordFinancials.reduce((sum: number, l: LandlordFinancial) => sum + l.landlordPayout, 0)
+  const totalBalance = landlordFinancials.reduce((sum: number, l: LandlordFinancial) => sum + l.totalBalance, 0)
+  const totalPaid = landlordFinancials.reduce((sum: number, l: LandlordFinancial) => sum + l.totalPaid, 0)
   const collectionRate = totalRevenue > 0 ? ((totalPaid / totalRevenue) * 100).toFixed(1) : 0
 
   // Prepare chart data
@@ -52,7 +64,7 @@ export default function FinancialsPage() {
     { name: "Outstanding", value: totalBalance, color: "#ef4444" },
   ]
 
-  const landlordPayoutData = landlordFinancials.slice(0, 5).map((l) => ({
+  const landlordPayoutData = landlordFinancials.slice(0, 5).map((l: LandlordFinancial) => ({
     name: l.landlord.name.split(" ")[0],
     payout: l.landlordPayout,
     commission: l.commission,
