@@ -1,13 +1,51 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
 import { getCashFlowStatement } from "@/app/(dashboard)/accounting/actions"
 import { formatCurrency } from "@/lib/utils"
 
-export default async function CashFlowPage() {
-  const today = new Date()
-  const startDate = new Date(today.getFullYear(), 0, 1).toISOString().split('T')[0]
-  const endDate = today.toISOString().split('T')[0]
-  const cashFlow = await getCashFlowStatement(startDate, endDate)
+export default function CashFlowPage() {
+  const [cashFlow, setCashFlow] = useState<{
+    startDate: string
+    endDate: string
+    transactions: any[]
+  } | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const today = new Date()
+        const startDate = new Date(today.getFullYear(), 0, 1).toISOString().split('T')[0]
+        const endDate = today.toISOString().split('T')[0]
+        const data = await getCashFlowStatement(startDate, endDate)
+        setCashFlow(data)
+      } catch (error) {
+        console.error("Error loading cash flow:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    loadData()
+  }, [])
+
+  if (isLoading || !cashFlow) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Cash Flow Statement</h1>
+          <p className="text-gray-500 mt-2">Track cash movement across your business</p>
+        </div>
+        <Card>
+          <CardContent className="py-8">
+            <p className="text-center text-gray-500">Loading cash flow data...</p>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   // Simplified cash flow - categorize transactions
   const operatingInflow = (cashFlow.transactions || []).filter((t: any) => 
