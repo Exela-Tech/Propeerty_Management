@@ -12,7 +12,9 @@ import {
   getPaymentDeposits,
   createPaymentDeposit,
   getBankTransactions,
+  getUndepositedFundsStatement,
 } from "../actions"
+import { Printer } from "lucide-react"
 
 export default function CashManagementPage() {
   const [bankAccounts, setBankAccounts] = useState<any[]>([])
@@ -27,6 +29,12 @@ export default function CashManagementPage() {
   const [bankTransactions, setBankTransactions] = useState<any[]>([])
   const [selectedBankInfo, setSelectedBankInfo] = useState<any>(null)
   const [loadingTransactions, setLoadingTransactions] = useState(false)
+
+  // Statement state
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1)
+  const [statement, setStatement] = useState<any>(null)
+  const [loadingStatement, setLoadingStatement] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -179,8 +187,9 @@ export default function CashManagementPage() {
       </div>
 
       <Tabs defaultValue="undeposited" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="undeposited">Undeposited Funds</TabsTrigger>
+          <TabsTrigger value="statement">Monthly Statement</TabsTrigger>
           <TabsTrigger value="deposits">Bank Transactions</TabsTrigger>
         </TabsList>
 
@@ -316,6 +325,303 @@ export default function CashManagementPage() {
               <Button onClick={handleDepositPayments} disabled={selectedPayments.size === 0} className="w-full">
                 Deposit {selectedPayments.size} Payment(s) to Bank
               </Button>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="statement">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Undeposited Funds Statement</CardTitle>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    View monthly statement showing all payments received (debits) and deposits made (credits)
+                  </p>
+                </div>
+                <Button onClick={() => window.print()} variant="outline" className="gap-2">
+                  <Printer className="w-4 h-4" />
+                  Print Statement
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-4 items-end">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium mb-2">Select Month</label>
+                  <div className="flex gap-2">
+                    <select
+                      value={selectedMonth}
+                      onChange={(e) => {
+                        setSelectedMonth(Number.parseInt(e.target.value))
+                        setStatement(null)
+                      }}
+                      className="flex-1 p-2 border rounded-md"
+                    >
+                      {Array.from({ length: 12 }, (_, i) => i + 1).map((month) => (
+                        <option key={month} value={month}>
+                          {new Date(2000, month - 1, 1).toLocaleDateString("en-US", { month: "long" })}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      value={selectedYear}
+                      onChange={(e) => {
+                        setSelectedYear(Number.parseInt(e.target.value))
+                        setStatement(null)
+                      }}
+                      className="flex-1 p-2 border rounded-md"
+                    >
+                      {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 2 + i).map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
+                    <Button
+                      onClick={async () => {
+                        setLoadingStatement(true)
+                        try {
+                          const data = await getUndepositedFundsStatement(selectedYear, selectedMonth)
+                          setStatement(data)
+                        } catch (error) {
+                          console.error("Error loading statement:", error)
+                          alert("Failed to load statement")
+                        } finally {
+                          setLoadingStatement(false)
+                        }
+                      }}
+                      disabled={loadingStatement}
+                    >
+                      {loadingStatement ? "Loading..." : "Load Statement"}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {statement && (
+                <div className="space-y-4 print:break-inside-avoid">
+                  {/* Statement Header - Print Only */}
+                  <div className="hidden print:block mb-6">
+                    <h2 className="text-2xl font-bold mb-2">Undeposited Funds Statement</h2>
+                    <p className="text-lg">{statement.period.monthName}</p>
+                    <p className="text-sm text-muted-foreground">
+                      Period: {statement.period.startDate} to {statement.period.endDate}
+                    </p>
+                  </div>
+
+                  {/* Summary Cards */}
+                  <div className="grid grid-cols-4 gap-4 print:grid-cols-4">
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-xs font-medium">Opening Balance</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-lg font-bold">
+                          {statement.openingBalance.toLocaleString("en-US", {
+                            style: "currency",
+                            currency: "UGX",
+                            minimumFractionDigits: 0,
+                          })}
+                        </div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-xs font-medium">Total Debits</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-lg font-bold text-green-700">
+                          {statement.totalDebits.toLocaleString("en-US", {
+                            style: "currency",
+                            currency: "UGX",
+                            minimumFractionDigits: 0,
+                          })}
+                        </div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-xs font-medium">Total Credits</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-lg font-bold text-red-700">
+                          {statement.totalCredits.toLocaleString("en-US", {
+                            style: "currency",
+                            currency: "UGX",
+                            minimumFractionDigits: 0,
+                          })}
+                        </div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-xs font-medium">Closing Balance</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-lg font-bold">
+                          {statement.closingBalance.toLocaleString("en-US", {
+                            style: "currency",
+                            currency: "UGX",
+                            minimumFractionDigits: 0,
+                          })}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Statement Table */}
+                  <div className="overflow-x-auto border rounded-lg print:border-0">
+                    <table className="w-full text-sm print:text-xs">
+                      <thead>
+                        <tr className="border-b bg-muted print:bg-transparent">
+                          <th className="text-left p-3 font-semibold">Date</th>
+                          <th className="text-left p-3 font-semibold">Description</th>
+                          <th className="text-left p-3 font-semibold">Type</th>
+                          <th className="text-right p-3 font-semibold text-green-700">Debit</th>
+                          <th className="text-right p-3 font-semibold text-red-700">Credit</th>
+                          <th className="text-right p-3 font-semibold">Balance</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {statement.entries.length === 0 ? (
+                          <tr>
+                            <td colSpan={6} className="p-8 text-center text-muted-foreground">
+                              No transactions found for this period
+                            </td>
+                          </tr>
+                        ) : (
+                          <>
+                            {/* Opening Balance Row */}
+                            <tr className="border-b bg-muted/30 print:bg-transparent">
+                              <td className="p-3 font-mono" colSpan={3}>
+                                <strong>Opening Balance</strong>
+                              </td>
+                              <td className="p-3 text-right font-mono">-</td>
+                              <td className="p-3 text-right font-mono">-</td>
+                              <td className="p-3 text-right font-mono font-semibold">
+                                {statement.openingBalance.toLocaleString("en-US", {
+                                  style: "currency",
+                                  currency: "UGX",
+                                  minimumFractionDigits: 0,
+                                })}
+                              </td>
+                            </tr>
+                            {/* Transaction Entries */}
+                            {statement.entries.map((entry: any) => (
+                              <tr key={entry.id} className="border-b hover:bg-muted/30 print:hover:bg-transparent">
+                                <td className="p-3 font-mono text-muted-foreground">
+                                  {new Date(entry.date).toLocaleDateString("en-GB")}
+                                </td>
+                                <td className="p-3">
+                                  <div className="flex flex-col">
+                                    <span className="font-medium">{entry.description}</span>
+                                    {entry.payerName && (
+                                      <span className="text-xs text-muted-foreground">{entry.payerName}</span>
+                                    )}
+                                  </div>
+                                </td>
+                                <td className="p-3">
+                                  <Badge variant="outline" className="text-xs">
+                                    {entry.paymentType}
+                                  </Badge>
+                                </td>
+                                <td className="p-3 text-right font-mono">
+                                  {entry.debit > 0 ? (
+                                    <span className="text-green-700 font-semibold">
+                                      {entry.debit.toLocaleString("en-US", {
+                                        style: "currency",
+                                        currency: "UGX",
+                                        minimumFractionDigits: 0,
+                                      })}
+                                    </span>
+                                  ) : (
+                                    <span className="text-muted-foreground">-</span>
+                                  )}
+                                </td>
+                                <td className="p-3 text-right font-mono">
+                                  {entry.credit > 0 ? (
+                                    <span className="text-red-700 font-semibold">
+                                      {entry.credit.toLocaleString("en-US", {
+                                        style: "currency",
+                                        currency: "UGX",
+                                        minimumFractionDigits: 0,
+                                      })}
+                                    </span>
+                                  ) : (
+                                    <span className="text-muted-foreground">-</span>
+                                  )}
+                                </td>
+                                <td className="p-3 text-right font-mono font-semibold">
+                                  <span className={entry.runningBalance >= 0 ? "text-green-700" : "text-red-700"}>
+                                    {entry.runningBalance.toLocaleString("en-US", {
+                                      style: "currency",
+                                      currency: "UGX",
+                                      minimumFractionDigits: 0,
+                                    })}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                            {/* Totals Row */}
+                            <tr className="border-t-2 font-bold bg-muted print:bg-transparent">
+                              <td colSpan={3} className="p-3 text-right">
+                                <strong>Totals</strong>
+                              </td>
+                              <td className="p-3 text-right font-mono text-green-700">
+                                {statement.totalDebits.toLocaleString("en-US", {
+                                  style: "currency",
+                                  currency: "UGX",
+                                  minimumFractionDigits: 0,
+                                })}
+                              </td>
+                              <td className="p-3 text-right font-mono text-red-700">
+                                {statement.totalCredits.toLocaleString("en-US", {
+                                  style: "currency",
+                                  currency: "UGX",
+                                  minimumFractionDigits: 0,
+                                })}
+                              </td>
+                              <td className="p-3 text-right font-mono font-semibold">
+                                {statement.closingBalance.toLocaleString("en-US", {
+                                  style: "currency",
+                                  currency: "UGX",
+                                  minimumFractionDigits: 0,
+                                })}
+                              </td>
+                            </tr>
+                          </>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Accounting Explanation */}
+                  <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg print:break-inside-avoid">
+                    <p className="text-sm font-medium mb-2">Accounting Explanation:</p>
+                    <ul className="text-sm space-y-1 text-muted-foreground">
+                      <li>
+                        <strong className="text-green-700">Debit (Payment Received):</strong> When a payment is
+                        received, it is posted as a debit to Undeposited Funds, increasing the balance.
+                      </li>
+                      <li>
+                        <strong className="text-red-700">Credit (Deposit Made):</strong> When payments are deposited to
+                        the bank, it is posted as a credit to Undeposited Funds, decreasing the balance.
+                      </li>
+                      <li>
+                        <strong>Balance:</strong> The running balance shows the amount of cash in Undeposited Funds at
+                        any point in time. When all payments are deposited, the balance should be zero.
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              )}
+
+              {!statement && !loadingStatement && (
+                <div className="text-center py-12 text-muted-foreground">
+                  <p>Select a month and click "Load Statement" to view the undeposited funds statement</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

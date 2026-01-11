@@ -180,6 +180,162 @@ export async function getUndepositedFunds() {
   return combinedPayments
 }
 
+export async function getUndepositedFundsStatement(year: number, month: number) {
+  const supabase = getServiceClient()
+
+  // Calculate date range for the selected month
+  const startDate = `${year}-${String(month).padStart(2, "0")}-01`
+  const endDate = new Date(year, month, 0).toISOString().split("T")[0] // Last day of month
+
+  // Get Undeposited Funds account
+  const { data: undepositedAccount } = await supabase
+    .from("chart_of_accounts")
+    .select("id")
+    .eq("account_code", "1015")
+    .single()
+
+  if (!undepositedAccount) {
+    throw new Error("Undeposited Funds account not found")
+  }
+
+  // Get opening balance (balance before the selected month)
+  const { data: openingBalanceEntries } = await supabase
+    .from("general_ledger")
+    .select("debit, credit")
+    .eq("account_id", undepositedAccount.id)
+    .lt("transaction_date", startDate)
+
+  const openingBalance =
+    (openingBalanceEntries || []).reduce((sum, entry) => sum + (entry.debit || 0) - (entry.credit || 0), 0) || 0
+
+  // Get all GL entries for Undeposited Funds in the selected month
+  const { data: glEntries, error: glError } = await supabase
+    .from("general_ledger")
+    .select(
+      "id, transaction_date, debit, credit, description, reference_type, reference_id, created_at",
+    )
+    .eq("account_id", undepositedAccount.id)
+    .gte("transaction_date", startDate)
+    .lte("transaction_date", endDate)
+    .order("transaction_date", { ascending: true })
+    .order("created_at", { ascending: true })
+
+  if (glError) {
+    console.error("Error fetching GL entries:", glError)
+    throw new Error("Failed to fetch undeposited funds statement")
+  }
+
+  // Collect all reference IDs to fetch in batch
+  const tenantPaymentIds: string[] = []
+  const landlordPaymentIds: string[] = []
+  const depositIds: string[] = []
+
+  for (const entry of glEntries || []) {
+    if (entry.reference_type === "tenant_payment" && entry.reference_id) {
+      tenantPaymentIds.push(entry.reference_id)
+    } else if (entry.reference_type === "landlord_payment" && entry.reference_id) {
+      landlordPaymentIds.push(entry.reference_id)
+    } else if (entry.reference_type === "deposit" && entry.reference_id) {
+      depositIds.push(entry.reference_id)
+    }
+  }
+
+  // Fetch all payment and deposit details in batch
+  const [tenantPayments, landlordPayments, deposits] = await Promise.all([
+    tenantPaymentIds.length > 0
+      ? supabase
+          .from("tenant_payments")
+          .select("id, tenant:tenant_id(first_name, last_name)")
+          .in("id", tenantPaymentIds)
+      : { data: [] },
+    landlordPaymentIds.length > 0
+      ? supabase
+          .from("landlord_payments")
+          .select("id, landlord:landlord_id(name)")
+          .in("id", landlordPaymentIds)
+      : { data: [] },
+    depositIds.length > 0
+      ? supabase
+          .from("payment_deposits")
+          .select("id, deposit_reference, bank_account:bank_account_id(account_name, bank_name)")
+          .in("id", depositIds)
+      : { data: [] },
+  ])
+
+  // Create lookup maps
+  const tenantPaymentMap = new Map(
+    (tenantPayments.data || []).map((p: any) => [
+      p.id,
+      p.tenant ? `${p.tenant.first_name} ${p.tenant.last_name}` : "",
+    ]),
+  )
+  const landlordPaymentMap = new Map(
+    (landlordPayments.data || []).map((p: any) => [p.id, p.landlord?.name || ""]),
+  )
+  const depositMap = new Map(
+    (deposits.data || []).map((d: any) => [
+      d.id,
+      d.deposit_reference || `Deposit to ${d.bank_account?.account_name || "Bank"}`,
+    ]),
+  )
+
+  // Build statement entries with running balance
+  const statementEntries: any[] = []
+  let runningBalance = openingBalance
+
+  for (const entry of glEntries || []) {
+    runningBalance += (entry.debit || 0) - (entry.credit || 0)
+
+    // Get payment details from lookup maps
+    let payerName = ""
+    let paymentType = ""
+
+    if (entry.reference_type === "tenant_payment" && entry.reference_id) {
+      payerName = tenantPaymentMap.get(entry.reference_id) || ""
+      paymentType = "Tenant Payment"
+    } else if (entry.reference_type === "landlord_payment" && entry.reference_id) {
+      payerName = landlordPaymentMap.get(entry.reference_id) || ""
+      paymentType = "Landlord Payment"
+    } else if (entry.reference_type === "deposit" && entry.reference_id) {
+      payerName = depositMap.get(entry.reference_id) || ""
+      paymentType = "Deposit"
+    }
+
+    statementEntries.push({
+      id: entry.id,
+      date: entry.transaction_date,
+      description: entry.description,
+      payerName: payerName || entry.description,
+      paymentType: paymentType || entry.reference_type,
+      debit: entry.debit || 0,
+      credit: entry.credit || 0,
+      runningBalance,
+      referenceType: entry.reference_type,
+      referenceId: entry.reference_id,
+    })
+  }
+
+  // Calculate totals
+  const totalDebits = statementEntries.reduce((sum, e) => sum + e.debit, 0)
+  const totalCredits = statementEntries.reduce((sum, e) => sum + e.credit, 0)
+  const closingBalance = openingBalance + totalDebits - totalCredits
+
+  return {
+    period: {
+      year,
+      month,
+      monthName: new Date(year, month - 1, 1).toLocaleDateString("en-US", { month: "long", year: "numeric" }),
+      startDate,
+      endDate,
+    },
+    openingBalance,
+    closingBalance,
+    totalDebits,
+    totalCredits,
+    entries: statementEntries,
+  }
+}
+
 export async function getPaymentDeposits(bankAccountId?: string) {
   const supabase = getServiceClient()
 
