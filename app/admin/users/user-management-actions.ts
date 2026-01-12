@@ -343,3 +343,125 @@ export async function getAllUsers() {
 
   return data || []
 }
+
+export async function getPendingTeamMembers() {
+  const supabase = await createClient()
+
+  // Get pending team members that don't have a user account yet
+  const { data: teamMembers, error: teamError } = await supabase
+    .from("team_members")
+    .select("*")
+    .eq("status", "pending")
+    .order("invited_at", { ascending: false })
+
+  if (teamError) {
+    console.error(" Error fetching team members:", teamError)
+    return []
+  }
+
+  if (!teamMembers || teamMembers.length === 0) {
+    return []
+  }
+
+  // Check which team members already have user accounts
+  const emails = teamMembers.map((tm) => tm.email)
+  const { data: existingUsers } = await supabase.from("profiles").select("email").in("email", emails)
+
+  const existingEmails = new Set(existingUsers?.map((u) => u.email) || [])
+
+  // Return only team members without user accounts
+  return teamMembers.filter((tm) => !existingEmails.has(tm.email))
+}
+
+export async function approveTeamMember(teamMemberId: string, assignedRole?: string) {
+  const supabase = await createClient()
+  const serviceClient = await getServiceClient()
+
+  // Get current user
+  const {
+    data: { user: currentUser },
+  } = await supabase.auth.getUser()
+  if (!currentUser) {
+    return { error: "Unauthorized" }
+  }
+
+  // Get team member details
+  const { data: teamMember, error: teamError } = await supabase
+    .from("team_members")
+    .select("*")
+    .eq("id", teamMemberId)
+    .single()
+
+  if (teamError || !teamMember) {
+    return { error: "Team member not found" }
+  }
+
+  // Check if user already exists
+  const { data: existingUser } = await supabase.from("profiles").select("id").eq("email", teamMember.email).single()
+
+  if (existingUser) {
+    return { error: "User account already exists for this email" }
+  }
+
+  // Use assigned role or team member's role
+  const role = assignedRole || teamMember.role
+
+  // Generate temporary password
+  const tempPassword = `Temp${Math.random().toString(36).slice(-8)}!`
+
+  // Create auth user using service client
+  const { data: authUser, error: authError } = await serviceClient.auth.admin.createUser({
+    email: teamMember.email,
+    password: tempPassword,
+    email_confirm: true,
+    user_metadata: {
+      first_name: teamMember.first_name,
+      last_name: teamMember.last_name,
+    },
+  })
+
+  if (authError) {
+    console.error(" Auth creation error:", authError)
+    return { error: "Failed to create user account" }
+  }
+
+  // Create profile
+  const { error: profileError } = await supabase.from("profiles").insert({
+    id: authUser.user.id,
+    email: teamMember.email,
+    first_name: teamMember.first_name,
+    last_name: teamMember.last_name,
+    role: role,
+    is_admin: role === "admin",
+    requires_password_change: true,
+    is_active: true,
+    created_by: currentUser.id,
+    status: "active",
+  })
+
+  if (profileError) {
+    console.error(" Profile creation error:", profileError)
+    return { error: "Failed to create user profile" }
+  }
+
+  // Update team member status to active
+  await supabase
+    .from("team_members")
+    .update({
+      status: "active",
+      invitation_token: null,
+    })
+    .eq("id", teamMemberId)
+
+  // Log activity
+  await logActivity(currentUser.id, "approve_team_member", "users", authUser.user.id, {
+    email: teamMember.email,
+    assigned_role: role,
+    team_member_id: teamMemberId,
+  })
+
+  revalidatePath("/admin/users")
+  revalidatePath("/team")
+
+  return { success: true, tempPassword, email: teamMember.email }
+}
