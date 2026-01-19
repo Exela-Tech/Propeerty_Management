@@ -2,12 +2,13 @@ import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Users, UserPlus, Clock } from "lucide-react"
+import { Users, UserPlus, Clock, UsersRound } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { PendingRegistrationsTable } from "./pending-registrations-table"
+import { PendingTeamMembersTable } from "./pending-team-members-table"
 import { ExistingUsersTable } from "./existing-users-table"
-import { getPendingRegistrations, getAllUsers } from "./user-management-actions"
+import { getPendingRegistrations, getPendingTeamMembers, getAllUsers } from "./user-management-actions"
 
 async function updateUserRole(formData: FormData) {
   "use server"
@@ -47,6 +48,7 @@ export default async function AdminUsersPage() {
   }
 
   const pendingRegistrations = await getPendingRegistrations()
+  const pendingTeamMembers = await getPendingTeamMembers()
   const allUsers = await getAllUsers()
 
   return (
@@ -73,6 +75,26 @@ export default async function AdminUsersPage() {
         </CardHeader>
         <CardContent>
           <PendingRegistrationsTable registrations={pendingRegistrations} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <CardTitle className="flex items-center gap-2">
+                <UsersRound className="h-5 w-5 text-blue-600" />
+                Pending Team Members
+              </CardTitle>
+              <CardDescription>Approve team members from the Teams module and create user accounts</CardDescription>
+            </div>
+            <Badge variant="secondary" className="h-8 px-3">
+              {pendingTeamMembers.length} pending
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <PendingTeamMembersTable teamMembers={pendingTeamMembers} />
         </CardContent>
       </Card>
 
