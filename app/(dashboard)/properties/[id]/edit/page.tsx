@@ -20,7 +20,7 @@ export default async function EditPropertyPage({ params }: { params: Promise<{ i
         try {
           cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
         } catch (error) {
-          console.error(" Error setting cookies:", error)
+          console.error("[v0] Error setting cookies:", error)
         }
       },
     },
@@ -28,7 +28,7 @@ export default async function EditPropertyPage({ params }: { params: Promise<{ i
 
   const { data: propertyData, error: propertyError } = await supabase
     .from("properties")
-    .select("id, name, property_type, location, total_units, owner_id, description, management_fee")
+    .select("id, name, property_type, location, total_units, owner_id, description, commission_type, commission_value")
     .eq("id", propertyId)
     .limit(1)
 

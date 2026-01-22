@@ -19,6 +19,7 @@ interface EditPropertyFormProps {
 export function EditPropertyForm({ property, landlords }: EditPropertyFormProps) {
   const [propertyType, setPropertyType] = useState(property.property_type)
   const [landlordId, setLandlordId] = useState(property.owner_id || "")
+  const [commissionType, setCommissionType] = useState(property.commission_type || "percentage")
   const [managementFeeType, setManagementFeeType] = useState(property.management_fee_type || "percentage")
   const [isPending, startTransition] = useTransition()
 
@@ -27,6 +28,7 @@ export function EditPropertyForm({ property, landlords }: EditPropertyFormProps)
     const formData = new FormData(e.currentTarget)
     formData.set("property_type", propertyType)
     formData.set("landlord_id", landlordId)
+    formData.set("commission_type", commissionType)
     formData.set("management_fee_type", managementFeeType)
     startTransition(() => {
       updateProperty(formData)
@@ -107,35 +109,40 @@ export function EditPropertyForm({ property, landlords }: EditPropertyFormProps)
       </div>
 
       <div className="border-t pt-6">
-        <h3 className="text-lg font-semibold mb-4">Management Fee Configuration</h3>
+        <h3 className="text-lg font-semibold mb-4">Management Commission Settings</h3>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="management_fee_type">Fee Type</Label>
-            <Select value={managementFeeType} onValueChange={setManagementFeeType}>
-              <SelectTrigger id="management_fee_type">
-                <SelectValue placeholder="Select fee type" />
+            <Label htmlFor="commission_type">Commission Type</Label>
+            <Select value={commissionType} onValueChange={setCommissionType}>
+              <SelectTrigger id="commission_type">
+                <SelectValue placeholder="Select commission type" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="percentage">Percentage (%)</SelectItem>
-                <SelectItem value="fixed">Fixed Amount</SelectItem>
+                <SelectItem value="fixed">Fixed Amount (UGX)</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <Label htmlFor="management_fee">
-              {managementFeeType === "percentage" ? "Fee Percentage (%)" : "Fee Amount (UGX)"}
+            <Label htmlFor="commission_value">
+              {commissionType === "percentage" ? "Commission Percentage (%)" : "Fixed Amount (UGX)"}
             </Label>
             <Input
-              id="management_fee"
-              name="management_fee"
+              id="commission_value"
+              name="commission_value"
               type="number"
-              defaultValue={property.management_fee || ""}
-              placeholder={managementFeeType === "percentage" ? "e.g., 10" : "e.g., 400000"}
-              step={managementFeeType === "percentage" ? "0.1" : "1"}
+              defaultValue={property.commission_value || 10}
+              placeholder={commissionType === "percentage" ? "e.g., 10" : "e.g., 50000"}
+              step={commissionType === "percentage" ? "0.1" : "1"}
               min="0"
             />
+            <p className="text-xs text-muted-foreground mt-1">
+              {commissionType === "percentage" 
+                ? "This percentage will be deducted as management fee when paying the landlord" 
+                : "This fixed amount will be deducted as management fee when paying the landlord"}
+            </p>
           </div>
         </div>
       </div>

@@ -26,7 +26,6 @@ interface LandlordPaymentData {
     name: string
     email: string
     phone: string
-    commission_percentage: number
   }
   payments: Payment[]
   totalPaid: number
@@ -54,7 +53,7 @@ export default function LandlordPaymentHistoryPage() {
         const result = await response.json()
         setData(result)
       } catch (err) {
-        console.error(" Error fetching payment history:", err)
+        console.error("[v0] Error fetching payment history:", err)
         setError("Failed to load payment history")
       } finally {
         setLoading(false)
@@ -74,7 +73,7 @@ export default function LandlordPaymentHistoryPage() {
     )
   }
 
-  if (error || !data) {
+  if (error || !data || !data.landlord) {
     return (
       <div className="space-y-6 p-8">
         <Link href="/landlords/payments">
@@ -86,6 +85,9 @@ export default function LandlordPaymentHistoryPage() {
       </div>
     )
   }
+
+  const landlord = data.landlord
+  const payments = data.payments || []
 
   const getPaymentMethodLabel = (method: string): string => {
     const labels: Record<string, string> = {
@@ -123,9 +125,9 @@ export default function LandlordPaymentHistoryPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold uppercase">{data.landlord.name}'S PAYMENT HISTORY</h1>
+              <h1 className="text-3xl font-bold uppercase">{landlord.name}'S PAYMENT HISTORY</h1>
               <p className="text-muted-foreground mt-1">
-                {data.landlord.email} • {data.landlord.phone}
+                {landlord.email} • {landlord.phone}
               </p>
             </div>
           </div>
@@ -179,7 +181,7 @@ export default function LandlordPaymentHistoryPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-orange-600">{formatCurrency(data.totalCommissionDeducted)}</p>
-            <p className="text-xs text-muted-foreground mt-1">{data.landlord.commission_percentage}% of expected</p>
+            <p className="text-xs text-muted-foreground mt-1">Based on property commissions</p>
           </CardContent>
         </Card>
 
@@ -205,7 +207,7 @@ export default function LandlordPaymentHistoryPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-purple-600">{formatCurrency(data.totalPaid)}</p>
-            <p className="text-xs text-muted-foreground mt-1">{data.payments.length} payments</p>
+            <p className="text-xs text-muted-foreground mt-1">{payments.length} payments</p>
           </CardContent>
         </Card>
       </div>
@@ -218,7 +220,7 @@ export default function LandlordPaymentHistoryPage() {
             COMMISSION BREAKDOWN
           </CardTitle>
           <CardDescription>
-            Commission is calculated at {data.landlord.commission_percentage}% of EXPECTED rent from tenants
+            Commission is calculated per property (fixed amount or percentage)
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -230,7 +232,7 @@ export default function LandlordPaymentHistoryPage() {
             <div className="flex items-center justify-center">
               <div className="text-center">
                 <p className="text-sm text-muted-foreground mb-1">Commission Rate</p>
-                <p className="text-2xl font-bold text-orange-600">{data.landlord.commission_percentage}%</p>
+                <p className="text-2xl font-bold text-orange-600">Per Property</p>
               </div>
             </div>
             <div>
@@ -261,7 +263,7 @@ export default function LandlordPaymentHistoryPage() {
           <CardDescription>Complete record of all payments made to this landlord</CardDescription>
         </CardHeader>
         <CardContent>
-          {data.payments.length === 0 ? (
+          {payments.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">No payments recorded yet</div>
           ) : (
             <div className="overflow-x-auto">
@@ -278,7 +280,7 @@ export default function LandlordPaymentHistoryPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.payments.map((payment) => (
+                  {payments.map((payment) => (
                     <tr key={payment.id} className="border-b hover:bg-accent transition">
                       <td className="py-3 px-4 font-mono font-semibold">{payment.receipt_number}</td>
                       <td className="py-3 px-4">{new Date(payment.payment_date).toLocaleDateString()}</td>
@@ -298,11 +300,15 @@ export default function LandlordPaymentHistoryPage() {
                         </Badge>
                       </td>
                       <td className="py-3 px-4">
-                        <Link href={`/landlords/payments/${payment.id}/receipt`}>
-                          <Button variant="outline" size="sm">
-                            VIEW RECEIPT
-                          </Button>
-                        </Link>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            window.print()
+                          }}
+                        >
+                          VIEW RECEIPT
+                        </Button>
                       </td>
                     </tr>
                   ))}
@@ -314,14 +320,14 @@ export default function LandlordPaymentHistoryPage() {
       </Card>
 
       {/* Notes Section */}
-      {data.payments.some((p) => p.notes) && (
+      {payments.some((p) => p.notes) && (
         <Card>
           <CardHeader>
             <CardTitle>PAYMENT NOTES</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {data.payments
+              {payments
                 .filter((p) => p.notes)
                 .map((payment) => (
                   <div key={payment.id} className="p-3 bg-accent rounded-lg">

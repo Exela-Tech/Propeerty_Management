@@ -1,60 +1,58 @@
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Calendar, AlertCircle, CheckCircle2 } from "lucide-react"
+import { Calendar, Building2, Users, ChevronDown, ChevronUp } from "lucide-react"
 import Link from "next/link"
-import { calculateLandlordOwed } from "../payment-actions"
-import { RecordPaymentDialog } from "@/components/record-payment-dialog"
+import { PropertyPaymentCard } from "@/components/property-payment-card"
 
-interface LandlordWithPaymentInfo {
+interface Property {
+  id: string
+  name: string
+  location: string
+  commission_type: "percentage" | "fixed"
+  commission_value: number
+  totalCollected: number
+  expectedRent: number
+  commissionAmount: number
+  netPayable: number
+  tenantCount: number
+  paidToLandlord: number
+  balance: number
+}
+
+interface LandlordWithProperties {
   id: string
   name: string
   email: string
   phone: string
   payment_due_day: number
-  commission_percentage: number
-  owed: number
+  properties: Property[]
+  totalExpected: number
   totalCollected: number
-  totalPaidToLandlord: number
-  tenantCount: number
-  paymentCount: number
-  expectedRent: number
-  collectionRate: number
-  commissionDeducted: number
-  netPayout: number
+  totalCommission: number
+  totalNetPayable: number
+  totalPaid: number
+  totalBalance: number
 }
 
 function getDayLabel(day: number): string {
-  if (day === 30) return "End of Month"
-  if (day === 5) return "5th"
-  if (day === 15) return "15th"
-  return `${day}th`
+  if (day === 30 || day === 31) return "End of Month"
+  const suffix = day === 1 || day === 21 || day === 31 ? "st" : day === 2 || day === 22 ? "nd" : day === 3 || day === 23 ? "rd" : "th"
+  return `${day}${suffix}`
 }
 
-function getPaymentStatus(
-  dueDay: number,
-): { status: "due"; label: string; color: string } | { status: "upcoming"; label: string; color: string } {
+function getPaymentStatusBadge(dueDay: number) {
   const today = new Date()
   const currentDay = today.getDate()
 
   if (currentDay >= dueDay) {
-    return { status: "due", label: "Payment Due", color: "bg-red-100 text-red-800" }
+    return <Badge variant="destructive">Payment Due</Badge>
   } else {
     const daysUntil = dueDay - currentDay
-    return {
-      status: "upcoming",
-      label: `Due in ${daysUntil} days`,
-      color: "bg-blue-100 text-blue-800",
-    }
+    return <Badge variant="secondary">Due in {daysUntil} days</Badge>
   }
-}
-
-function getCollectionRateColor(rate: number): string {
-  if (rate >= 95) return "text-green-600"
-  if (rate >= 80) return "text-yellow-600"
-  return "text-red-600"
 }
 
 export default async function LandlordPaymentsPage() {
@@ -72,13 +70,21 @@ export default async function LandlordPaymentsPage() {
     },
   })
 
+  // Get current period
+  const today = new Date()
+  const currentMonth = today.toISOString().substring(0, 7)
+  const [year, month] = currentMonth.split("-")
+  const periodStart = `${year}-${month}-01`
+  const periodEnd = `${year}-${month}-${new Date(Number.parseInt(year), Number.parseInt(month), 0).getDate()}`
+
+  // Fetch all landlords
   const { data: landlords, error } = await supabase
     .from("owners")
-    .select("id, name, email, phone, payment_due_day, commission_percentage")
+    .select("id, name, email, phone, payment_due_day")
     .order("payment_due_day", { ascending: true })
 
   if (error) {
-    console.error(" Error fetching landlords:", error)
+    console.error("[v0] Error fetching landlords:", error)
     return (
       <div className="space-y-6 p-8">
         <div className="text-center py-12">Failed to load landlord payment schedule</div>
@@ -86,213 +92,252 @@ export default async function LandlordPaymentsPage() {
     )
   }
 
-  // Calculate owed amounts for each landlord
-  const today = new Date()
-  const currentMonth = today.toISOString().substring(0, 7)
-  const [year, month] = currentMonth.split("-")
-  const periodStart = `${year}-${month}-01`
-  const periodEnd = `${year}-${month}-${new Date(Number.parseInt(year), Number.parseInt(month), 0).getDate()}`
-
-  const landlordData: LandlordWithPaymentInfo[] = await Promise.all(
+  // Build landlord data with properties
+  const landlordData: LandlordWithProperties[] = await Promise.all(
     (landlords || []).map(async (landlord) => {
-      const { data: properties } = await supabase.from("properties").select("id").eq("owner_id", landlord.id)
+      // Get all properties for this landlord with commission settings
+      const { data: properties } = await supabase
+        .from("properties")
+        .select("id, name, location, commission_type, commission_value")
+        .or(`owner_id.eq.${landlord.id},landlord_id.eq.${landlord.id}`)
 
-      const propertyIds = properties?.map((p) => p.id) || []
+      const propertiesWithData: Property[] = await Promise.all(
+        (properties || []).map(async (property) => {
+          // Get active tenants for this property
+          const { data: tenants } = await supabase
+            .from("tenants")
+            .select("id, monthly_rent")
+            .eq("property_id", property.id)
+            .eq("status", "active")
 
-      let expectedRent = 0
-      let tenantCount = 0
-      let paymentCount = 0
+          const tenantIds = tenants?.map((t) => t.id) || []
+          const expectedRent = tenants?.reduce((sum, t) => sum + (t.monthly_rent || 0), 0) || 0
 
-      if (propertyIds.length > 0) {
-        const { data: tenants } = await supabase
-          .from("tenants")
-          .select("id, monthly_rent")
-          .in("property_id", propertyIds)
-          .eq("status", "active")
+          // Get payments collected this period
+          let totalCollected = 0
+          if (tenantIds.length > 0) {
+            const { data: payments } = await supabase
+              .from("tenant_payments")
+              .select("amount")
+              .in("tenant_id", tenantIds)
+              .gte("payment_date", periodStart)
+              .lte("payment_date", periodEnd)
 
-        tenantCount = tenants?.length || 0
-        expectedRent = tenants?.reduce((sum, t) => sum + (t.monthly_rent || 0), 0) || 0
+            totalCollected = payments?.reduce((sum, p) => sum + (p.amount || 0), 0) || 0
+          }
 
-        if (tenants && tenants.length > 0) {
-          const tenantIds = tenants.map((t) => t.id)
+          // Calculate commission based on property settings
+          const commissionType = property.commission_type || "percentage"
+          const commissionValue = property.commission_value || 10
+          let commissionAmount: number
 
-          const { count: paymentRecords } = await supabase
-            .from("tenant_payments")
-            .select("*", { count: "exact", head: true })
-            .in("tenant_id", tenantIds)
+          if (commissionType === "fixed") {
+            commissionAmount = commissionValue
+          } else {
+            commissionAmount = (totalCollected * commissionValue) / 100
+          }
+
+          const netPayable = totalCollected - commissionAmount
+
+          // Get payments already made to landlord for this property this period
+          const { data: landlordPayments } = await supabase
+            .from("landlord_payments")
+            .select("amount")
+            .eq("landlord_id", landlord.id)
+            .eq("property_id", property.id)
             .gte("payment_date", periodStart)
             .lte("payment_date", periodEnd)
 
-          paymentCount = paymentRecords || 0
-        }
-      }
+          const paidToLandlord = landlordPayments?.reduce((sum, p) => sum + (p.amount || 0), 0) || 0
+          const balance = Math.max(0, netPayable - paidToLandlord)
 
-      const result = await calculateLandlordOwed(
-        landlord.id,
-        periodStart,
-        periodEnd,
+          return {
+            id: property.id,
+            name: property.name,
+            location: property.location || "",
+            commission_type: commissionType as "percentage" | "fixed",
+            commission_value: commissionValue,
+            totalCollected,
+            expectedRent,
+            commissionAmount,
+            netPayable,
+            tenantCount: tenants?.length || 0,
+            paidToLandlord,
+            balance,
+          }
+        })
       )
 
-      const { owed, totalCollected, totalPaidToLandlord, commissionDeducted = 0, netPayout = 0 } = result
-
-      const collectionRate = expectedRent > 0 ? (totalCollected / expectedRent) * 100 : 0
+      // Calculate totals
+      const totalExpected = propertiesWithData.reduce((sum, p) => sum + p.expectedRent, 0)
+      const totalCollected = propertiesWithData.reduce((sum, p) => sum + p.totalCollected, 0)
+      const totalCommission = propertiesWithData.reduce((sum, p) => sum + p.commissionAmount, 0)
+      const totalNetPayable = propertiesWithData.reduce((sum, p) => sum + p.netPayable, 0)
+      const totalPaid = propertiesWithData.reduce((sum, p) => sum + p.paidToLandlord, 0)
+      const totalBalance = propertiesWithData.reduce((sum, p) => sum + p.balance, 0)
 
       return {
         ...landlord,
-        owed,
+        properties: propertiesWithData,
+        totalExpected,
         totalCollected,
-        totalPaidToLandlord,
-        tenantCount,
-        paymentCount,
-        expectedRent,
-        collectionRate,
-        commissionDeducted,
-        netPayout,
+        totalCommission,
+        totalNetPayable,
+        totalPaid,
+        totalBalance,
       }
-    }),
+    })
   )
 
-  // Group by payment due day
-  const groupedByDueDay: { [key: number]: LandlordWithPaymentInfo[] } = {}
-  landlordData.forEach((landlord) => {
-    const day = landlord.payment_due_day || 30
-    if (!groupedByDueDay[day]) {
-      groupedByDueDay[day] = []
-    }
-    groupedByDueDay[day].push(landlord)
-  })
-
-  const sortedDays = Object.keys(groupedByDueDay)
-    .map(Number)
-    .sort((a, b) => a - b)
+  // Filter landlords with properties
+  const landlordsWithProperties = landlordData.filter((l) => l.properties.length > 0)
 
   return (
     <div className="space-y-6 p-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold uppercase">LANDLORD PAYMENT SCHEDULE</h1>
+          <h1 className="text-3xl font-bold">Landlord Payments</h1>
           <p className="text-muted-foreground mt-1">
-            Track landlord payments with collected rent and amounts owed. Integrated with rent collection data.
+            Period: {new Date(periodStart).toLocaleDateString("en-GB", { month: "long", year: "numeric" })}
           </p>
         </div>
-        <div className="flex gap-2">
-          <Link href="/landlords/reconciliation">
-            <Button variant="outline" size="sm">
-              Reconciliation
-            </Button>
-          </Link>
-          <Link href="/api/landlords/payment-reminders" target="_blank">
-            <Button variant="outline" size="sm">
-              View Reminders
-            </Button>
-          </Link>
-        </div>
+        <Link href="/landlords">
+          <Button variant="outline">Back to Landlords</Button>
+        </Link>
       </div>
 
-      <Link href="/landlords">
-        <Button variant="outline">← Back to Landlords</Button>
-      </Link>
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Collected</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold text-green-600">
+              UGX {landlordData.reduce((sum, l) => sum + l.totalCollected, 0).toLocaleString()}
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Commission</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold text-orange-600">
+              UGX {landlordData.reduce((sum, l) => sum + l.totalCommission, 0).toLocaleString()}
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Paid Out</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold text-blue-600">
+              UGX {landlordData.reduce((sum, l) => sum + l.totalPaid, 0).toLocaleString()}
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Balance Due</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold text-red-600">
+              UGX {landlordData.reduce((sum, l) => sum + l.totalBalance, 0).toLocaleString()}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
+      {/* Landlord List */}
       <div className="space-y-6">
-        {sortedDays.map((day) => {
-          const landlordsList = groupedByDueDay[day]
-          const status = getPaymentStatus(day)
-
-          return (
-            <Card key={day} className="overflow-hidden">
-              <CardHeader className={`${status.status === "due" ? "bg-red-50" : "bg-blue-50"}`}>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Calendar className="h-5 w-5 text-muted-foreground" />
+        {landlordsWithProperties.length === 0 ? (
+          <Card>
+            <CardContent className="py-12 text-center text-muted-foreground">
+              No landlords with properties found
+            </CardContent>
+          </Card>
+        ) : (
+          landlordsWithProperties.map((landlord) => (
+            <Card key={landlord.id} className="overflow-hidden">
+              <CardHeader className="bg-muted/50">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex items-start gap-4">
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Users className="h-6 w-6 text-primary" />
+                    </div>
                     <div>
-                      <CardTitle>{getDayLabel(day)}</CardTitle>
-                      <CardDescription>{landlordsList.length} landlords</CardDescription>
+                      <CardTitle className="text-xl">{landlord.name}</CardTitle>
+                      <p className="text-sm text-muted-foreground">{landlord.email} | {landlord.phone}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm">Due: {getDayLabel(landlord.payment_due_day || 30)}</span>
+                        {getPaymentStatusBadge(landlord.payment_due_day || 30)}
+                      </div>
                     </div>
                   </div>
-                  <Badge className={status.color}>
-                    {status.status === "due" ? (
-                      <AlertCircle className="mr-1 h-4 w-4" />
-                    ) : (
-                      <CheckCircle2 className="mr-1 h-4 w-4" />
-                    )}
-                    {status.label}
-                  </Badge>
+                  <div className="flex flex-col items-end gap-1">
+                    <div className="text-right">
+                      <p className="text-sm text-muted-foreground">Total Balance Due</p>
+                      <p className="text-2xl font-bold text-red-600">UGX {landlord.totalBalance.toLocaleString()}</p>
+                    </div>
+                    <Link href={`/landlords/${landlord.id}/payments`}>
+                      <Button variant="link" size="sm" className="text-blue-600">
+                        View Payment History
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="pt-6">
+                {/* Landlord Totals */}
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6 p-4 bg-muted/30 rounded-lg">
+                  <div>
+                    <p className="text-xs text-muted-foreground">Expected</p>
+                    <p className="font-semibold">UGX {landlord.totalExpected.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Collected</p>
+                    <p className="font-semibold text-green-600">UGX {landlord.totalCollected.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Commission</p>
+                    <p className="font-semibold text-orange-600">UGX {landlord.totalCommission.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Net Payable</p>
+                    <p className="font-semibold text-blue-600">UGX {landlord.totalNetPayable.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Already Paid</p>
+                    <p className="font-semibold">UGX {landlord.totalPaid.toLocaleString()}</p>
+                  </div>
+                </div>
+
+                {/* Properties */}
                 <div className="space-y-4">
-                  {landlordsList.map((landlord) => (
-                    <div key={landlord.id} className="p-4 border rounded-lg hover:bg-accent transition">
-                      {/* Landlord Info */}
-                      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-3">
-                        <div className="flex-1">
-                          <p className="font-medium">{landlord.name}</p>
-                          <p className="text-sm text-muted-foreground">{landlord.email}</p>
-                          <p className="text-sm text-muted-foreground">{landlord.phone}</p>
-                        </div>
-
-                        <div className="text-right">
-                          <p className="text-xs text-muted-foreground mb-1">EXPECTED RENT</p>
-                          <p className="font-semibold">UGX {Math.round(landlord.expectedRent).toLocaleString()}</p>
-                        </div>
-
-                        <div className="text-right">
-                          <p className="text-xs text-muted-foreground mb-1">COLLECTED</p>
-                          <p className="font-semibold text-green-600">
-                            UGX {Math.round(landlord.totalCollected).toLocaleString()}
-                          </p>
-                        </div>
-
-                        <div className="text-right">
-                          <p className="text-xs text-muted-foreground mb-1">
-                            COMMISSION ({landlord.commission_percentage}%)
-                          </p>
-                          <p className="font-semibold text-orange-600">
-                            UGX {Math.round(landlord.commissionDeducted).toLocaleString()}
-                          </p>
-                        </div>
-
-                        <div className="text-right">
-                          <p className="text-xs text-muted-foreground mb-1">NET PAYOUT</p>
-                          <p className="font-bold text-lg text-blue-600">
-                            UGX {Math.round(landlord.netPayout).toLocaleString()}
-                          </p>
-                        </div>
-
-                        <div className="text-right flex flex-col items-end gap-2">
-                          <div>
-                            <p className="text-xs text-muted-foreground mb-1">Amount Owed</p>
-                            <p className="font-bold text-lg text-red-600">
-                              UGX {Math.round(landlord.owed).toLocaleString()}
-                            </p>
-                          </div>
-                          <RecordPaymentDialog landlord={landlord} periodStart={periodStart} periodEnd={periodEnd} />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-3 gap-4 pt-3 border-t text-xs text-muted-foreground">
-                        <div className="flex items-center gap-2">
-                          <span>Tenants: {landlord.tenantCount}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span>Payments: {landlord.paymentCount}</span>
-                        </div>
-                        <div className="text-right">
-                          <Link
-                            href={`/landlords/${landlord.id}/payments`}
-                            className="text-blue-600 hover:underline font-semibold"
-                          >
-                            View Payment History →
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                  <h4 className="font-semibold flex items-center gap-2">
+                    <Building2 className="h-4 w-4" />
+                    Properties ({landlord.properties.length})
+                  </h4>
+                  <div className="grid gap-4">
+                    {landlord.properties.map((property) => (
+                      <PropertyPaymentCard
+                        key={property.id}
+                        property={property}
+                        landlordId={landlord.id}
+                        landlordName={landlord.name}
+                        periodStart={periodStart}
+                        periodEnd={periodEnd}
+                      />
+                    ))}
+                  </div>
                 </div>
               </CardContent>
             </Card>
-          )
-        })}
+          ))
+        )}
       </div>
     </div>
   )

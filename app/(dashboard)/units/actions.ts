@@ -101,7 +101,24 @@ export async function updateUnit(id: string, formData: FormData) {
     return { success: false, error: error.message }
   }
 
+  // Update the monthly_rent for any active tenant in this unit
+  // This only updates their future rent charges, not past payments
+  const { error: tenantError } = await supabase
+    .from("tenants")
+    .update({
+      monthly_rent: rent_amount,
+      currency,
+    })
+    .eq("unit_id", id)
+    .eq("status", "active")
+
+  if (tenantError) {
+    console.error("Error updating tenant rent:", tenantError)
+    // Don't fail the whole operation, just log the error
+  }
+
   revalidatePath("/units")
+  revalidatePath("/tenants")
   revalidatePath("/dashboard")
 
   return { success: true, data }

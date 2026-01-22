@@ -17,6 +17,7 @@ interface LandlordWithPaymentInfo {
   email: string
   phone: string
   payment_due_day: number
+  commission_percentage: number
   owed: number
   totalCollected: number
   totalPaidToLandlord: number
@@ -45,9 +46,16 @@ export function RecordPaymentDialog({
   useEffect(() => {
     if (open) {
       getBankAccounts().then((accounts) => {
-        setBankAccounts(accounts)
-        if (accounts.length > 0) {
-          setBankAccountId(accounts[0].id)
+        const mappedAccounts = accounts.map((account: any) => ({
+          id: account.id,
+          account_name: account.account_name,
+          bank_name: account.bank_name,
+          currency: account.currency || "UGX",
+          current_balance: account.current_balance || 0,
+        }))
+        setBankAccounts(mappedAccounts)
+        if (mappedAccounts.length > 0) {
+          setBankAccountId(mappedAccounts[0].id)
         }
       })
     }
@@ -70,14 +78,16 @@ export function RecordPaymentDialog({
       const result = await recordLandlordPayment(formData)
 
       if (result.success) {
-        alert(`Payment recorded! Receipt: ${result.receipt_number}`)
+        alert(
+          `Payment recorded!\n\nReceipt: ${result.receipt_number}\nGross: UGX ${result.grossAmount?.toLocaleString()}\nManagement Fee: UGX ${result.managementFee?.toLocaleString()}\nNet to Landlord: UGX ${result.netAmount?.toLocaleString()}`
+        )
         setOpen(false)
         window.location.reload()
       } else {
         alert(`Error: ${result.error}`)
       }
     } catch (error) {
-      console.error(" Error:", error)
+      console.error("[v0] Error:", error)
       alert("Failed to record payment")
     } finally {
       setLoading(false)
@@ -97,7 +107,7 @@ export function RecordPaymentDialog({
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="amount">Amount (UGX)</Label>
+            <Label htmlFor="amount">Gross Amount (UGX)</Label>
             <Input
               id="amount"
               type="number"
@@ -106,6 +116,26 @@ export function RecordPaymentDialog({
               step="1"
               required
             />
+            {Number(amount) > 0 && (
+              <div className="mt-3 p-3 bg-muted rounded-lg space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Gross Amount:</span>
+                  <span className="font-medium">UGX {Number(amount).toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between text-orange-600">
+                  <span>Management Fee ({landlord.commission_percentage || 10}%):</span>
+                  <span className="font-medium">
+                    - UGX {Math.round((Number(amount) * (landlord.commission_percentage || 10)) / 100).toLocaleString()}
+                  </span>
+                </div>
+                <div className="flex justify-between border-t pt-2 font-bold text-green-600">
+                  <span>Net to Landlord:</span>
+                  <span>
+                    UGX {Math.round(Number(amount) * (1 - (landlord.commission_percentage || 10) / 100)).toLocaleString()}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
           <div>
             <Label htmlFor="bank_account">Pay From Bank</Label>
