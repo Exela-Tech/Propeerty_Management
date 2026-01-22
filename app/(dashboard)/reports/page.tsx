@@ -38,32 +38,35 @@ export default function ReportsPage() {
   const [properties, setProperties] = useState<any[]>([])
   const [landlords, setLandlords] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
-  const [selectedMonth, setSelectedMonth] = useState("")
+  const [selectedMonth, setSelectedMonth] = useState(() => {
+    const today = new Date()
+    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`
+  })
   const [monthlyStatusFilter, setMonthlyStatusFilter] = useState("all")
   const [monthlySearchTenant, setMonthlySearchTenant] = useState("")
 
   const availableMonths = useMemo(() => {
     const months = []
     const today = new Date()
+    const seen = new Set<string>()
 
     // Generate last 12 months plus current month
     for (let i = 12; i >= 0; i--) {
       const date = new Date(today.getFullYear(), today.getMonth() - i, 1)
       const year = date.getFullYear()
       const month = String(date.getMonth() + 1).padStart(2, "0")
-      months.push(`${year}-${month}`)
+      const monthKey = `${year}-${month}`
+      
+      // Only add if not already seen (prevent duplicates)
+      if (!seen.has(monthKey)) {
+        seen.add(monthKey)
+        months.push(monthKey)
+      }
     }
 
     return months
   }, [])
 
-  useEffect(() => {
-    if (availableMonths.length > 0 && !selectedMonth) {
-      const today = new Date()
-      const currentMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`
-      setSelectedMonth(currentMonth)
-    }
-  }, [availableMonths, selectedMonth])
 
   useEffect(() => {
     const loadData = async () => {
@@ -827,14 +830,14 @@ export default function ReportsPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {availableMonths.map((month) => {
+                      {availableMonths.map((month, index) => {
                         const [year, monthNum] = month.split("-")
                         const monthName = new Date(Number(year), Number(monthNum) - 1).toLocaleDateString("en-US", {
                           year: "numeric",
                           month: "long",
                         })
                         return (
-                          <SelectItem key={month} value={month}>
+                          <SelectItem key={`${month}-${index}`} value={month}>
                             {monthName}
                           </SelectItem>
                         )

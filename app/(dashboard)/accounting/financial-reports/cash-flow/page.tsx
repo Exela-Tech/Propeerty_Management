@@ -1,26 +1,76 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
 import { getCashFlowStatement } from "@/app/(dashboard)/accounting/actions"
 import { formatCurrency } from "@/lib/utils"
 
-export default async function CashFlowPage() {
-  const cashFlow = await getCashFlowStatement()
+export default function CashFlowPage() {
+  const [cashFlow, setCashFlow] = useState<{
+    startDate: string
+    endDate: string
+    transactions: any[]
+  } | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const today = new Date()
+        const startDate = new Date(today.getFullYear(), 0, 1).toISOString().split('T')[0]
+        const endDate = today.toISOString().split('T')[0]
+        const data = await getCashFlowStatement(startDate, endDate)
+        setCashFlow(data)
+      } catch (error) {
+        console.error("Error loading cash flow:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    loadData()
+  }, [])
+
+  if (isLoading || !cashFlow) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Cash Flow Statement</h1>
+          <p className="text-gray-500 mt-2">Track cash movement across your business</p>
+        </div>
+        <Card>
+          <CardContent className="py-8">
+            <p className="text-center text-gray-500">Loading cash flow data...</p>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  // Simplified cash flow - categorize transactions
+  const operatingInflow = (cashFlow.transactions || []).filter((t: any) => 
+    t.chart_of_accounts?.account_type === 'income'
+  ).reduce((sum: number, t: any) => sum + (t.credit || 0), 0)
+  
+  const operatingOutflow = (cashFlow.transactions || []).filter((t: any) => 
+    t.chart_of_accounts?.account_type === 'expense'
+  ).reduce((sum: number, t: any) => sum + (t.debit || 0), 0)
 
   const chartData = [
     {
       name: "Operating",
-      inflow: cashFlow.operatingCashInflow || 0,
-      outflow: cashFlow.operatingCashOutflow || 0,
+      inflow: operatingInflow,
+      outflow: operatingOutflow,
     },
     {
       name: "Investing",
-      inflow: cashFlow.investingCashInflow || 0,
-      outflow: cashFlow.investingCashOutflow || 0,
+      inflow: 0,
+      outflow: 0,
     },
     {
       name: "Financing",
-      inflow: cashFlow.financingCashInflow || 0,
-      outflow: cashFlow.financingCashOutflow || 0,
+      inflow: 0,
+      outflow: 0,
     },
   ]
 
@@ -38,7 +88,7 @@ export default async function CashFlowPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-green-600">
-              {formatCurrency((cashFlow.operatingCashInflow || 0) - (cashFlow.operatingCashOutflow || 0))}
+              {formatCurrency(operatingInflow - operatingOutflow)}
             </p>
           </CardContent>
         </Card>
@@ -49,7 +99,7 @@ export default async function CashFlowPage() {
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold text-blue-600">
-              {formatCurrency((cashFlow.investingCashInflow || 0) - (cashFlow.investingCashOutflow || 0))}
+              {formatCurrency(0)}
             </p>
           </CardContent>
         </Card>
@@ -59,7 +109,7 @@ export default async function CashFlowPage() {
             <CardTitle className="text-sm">Ending Cash Position</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-purple-600">{formatCurrency(cashFlow.endingCashBalance || 0)}</p>
+            <p className="text-2xl font-bold text-purple-600">{formatCurrency(operatingInflow - operatingOutflow)}</p>
           </CardContent>
         </Card>
       </div>
@@ -74,7 +124,12 @@ export default async function CashFlowPage() {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
-              <Tooltip formatter={(value) => formatCurrency(value)} />
+              <Tooltip formatter={(value: string | number | (string | number)[]) => {
+                if (typeof value === 'number' || typeof value === 'string') {
+                  return formatCurrency(Number(value))
+                }
+                return value
+              }} />
               <Legend />
               <Bar dataKey="inflow" fill="#10b981" name="Cash Inflow" />
               <Bar dataKey="outflow" fill="#ef4444" name="Cash Outflow" />

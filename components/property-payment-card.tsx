@@ -74,7 +74,9 @@ export function PropertyPaymentCard({
 
   const loadBankAccounts = async () => {
     const accounts = await getBankAccounts()
-    const mappedAccounts: BankAccount[] = accounts.map((account: any) => ({
+    // Flatten all account arrays from the returned object
+    const allAccounts = Object.values(accounts).flat()
+    const mappedAccounts: BankAccount[] = allAccounts.map((account: any) => ({
       id: account.id,
       account_name: account.account_name,
       bank_name: account.bank_name,

@@ -23,19 +23,20 @@ export default async function AccountingDashboardPage() {
     redirect("/dashboard")
   }
 
+  // Get current month and year
+  const now = new Date()
+  const currentMonth = now.getMonth() + 1
+  const currentYear = now.getFullYear()
+
+  // Use Date objects for proper date handling instead of string interpolation
+  const startDate = new Date(currentYear, currentMonth - 1, 1).toISOString().split('T')[0]
+  const endDate = new Date(currentYear, currentMonth, 1).toISOString().split('T')[0]
+
+  // Try to fetch accounting data - if any query fails, schema is not ready
+  let stats: any = null
   let schemaReady = false
 
   try {
-    // Get current month and year
-    const now = new Date()
-    const currentMonth = now.getMonth() + 1
-    const currentYear = now.getFullYear()
-
-    // Use Date objects for proper date handling instead of string interpolation
-    const startDate = new Date(currentYear, currentMonth - 1, 1).toISOString().split('T')[0]
-    const endDate = new Date(currentYear, currentMonth, 1).toISOString().split('T')[0]
-
-    // Try to fetch accounting data - if any query fails, schema is not ready
     const [paymentsResult, expensesResult, payoutsResult, tenantsResult, pendingPayoutsResult] = await Promise.all([
       supabase
         .from("rent_payments")
@@ -70,7 +71,7 @@ export default async function AccountingDashboardPage() {
       const expenses = expensesResult.data || []
       const payouts = payoutsResult.data || []
 
-      const stats = {
+      stats = {
         totalRentCollected: payments.reduce((sum, p) => sum + Number(p.amount_paid || 0), 0),
         totalCommission: payments.reduce((sum, p) => sum + Number(p.commission_amount || 0), 0),
         totalExpenses: expenses.reduce((sum, e) => sum + Number(e.amount || 0), 0),
@@ -85,9 +86,14 @@ export default async function AccountingDashboardPage() {
 
       stats.netProfit = stats.totalCommission - stats.totalExpenses
       stats.collectionRate = stats.totalTenants ? Math.round((payments.length / stats.totalTenants) * 100) : 0
+    }
+  } catch (error: any) {
+    schemaReady = false
+  }
 
-      // Render the dashboard with stats
-      return (
+  // Render the dashboard with stats if schema is ready
+  if (schemaReady && stats) {
+    return (
         <div className="flex min-h-svh flex-col">
           {/* Header */}
           <header className="border-b">
@@ -234,9 +240,6 @@ export default async function AccountingDashboardPage() {
           </main>
         </div>
       )
-    }
-  } catch (error: any) {
-    schemaReady = false
   }
 
   // If schema is not ready, show migration message

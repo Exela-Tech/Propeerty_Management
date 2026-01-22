@@ -7,17 +7,54 @@ import { Plus, TrendingUp } from "lucide-react"
 import { getExpenseSummary, getExpenses } from "@/app/(dashboard)/accounting/expenses/actions"
 import { formatCurrency } from "@/lib/utils"
 
+interface Expense {
+  id: string
+  category: string
+  description: string
+  amount: number
+  status: string
+}
+
+interface ExpenseSummary {
+  totalExpenses: number
+  expensesByCategory: Record<string, { total: number; budget: number; variance: number }>
+  budgetStatus: Array<{
+    categoryId: string
+    categoryName: string
+    budgetLimit: number
+    totalSpent: number
+    remaining: number
+    percentageUsed: number
+    status: string
+  }>
+  monthlyTrend: Array<{ month: string; total: number }>
+  period: { startDate: string; endDate: string }
+  categories?: number
+  pendingApproval?: number
+}
+
 export default function ExpenseManagementPage() {
-  const [summary, setSummary] = useState({ totalExpenses: 0, categories: 0, pendingApproval: 0 })
-  const [expenses, setExpenses] = useState([])
+  const [summary, setSummary] = useState<ExpenseSummary>({
+    totalExpenses: 0,
+    expensesByCategory: {},
+    budgetStatus: [],
+    monthlyTrend: [],
+    period: { startDate: '', endDate: '' },
+    categories: 0,
+    pendingApproval: 0,
+  })
+  const [expenses, setExpenses] = useState<Expense[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [summaryData, expensesData] = await Promise.all([getExpenseSummary(), getExpenses()])
+        const today = new Date()
+        const startDate = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0]
+        const endDate = today.toISOString().split('T')[0]
+        const [summaryData, expensesData] = await Promise.all([getExpenseSummary(startDate, endDate), getExpenses()])
         setSummary(summaryData)
-        setExpenses(expensesData)
+        setExpenses(expensesData as Expense[])
       } catch (error) {
         console.error("Error loading expenses:", error)
       } finally {

@@ -61,22 +61,27 @@ export default function PaymentReceiptPage() {
 
     async function loadReceipt() {
       try {
-        const response = await fetch(
-          `/api/payments/${paymentId}/receipt`
-        )
+        console.log("Loading receipt for payment ID:", paymentId)
+        const url = `/api/payments/${paymentId}/receipt`
+        console.log("Fetching from URL:", url)
+        
+        const response = await fetch(url)
 
         if (!response.ok) {
           const text = await response.text()
           console.error(
             "Receipt API error:",
             response.status,
-            text
+            text,
+            "URL:",
+            url
           )
-          throw new Error("Failed to load receipt")
+          throw new Error(`Failed to load receipt (${response.status}): ${text}`)
         }
 
-        const data = await response.json()
-        setReceipt(data)
+        const result = await response.json()
+        console.log("Receipt loaded successfully:", result)
+        setReceipt(result.data)
       } catch (error) {
         console.error("Error loading receipt:", error)
       } finally {

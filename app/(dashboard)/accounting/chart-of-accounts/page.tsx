@@ -7,11 +7,20 @@ export const metadata = {
   description: "View all accounts and their balances",
 }
 
+interface AccountBalance {
+  id: string
+  account_code: string
+  account_name: string
+  account_type: string
+  normal_balance: string
+  current_balance: number
+}
+
 export default async function ChartOfAccountsPage() {
   const accounts = await getChartOfAccounts()
   const balances = await getAccountBalances()
 
-  const accountBalanceMap = new Map(balances.map((b) => [b.id, b]))
+  const accountBalanceMap = new Map(balances.map((b: AccountBalance) => [b.id, b]))
 
   const accountTypes = [
     { key: "asset", label: "Assets", color: "bg-blue-50 border-blue-200" },
@@ -27,7 +36,7 @@ export default async function ChartOfAccountsPage() {
         const typeAccounts = accounts[type.key as keyof typeof accounts] || []
         if (typeAccounts.length === 0) return null
 
-        const totalBalance = typeAccounts.reduce((sum, account) => {
+        const totalBalance = typeAccounts.reduce((sum: number, account: { id: string }) => {
           const balance = accountBalanceMap.get(account.id)
           return sum + (balance?.current_balance || 0)
         }, 0)
@@ -52,7 +61,7 @@ export default async function ChartOfAccountsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {typeAccounts.map((account) => {
+                    {typeAccounts.map((account: { id: string; account_code: string; account_name: string; description?: string }) => {
                       const balance = accountBalanceMap.get(account.id)
                       const balanceAmount = balance?.current_balance || 0
                       const isNegative = balanceAmount < 0

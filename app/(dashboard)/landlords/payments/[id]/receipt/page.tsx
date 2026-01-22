@@ -48,10 +48,19 @@ export default function LandlordPaymentReceiptPage() {
   useEffect(() => {
     async function loadReceipt() {
       try {
-        const response = await fetch(`/api/landlords/payments/${paymentId}/receipt`)
-        if (!response.ok) throw new Error("Failed to load receipt")
-        const data = await response.json()
-        setReceipt(data)
+        console.log("Loading landlord receipt for payment ID:", paymentId)
+        const url = `/api/landlords/payments/${paymentId}/receipt`
+        console.log("Fetching from URL:", url)
+        
+        const response = await fetch(url)
+        if (!response.ok) {
+          const text = await response.text()
+          console.error("Landlord receipt API error:", response.status, text, "URL:", url)
+          throw new Error(`Failed to load receipt (${response.status}): ${text}`)
+        }
+        const result = await response.json()
+        console.log("Landlord receipt loaded successfully:", result)
+        setReceipt(result.data)
       } catch (error) {
         console.error("Error loading receipt:", error)
       } finally {

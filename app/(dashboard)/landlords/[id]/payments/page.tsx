@@ -125,7 +125,7 @@ export default function LandlordPaymentHistoryPage() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-3xl font-bold uppercase">{landlord.name}'S PAYMENT HISTORY</h1>
+<h1 className="text-3xl font-bold uppercase">{landlord.name}&apos;S PAYMENT HISTORY</h1>
               <p className="text-muted-foreground mt-1">
                 {landlord.email} • {landlord.phone}
               </p>

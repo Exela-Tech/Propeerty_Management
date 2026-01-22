@@ -81,7 +81,7 @@ export default function NewTeamMemberPage() {
       <Card className="max-w-2xl">
         <CardHeader>
           <CardTitle>Team Member Details</CardTitle>
-          <CardDescription>Fill in the team member's information and select their role</CardDescription>
+          <CardDescription>Fill in the team member&apos;s information and select their role</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">

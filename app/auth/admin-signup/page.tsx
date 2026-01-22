@@ -144,7 +144,7 @@ export default function AdminSignUpPage() {
                   </div>
                   <div>
                     <strong>Update your email</strong>
-                    <p className="text-muted-foreground">Replace 'your-email@example.com' with your actual email</p>
+                    <p className="text-muted-foreground">Replace &apos;your-email@example.com&apos; with your actual email</p>
                   </div>
                 </div>
 
@@ -161,7 +161,7 @@ export default function AdminSignUpPage() {
 
               <Alert>
                 <AlertDescription>
-                  Once you're a super admin, you can manage other users' roles from the admin dashboard at{" "}
+                  Once you&apos;re a super admin, you can manage other users&apos; roles from the admin dashboard at{" "}
                   <Link href="/admin/users" className="text-primary hover:underline">
                     /admin/users
                   </Link>

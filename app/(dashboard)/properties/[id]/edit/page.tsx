@@ -2,29 +2,13 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
-import { cookies } from "next/headers"
-import { createServerClient } from "@supabase/ssr"
+import { getServiceClient } from "@/lib/supabase/server"
 import { EditPropertyForm } from "@/components/edit-property-form"
 
 export default async function EditPropertyPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: propertyId } = await params
 
-  const cookieStore = await cookies()
-
-  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll()
-      },
-      setAll(cookiesToSet) {
-        try {
-          cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
-        } catch (error) {
-          console.error("[v0] Error setting cookies:", error)
-        }
-      },
-    },
-  })
+const supabase = getServiceClient()
 
   const { data: propertyData, error: propertyError } = await supabase
     .from("properties")

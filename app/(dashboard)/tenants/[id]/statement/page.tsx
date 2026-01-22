@@ -51,8 +51,8 @@ export default function TenantStatementPage() {
       try {
         const response = await fetch(`/api/tenants/${tenantId}/statement`)
         if (!response.ok) throw new Error("Failed to load statement")
-        const data = await response.json()
-        setStatement(data)
+        const result = await response.json()
+        setStatement(result.data)
       } catch (error) {
         console.error("Error loading statement:", error)
       } finally {

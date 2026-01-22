@@ -1,4 +1,5 @@
 import { createServerClient } from "@supabase/ssr"
+import { createClient } from "@supabase/supabase-js"
 import { cookies } from "next/headers"
 import {
   successResponse,
@@ -11,17 +12,16 @@ import { logger } from "@/lib/logger"
 const log = logger.child("api:payments:receipt")
 
 /**
- * Create Supabase server client (request-scoped)
+ * Get service client (bypasses RLS for admin operations)
  */
-async function getServerClient(cookieStore: Awaited<ReturnType<typeof cookies>>) {
-  return createServerClient(
+function getServiceClient() {
+  return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
       },
     }
   )
@@ -34,62 +34,59 @@ export async function GET(
   try {
     const { id } = params
 
+    log.info("Receipt request received", { paymentId: id })
+
     // 1️⃣ Validate UUID
     if (!validateUUID(id)) {
+      log.warn("Invalid UUID format", { paymentId: id })
       return notFoundResponse("Payment")
     }
 
-    const cookieStore = await cookies()
-    const supabase = await getServerClient(cookieStore)
+    // Use service client to bypass RLS
+    const supabase = getServiceClient()
 
     // 2️⃣ Fetch payment + tenant details
     const { data: payment, error: paymentError } = await supabase
       .from("tenant_payments")
-      .select(`
-        id,
-        amount,
-        payment_date,
-        payment_period,
-        tenant:tenant_id (
-          id,
-          first_name,
-          last_name,
-          email,
-          phone,
-          currency,
-          balance,
-          monthly_rent,
-          prepaid_balance,
-          property_id,
-          unit_id,
-          property:property_id (
-            id,
-            name
-          ),
-          unit:unit_id (
-            id,
-            unit_number,
-            status,
-            bedrooms,
-            bathrooms,
-            monthly_rent
-          )
-        )
-      `)
+      .select("*")
       .eq("id", id)
       .single()
+
+    if (paymentError) {
+      log.error("Supabase error fetching payment", paymentError, { paymentId: id })
+    }
 
     if (paymentError || !payment) {
       log.error("Payment not found", paymentError, { paymentId: id })
       return notFoundResponse("Payment")
     }
 
-    if (!payment.tenant || !Array.isArray(payment.tenant) || payment.tenant.length === 0) {
+    log.info("Payment found", { paymentId: id, tenantId: payment.tenant_id })
+
+    // Fetch tenant separately
+    const { data: tenant, error: tenantError } = await supabase
+      .from("tenants")
+      .select("*")
+      .eq("id", payment.tenant_id)
+      .single()
+
+    if (tenantError || !tenant) {
       log.warn("Tenant not found for payment", { paymentId: id })
       return notFoundResponse("Tenant")
     }
 
-    const tenant = payment.tenant[0]
+    // Fetch property and unit
+    const { data: property } = await supabase
+      .from("properties")
+      .select("id, name")
+      .eq("id", tenant.property_id)
+      .single()
+
+    const { data: unit } = await supabase
+      .from("units")
+      .select("id, unit_number, room_number")
+      .eq("id", tenant.unit_id)
+      .single()
 
     // 3️⃣ Fetch tenant payment history (ONLY this tenant)
     const { data: paymentsHistory, error: historyError } = await supabase
@@ -163,16 +160,38 @@ export async function GET(
       }
     }
 
-    // 6️⃣ Return receipt
+    // 6️⃣ Return receipt with structured data
     return successResponse({
-      ...payment,
-      tenant: {
-        ...tenant,
-        balanceAtPayment,
-      },
-      property: tenant.property,
-      unit: tenant.unit,
+      id: payment.id,
+      receipt_number: payment.receipt_number,
+      amount: payment.amount,
+      payment_date: payment.payment_date,
+      payment_period: payment.payment_period,
+      payment_method: payment.payment_method,
+      status: payment.status,
+      overpayment_credit: payment.overpayment_credit,
       paymentBreakdown,
+      tenant: {
+        id: tenant.id,
+        first_name: tenant.first_name,
+        last_name: tenant.last_name,
+        email: tenant.email,
+        phone: tenant.phone,
+        currency: tenant.currency,
+        balance: tenant.balance,
+        balanceAtPayment,
+        prepaid_balance: tenant.prepaid_balance,
+        monthly_rent: tenant.monthly_rent,
+      },
+      property: {
+        id: property?.id,
+        name: property?.name,
+      },
+      unit: {
+        id: unit?.id,
+        unit_number: unit?.unit_number,
+        room_number: unit?.room_number,
+      },
     })
   } catch (error) {
     return handleApiError(error, "payments:[id]:receipt:GET")

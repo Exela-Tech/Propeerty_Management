@@ -13,19 +13,48 @@ import {
   getAccountReconciliation,
 } from "@/app/(dashboard)/accounting/actions"
 
+interface BankReconciliationData {
+  accounts?: Array<{ id: string; account_name: string; bank_name: string; current_balance: number; gl_account_id: string }>
+  bankAccountId?: string
+  asOfDate?: string
+  glBalance?: number
+  bankBalance?: number
+  difference?: number
+  outstandingItems?: Array<{ id: string; date: string; description: string; amount: number; reconciled: boolean }>
+  isReconciled?: boolean
+  discrepancy?: number
+  bankStatement?: number
+}
+
+interface AccountReconciliationData {
+  accounts?: Array<{ id: string; account_code: string; account_name: string; account_type: string }>
+  accountId?: string
+  accountName?: string
+  accountCode?: string
+  asOfDate?: string
+  totalDebits?: number
+  totalCredits?: number
+  balance?: number
+  entries?: Array<{ id: string; debit: number; credit: number; transaction_date: string; description: string }>
+  isReconciled?: boolean
+  discrepancy?: number
+  bankStatement?: number
+}
+
 export default function ReconciliationPage() {
-  const [bankReconciliation, setBankReconciliation] = useState(null)
-  const [accountReconciliation, setAccountReconciliation] = useState(null)
+  const [bankReconciliation, setBankReconciliation] = useState<BankReconciliationData | null>(null)
+  const [accountReconciliation, setAccountReconciliation] = useState<AccountReconciliationData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [selectedBank, setSelectedBank] = useState("")
   const [selectedAccount, setSelectedAccount] = useState("")
   const [statementDate, setStatementDate] = useState(new Date().toISOString().split("T")[0])
-  const [bankList, setBankList] = useState([])
-  const [accountList, setAccountList] = useState([])
+  const [bankList, setBankList] = useState<Array<{ id: string; account_name: string; bank_name: string; current_balance: number; gl_account_id: string }>>([])
+  const [accountList, setAccountList] = useState<Array<{ id: string; account_code: string; account_name: string; account_type: string }>>([])
 
   useEffect(() => {
     const loadInitialData = async () => {
       try {
+        setIsLoading(true)
         const [bankData, accountData] = await Promise.all([
           getBankReconciliationSummary(),
           getAccountReconciliationSummary(),
@@ -42,6 +71,9 @@ export default function ReconciliationPage() {
         }
       } catch (error) {
         console.error("Error loading reconciliation data:", error)
+        // Set empty arrays on error to show proper empty state
+        setBankList([])
+        setAccountList([])
       } finally {
         setIsLoading(false)
       }
@@ -50,12 +82,19 @@ export default function ReconciliationPage() {
   }, [])
 
   const handleBankReconciliation = async () => {
-    if (!selectedBank) return
+    if (!selectedBank) {
+      alert("Please select a bank account")
+      return
+    }
     try {
+      setIsLoading(true)
       const data = await getBankReconciliation(selectedBank, statementDate)
       setBankReconciliation(data)
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error reconciling bank account:", error)
+      alert(error.message || "Failed to reconcile bank account. Please try again.")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -63,7 +102,10 @@ export default function ReconciliationPage() {
     if (!selectedAccount) return
     try {
       const data = await getAccountReconciliation(selectedAccount, statementDate)
-      setAccountReconciliation(data)
+      setAccountReconciliation({ 
+        ...data, 
+        accounts: accountList,
+      } as unknown as AccountReconciliationData)
     } catch (error) {
       console.error("Error reconciling account:", error)
     }
@@ -98,11 +140,17 @@ export default function ReconciliationPage() {
                       <SelectValue placeholder="Select bank account" />
                     </SelectTrigger>
                     <SelectContent>
-                      {bankList.map((bank) => (
-                        <SelectItem key={bank.id} value={bank.id}>
-                          {bank.name}
+                      {bankList.length > 0 ? (
+                        bankList.map((bank) => (
+                          <SelectItem key={bank.id} value={bank.id}>
+                            {bank.account_name}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="no-banks" disabled>
+                          No bank accounts found
                         </SelectItem>
-                      ))}
+                      )}
                     </SelectContent>
                   </Select>
                 </div>

@@ -44,21 +44,22 @@ export function RecordPaymentDialog({
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (open) {
-      getBankAccounts().then((accounts) => {
-        const mappedAccounts = accounts.map((account: any) => ({
-          id: account.id,
-          account_name: account.account_name,
-          bank_name: account.bank_name,
-          currency: account.currency || "UGX",
-          current_balance: account.current_balance || 0,
-        }))
-        setBankAccounts(mappedAccounts)
-        if (mappedAccounts.length > 0) {
-          setBankAccountId(mappedAccounts[0].id)
-        }
-      })
+if (open) {
+  getBankAccounts().then((accountsByType) => {
+    // Combine all account arrays into one flat array
+    const allAccounts: BankAccount[] = [
+      ...(accountsByType.asset || []),
+      ...(accountsByType.liability || []),
+      ...(accountsByType.equity || []),
+      ...(accountsByType.income || []),
+      ...(accountsByType.expense || []),
+    ]
+    setBankAccounts(allAccounts)
+    if (allAccounts.length > 0) {
+      setBankAccountId(allAccounts[0].id)
     }
+  })
+}
   }, [open])
 
   const handleSubmit = async (e: React.FormEvent) => {

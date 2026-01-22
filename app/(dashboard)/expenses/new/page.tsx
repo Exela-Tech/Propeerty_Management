@@ -38,7 +38,7 @@ export default function NewExpensePage() {
       }
     }
     loadData()
-  }, [])
+  }, [toast])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
