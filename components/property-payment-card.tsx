@@ -128,7 +128,7 @@ export function PropertyPaymentCard({
         alert(`Error: ${result.error}`)
       }
     } catch (error) {
-      console.error("[v0] Error:", error)
+      console.error(" Error:", error)
       alert("Failed to record payment")
     } finally {
       setLoading(false)

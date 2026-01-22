@@ -19,13 +19,13 @@ export async function getProperties() {
     const { data, error } = await supabase.from("properties").select("id, name, property_type").order("name")
 
     if (error) {
-      console.error("[v0] Error fetching properties:", error)
+      console.error(" Error fetching properties:", error)
       throw error
     }
 
     return data || []
   } catch (error) {
-    console.error("[v0] getProperties failed:", error)
+    console.error(" getProperties failed:", error)
     return []
   }
 }
@@ -42,13 +42,13 @@ export async function getVacantUnits(propertyId: string) {
       .order("unit_number")
 
     if (error) {
-      console.error("[v0] Error fetching units:", error)
+      console.error(" Error fetching units:", error)
       throw error
     }
 
     return data || []
   } catch (error) {
-    console.error("[v0] getVacantUnits failed:", error)
+    console.error(" getVacantUnits failed:", error)
     return []
   }
 }
@@ -78,7 +78,7 @@ export async function createTenant(formData: FormData) {
     const { data, error } = await supabase.from("tenants").insert([tenantData]).select().single()
 
     if (error) {
-      console.error("[v0] Error creating tenant:", error)
+      console.error(" Error creating tenant:", error)
       return { success: false, error: error.message }
     }
 
@@ -92,7 +92,7 @@ export async function createTenant(formData: FormData) {
 
     return { success: true, data }
   } catch (error: any) {
-    console.error("[v0] createTenant failed:", error)
+    console.error(" createTenant failed:", error)
     return { success: false, error: error.message || "Failed to create tenant" }
   }
 }
@@ -104,13 +104,13 @@ export async function getTenant(id: string) {
     const { data, error } = await supabase.from("tenants").select("*").eq("id", id).single()
 
     if (error) {
-      console.error("[v0] Error fetching tenant:", error)
+      console.error(" Error fetching tenant:", error)
       throw error
     }
 
     return data
   } catch (error) {
-    console.error("[v0] getTenant failed:", error)
+    console.error(" getTenant failed:", error)
     return null
   }
 }
@@ -155,7 +155,7 @@ export async function updateTenant(id: string, formData: FormData) {
     const { data, error } = await supabase.from("tenants").update(tenantData).eq("id", id).select().single()
 
     if (error) {
-      console.error("[v0] Error updating tenant:", error)
+      console.error(" Error updating tenant:", error)
       return { success: false, error: error.message }
     }
 
@@ -187,7 +187,7 @@ export async function updateTenant(id: string, formData: FormData) {
 
     return { success: true, data }
   } catch (error: any) {
-    console.error("[v0] updateTenant failed:", error)
+    console.error(" updateTenant failed:", error)
     return { success: false, error: error.message || "Failed to update tenant" }
   }
 }
@@ -206,7 +206,7 @@ export async function toggleTenantStatus(tenantId: string, newStatus: "active" |
     const { error } = await supabase.from("tenants").update({ status: newStatus }).eq("id", tenantId)
 
     if (error) {
-      console.error("[v0] Error updating tenant status:", error)
+      console.error(" Error updating tenant status:", error)
       throw new Error(error.message)
     }
 
@@ -231,7 +231,7 @@ export async function toggleTenantStatus(tenantId: string, newStatus: "active" |
     revalidatePath("/reports")
     revalidatePath("/dashboard")
   } catch (error: any) {
-    console.error("[v0] toggleTenantStatus failed:", error)
+    console.error(" toggleTenantStatus failed:", error)
     throw error
   }
 }

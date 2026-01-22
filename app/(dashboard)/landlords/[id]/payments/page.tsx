@@ -53,7 +53,7 @@ export default function LandlordPaymentHistoryPage() {
         const result = await response.json()
         setData(result)
       } catch (err) {
-        console.error("[v0] Error fetching payment history:", err)
+        console.error(" Error fetching payment history:", err)
         setError("Failed to load payment history")
       } finally {
         setLoading(false)

@@ -17,7 +17,7 @@ export async function getProperties() {
   const { data, error } = await supabase.from("properties").select("id, name, property_type").order("name")
 
   if (error) {
-    console.error("[v0] Error fetching properties:", error)
+    console.error("Error fetching properties:", error)
     throw new Error("Failed to fetch properties")
   }
 
@@ -33,7 +33,7 @@ export async function getBankAccounts() {
     .order("account_name", { ascending: true })
 
   if (error) {
-    console.error("[v0] Error fetching bank accounts:", error)
+    console.error("Error fetching bank accounts:", error)
     return []
   }
 
@@ -110,7 +110,7 @@ async function recordExpenseToGL(
   const { error } = await supabase.from("general_ledger").insert(glEntries)
 
   if (error) {
-    console.error("[v0] Error posting expense to GL:", error)
+    console.error("Error posting expense to GL:", error)
     throw new Error("Failed to post expense to general ledger")
   }
 }
@@ -140,24 +140,24 @@ export async function createExpense(formData: FormData) {
     type: "expense",
   }
 
-  console.log("[v0] Creating expense with data:", expenseData)
+  console.log("Creating expense with data:", expenseData)
 
   const { data, error } = await supabase.from("transactions").insert([expenseData]).select()
 
   if (error) {
-    console.error("[v0] Error creating expense:", error)
+    console.error("Error creating expense:", error)
     throw new Error(error.message)
   }
 
-  console.log("[v0] Expense created successfully:", data)
+  console.log("Expense created successfully:", data)
 
   if (data && data.length > 0) {
     const expenseId = data[0].id
     try {
       await recordExpenseToGL(expenseId, category, amount, description, transactionDate, bankAccountId)
-      console.log("[v0] Expense posted to GL successfully")
+      console.log("Expense posted to GL successfully")
     } catch (glError) {
-      console.error("[v0] Failed to post expense to GL:", glError)
+      console.error("Failed to post expense to GL:", glError)
       // Rollback the expense
       await supabase.from("transactions").delete().eq("id", expenseId)
       throw glError
@@ -177,7 +177,7 @@ export async function deleteExpense(expenseId: string) {
   const { error } = await supabase.from("transactions").delete().eq("id", expenseId)
 
   if (error) {
-    console.error("[v0] Error deleting expense:", error)
+    console.error("Error deleting expense:", error)
     throw new Error(error.message)
   }
 

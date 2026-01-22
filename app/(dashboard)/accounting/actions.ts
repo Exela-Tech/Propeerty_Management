@@ -13,7 +13,7 @@ export async function getChartOfAccounts() {
     .order("account_code")
 
   if (error) {
-    console.error("[v0] Error fetching chart of accounts:", error)
+    console.error("Error fetching chart of accounts:", error)
     throw new Error("Failed to fetch chart of accounts")
   }
 
@@ -34,7 +34,7 @@ export async function getAccountBalances() {
   const { data, error } = await supabase.from("account_balances").select("*").order("account_code")
 
   if (error) {
-    console.error("[v0] Error fetching account balances:", error)
+    console.error("Error fetching account balances:", error)
     throw new Error("Failed to fetch account balances")
   }
 
@@ -64,7 +64,7 @@ export async function getGeneralLedger(accountId?: string, startDate?: string, e
   const { data, error } = await query.limit(500)
 
   if (error) {
-    console.error("[v0] Error fetching general ledger:", error)
+    console.error("Error fetching general ledger:", error)
     throw new Error("Failed to fetch general ledger")
   }
 
@@ -128,7 +128,7 @@ export async function syncTenantPaymentToGL(paymentId: string) {
   const { error } = await supabase.from("general_ledger").insert(entries)
 
   if (error) {
-    console.error("[v0] Error syncing payment to GL:", error)
+    console.error("Error syncing payment to GL:", error)
     throw new Error("Failed to sync payment to general ledger")
   }
 
@@ -145,7 +145,7 @@ export async function getBankAccounts() {
     .order("account_name", { ascending: true })
 
   if (error) {
-    console.error("[v0] Error fetching bank accounts:", error)
+    console.error("Error fetching bank accounts:", error)
     throw new Error("Failed to fetch bank accounts")
   }
 
@@ -202,7 +202,7 @@ export async function getPaymentDeposits(bankAccountId?: string) {
   const { data, error } = await query
 
   if (error) {
-    console.error("[v0] Error fetching deposits:", error)
+    console.error("Error fetching deposits:", error)
     throw new Error("Failed to fetch deposits")
   }
 
@@ -218,18 +218,18 @@ export async function createPaymentDeposit(
 ) {
   const supabase = getServiceClient()
 
-  console.log("[v0] Creating deposit for bank:", bankAccountId)
-  console.log("[v0] Payment IDs:", paymentIds)
+  console.log("Creating deposit for bank:", bankAccountId)
+  console.log("Payment IDs:", paymentIds)
 
   const { data: tenantPayments, error: tenantError } = await supabase
     .from("tenant_payments")
     .select("id, amount, payment_date, tenant_id, tenants!inner(first_name, last_name)")
     .in("id", paymentIds)
 
-  console.log("[v0] Tenant payments fetched:", tenantPayments)
+  console.log("Tenant payments fetched:", tenantPayments)
 
   if (tenantError) {
-    console.log("[v0] Error fetching tenant payments:", tenantError.message)
+    console.log("Error fetching tenant payments:", tenantError.message)
   }
 
   let landlordPaymentsWithNames: any[] = []
@@ -239,10 +239,10 @@ export async function createPaymentDeposit(
     .select("id, amount, payment_date, landlord_id")
     .in("id", paymentIds)
 
-  console.log("[v0] Landlord payments fetched:", landlordPayments)
+  console.log("Landlord payments fetched:", landlordPayments)
 
   if (landlordError) {
-    console.log("[v0] Error fetching landlord payments:", landlordError.message)
+    console.log("Error fetching landlord payments:", landlordError.message)
   }
 
   if (landlordPayments && landlordPayments.length > 0) {
@@ -254,7 +254,7 @@ export async function createPaymentDeposit(
       .in("id", landlordIds)
 
     if (profileError) {
-      console.log("[v0] Error fetching landlord profiles:", profileError.message)
+      console.log("Error fetching landlord profiles:", profileError.message)
     } else if (landlordProfiles) {
       landlordPaymentsWithNames = landlordPayments.map((payment) => {
         const profile = landlordProfiles.find((p) => p.id === payment.landlord_id)
@@ -274,13 +274,13 @@ export async function createPaymentDeposit(
     throw new Error("No valid payments found to deposit")
   }
 
-  console.log("[v0] Total amount to deposit:", totalAmount)
+  console.log("Total amount to deposit:", totalAmount)
 
   const payerNames: string[] = []
 
   if (tenantPayments && tenantPayments.length > 0) {
     tenantPayments.forEach((p: any) => {
-      console.log("[v0] Processing tenant payment:", p)
+      console.log("Processing tenant payment:", p)
       if (p.tenants) {
         payerNames.push(`Tenant payment received - ${p.tenants.first_name} ${p.tenants.last_name}`)
       }
@@ -289,14 +289,14 @@ export async function createPaymentDeposit(
 
   if (landlordPaymentsWithNames && landlordPaymentsWithNames.length > 0) {
     landlordPaymentsWithNames.forEach((p: any) => {
-      console.log("[v0] Processing landlord payment:", p)
+      console.log("Processing landlord payment:", p)
       if (p.profiles) {
         payerNames.push(`Landlord payment received - ${p.profiles.first_name} ${p.profiles.last_name}`)
       }
     })
   }
 
-  console.log("[v0] Payer names collected:", payerNames)
+  console.log("Payer names collected:", payerNames)
 
   let depositDescription = ""
   if (payerNames.length > 0) {
@@ -309,7 +309,7 @@ export async function createPaymentDeposit(
     depositDescription += ` (Ref: ${depositReference})`
   }
 
-  console.log("[v0] Final deposit description:", depositDescription)
+  console.log("Final deposit description:", depositDescription)
 
   const { data: deposit, error: depositError } = await supabase
     .from("payment_deposits")
@@ -325,7 +325,7 @@ export async function createPaymentDeposit(
     .single()
 
   if (depositError) {
-    console.error("[v0] Error creating deposit:", depositError)
+    console.error("Error creating deposit:", depositError)
     throw new Error("Failed to create deposit: " + depositError.message)
   }
 
@@ -351,7 +351,7 @@ export async function createPaymentDeposit(
   if (depositItems.length > 0) {
     const { error: itemsError } = await supabase.from("deposit_items").insert(depositItems)
     if (itemsError) {
-      console.error("[v0] Error creating deposit items:", itemsError)
+      console.error("Error creating deposit items:", itemsError)
       throw new Error("Failed to create deposit items: " + itemsError.message)
     }
   }
@@ -383,7 +383,7 @@ export async function createPaymentDeposit(
     .single()
 
   if (!bankAccount?.gl_account_id) {
-    console.error("[v0] Bank account has no GL account linkage!")
+    console.error("Bank account has no GL account linkage!")
     throw new Error("Bank account is not linked to a GL account")
   }
 
@@ -394,14 +394,14 @@ export async function createPaymentDeposit(
     .single()
 
   if (!undepositedAccount) {
-    console.error("[v0] Undeposited Funds account (1015) not found!")
+    console.error("Undeposited Funds account (1015) not found!")
     throw new Error("Undeposited Funds GL account not found")
   }
 
-  console.log("[v0] Creating GL entries...")
-  console.log("[v0] Bank GL Account ID:", bankAccount.gl_account_id)
-  console.log("[v0] Undeposited GL Account ID:", undepositedAccount.id)
-  console.log("[v0] Amount:", totalAmount)
+  console.log("Creating GL entries...")
+  console.log("Bank GL Account ID:", bankAccount.gl_account_id)
+  console.log("Undeposited GL Account ID:", undepositedAccount.id)
+  console.log("Amount:", totalAmount)
 
   const { data: glEntries, error: glError } = await supabase
     .from("general_ledger")
@@ -428,11 +428,11 @@ export async function createPaymentDeposit(
     .select()
 
   if (glError) {
-    console.error("[v0] CRITICAL: GL entry creation failed:", glError)
+    console.error("CRITICAL: GL entry creation failed:", glError)
     throw new Error("Failed to create GL entries: " + glError.message)
   }
 
-  console.log("[v0] GL entries created successfully:", glEntries?.length || 0)
+  console.log("GL entries created successfully:", glEntries?.length || 0)
 
   revalidatePath("/accounting")
   revalidatePath("/accounting/cash-management")
@@ -445,7 +445,7 @@ export async function getLandlordStatements() {
   const { data, error } = await supabase.from("landlord_balances").select("*").order("landlord_name")
 
   if (error) {
-    console.error("[v0] Error fetching landlord statements:", error)
+    console.error("Error fetching landlord statements:", error)
     throw new Error("Failed to fetch landlord statements")
   }
 
@@ -462,7 +462,7 @@ export async function getLandlordSubledger(landlordId: string) {
     .order("transaction_date", { ascending: false })
 
   if (error) {
-    console.error("[v0] Error fetching landlord subledger:", error)
+    console.error("Error fetching landlord subledger:", error)
     throw new Error("Failed to fetch landlord subledger")
   }
 
@@ -488,7 +488,7 @@ export async function getProfitAndLossStatement(startDate: string, endDate: stri
     .lte("transaction_date", endDate)
 
   if (error) {
-    console.error("[v0] Error fetching GL data:", error)
+    console.error("Error fetching GL data:", error)
     return { period: { startDate, endDate }, income: [], totalIncome: 0, expenses: [], totalExpenses: 0, netIncome: 0 }
   }
 
@@ -602,7 +602,7 @@ export async function getTrialBalance(asOfDate: string) {
   const { data: balances, error } = await supabase.from("account_balances").select("*").order("account_code")
 
   if (error) {
-    console.error("[v0] Error fetching trial balance:", error)
+    console.error("Error fetching trial balance:", error)
     throw new Error("Failed to fetch trial balance")
   }
 
@@ -665,7 +665,7 @@ export async function getTaxConfiguration() {
   const { data, error } = await supabase.from("tax_configuration").select("*").single()
 
   if (error && error.code !== "PGRST116") {
-    console.error("[v0] Error fetching tax configuration:", error)
+    console.error("Error fetching tax configuration:", error)
     throw new Error("Failed to fetch tax configuration")
   }
 
@@ -744,7 +744,7 @@ export async function recordTaxTransaction(taxType: string, amount: number, desc
   })
 
   if (error) {
-    console.error("[v0] Error recording tax transaction:", error)
+    console.error("Error recording tax transaction:", error)
     throw new Error("Failed to record tax transaction")
   }
 
@@ -832,7 +832,7 @@ export async function recordReconciliation(
   })
 
   if (error) {
-    console.error("[v0] Error recording reconciliation:", error)
+    console.error("Error recording reconciliation:", error)
     throw new Error("Failed to record reconciliation")
   }
 
@@ -849,7 +849,7 @@ export async function getReconciliationHistory(limit = 50) {
     .limit(limit)
 
   if (error) {
-    console.error("[v0] Error fetching reconciliation history:", error)
+    console.error("Error fetching reconciliation history:", error)
     throw new Error("Failed to fetch reconciliation history")
   }
 
@@ -954,7 +954,7 @@ export async function createBankAccount(data: {
     .single()
 
   if (error) {
-    console.error("[v0] Error creating bank account:", error)
+    console.error("Error creating bank account:", error)
     throw new Error("Failed to create bank account")
   }
 
@@ -1021,7 +1021,7 @@ export async function updateBankAccount(
     .single()
 
   if (error) {
-    console.error("[v0] Error updating bank account:", error)
+    console.error("Error updating bank account:", error)
     throw new Error("Failed to update bank account")
   }
 
@@ -1031,7 +1031,7 @@ export async function updateBankAccount(
 export async function getBankTransactions(bankAccountId: string) {
   const supabase = getServiceClient()
 
-  console.log("[v0] Fetching transactions for bank:", bankAccountId)
+  console.log("Fetching transactions for bank:", bankAccountId)
 
   const { data: bankAccount } = await supabase
     .from("bank_accounts")
@@ -1043,7 +1043,7 @@ export async function getBankTransactions(bankAccountId: string) {
     throw new Error("Bank account not found")
   }
 
-  console.log("[v0] Bank account GL ID:", bankAccount.gl_account_id)
+  console.log("Bank account GL ID:", bankAccount.gl_account_id)
 
   const { data: transactions, error } = await supabase
     .from("general_ledger")
@@ -1053,11 +1053,11 @@ export async function getBankTransactions(bankAccountId: string) {
     .order("created_at", { ascending: false })
     .limit(100)
 
-  console.log("[v0] Found transactions:", transactions?.length)
-  console.log("[v0] First transaction:", transactions?.[0])
+  console.log("Found transactions:", transactions?.length)
+  console.log("First transaction:", transactions?.[0])
 
   if (error) {
-    console.error("[v0] Error fetching bank transactions:", error)
+    console.error("Error fetching bank transactions:", error)
     throw new Error("Failed to fetch bank transactions")
   }
 
@@ -1080,7 +1080,7 @@ export async function getChartOfAccountsForBanks() {
     .order("account_code", { ascending: true })
 
   if (error) {
-    console.error("[v0] Error fetching GL accounts:", error)
+    console.error("Error fetching GL accounts:", error)
     throw new Error("Failed to fetch GL accounts")
   }
 
@@ -1091,7 +1091,7 @@ export async function getChartOfAccountsForBanks() {
 export async function getUndepositedFundsHistory(startDate?: string, endDate?: string) {
   const supabase = getServiceClient()
 
-  console.log("[v0] Fetching undeposited funds history")
+  console.log("Fetching undeposited funds history")
 
   // Get the Undeposited Funds GL account (1015)
   const { data: undepositedAccount } = await supabase
@@ -1104,7 +1104,7 @@ export async function getUndepositedFundsHistory(startDate?: string, endDate?: s
     throw new Error("Undeposited Funds account not found")
   }
 
-  console.log("[v0] Undeposited Funds GL Account ID:", undepositedAccount.id)
+  console.log("Undeposited Funds GL Account ID:", undepositedAccount.id)
 
   // Build query for GL transactions
   let query = supabase
@@ -1124,10 +1124,10 @@ export async function getUndepositedFundsHistory(startDate?: string, endDate?: s
 
   const { data: transactions, error } = await query.limit(200)
 
-  console.log("[v0] Found undeposited funds transactions:", transactions?.length)
+  console.log("Found undeposited funds transactions:", transactions?.length)
 
   if (error) {
-    console.error("[v0] Error fetching undeposited funds history:", error)
+    console.error("Error fetching undeposited funds history:", error)
     throw new Error("Failed to fetch undeposited funds history")
   }
 

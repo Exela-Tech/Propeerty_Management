@@ -241,7 +241,7 @@ export async function recordLandlordPayment(formData: FormData) {
     .single()
 
   if (error) {
-    console.error("[v0] Error recording landlord payment:", error)
+    console.error(" Error recording landlord payment:", error)
     return { success: false, error: error.message }
   }
 
@@ -283,7 +283,7 @@ export async function getLandlordPayments(landlordId: string) {
     .order("payment_date", { ascending: false })
 
   if (error) {
-    console.error("[v0] Error fetching landlord payments:", error)
+    console.error(" Error fetching landlord payments:", error)
     return []
   }
 
@@ -307,7 +307,7 @@ async function postLandlordPaymentToGL(
     .single()
 
   if (bankError || !bankAccount?.gl_account_id) {
-    console.error("[v0] Bank account GL linkage not found:", bankError)
+    console.error(" Bank account GL linkage not found:", bankError)
     throw new Error("Bank account must be linked to a GL account")
   }
 
@@ -319,7 +319,7 @@ async function postLandlordPaymentToGL(
     .single()
 
   if (!expenseAccount) {
-    console.error("[v0] Missing Landlord Payout Expense account (5020)")
+    console.error(" Missing Landlord Payout Expense account (5020)")
     throw new Error("Landlord expense account not found in chart of accounts")
   }
 
@@ -331,7 +331,7 @@ async function postLandlordPaymentToGL(
     .single()
 
   if (!incomeAccount) {
-    console.error("[v0] Missing Management Fee Income account (4010)")
+    console.error(" Missing Management Fee Income account (4010)")
     throw new Error("Management fee income account not found in chart of accounts")
   }
 
@@ -349,7 +349,7 @@ async function postLandlordPaymentToGL(
   })
 
   if (expenseError) {
-    console.error("[v0] Failed to create expense GL entry:", expenseError)
+    console.error(" Failed to create expense GL entry:", expenseError)
     throw new Error("Failed to post landlord expense to GL")
   }
 
@@ -366,7 +366,7 @@ async function postLandlordPaymentToGL(
     })
 
     if (incomeError) {
-      console.error("[v0] Failed to create income GL entry:", incomeError)
+      console.error(" Failed to create income GL entry:", incomeError)
       throw new Error("Failed to post management fee income to GL")
     }
   }
@@ -383,7 +383,7 @@ async function postLandlordPaymentToGL(
   })
 
   if (bankCreditError) {
-    console.error("[v0] Failed to create bank credit GL entry:", bankCreditError)
+    console.error(" Failed to create bank credit GL entry:", bankCreditError)
     throw new Error("Failed to reduce bank balance in GL")
   }
 }

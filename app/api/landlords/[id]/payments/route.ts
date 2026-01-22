@@ -11,7 +11,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id: landlordId } = await params
-  console.log("[v0] Landlord payments API called for:", landlordId)
+  console.log(" Landlord payments API called for:", landlordId)
 
   try {
     // Get landlord details
@@ -21,10 +21,10 @@ export async function GET(
       .eq("id", landlordId)
       .single()
 
-    console.log("[v0] Landlord query result:", landlord, landlordError)
+    console.log(" Landlord query result:", landlord, landlordError)
 
     if (landlordError || !landlord) {
-      console.log("[v0] Landlord not found:", landlordError)
+      console.log(" Landlord not found:", landlordError)
       return NextResponse.json({ error: "Landlord not found" }, { status: 404 })
     }
 
@@ -54,7 +54,7 @@ export async function GET(
       .order("payment_date", { ascending: false })
 
     if (paymentsError) {
-      console.error("[v0] Error fetching payments:", paymentsError)
+      console.error(" Error fetching payments:", paymentsError)
       return NextResponse.json({ error: "Failed to fetch payments" }, { status: 500 })
     }
 
@@ -64,7 +64,7 @@ export async function GET(
       .select("id, commission_type, commission_value")
       .or(`owner_id.eq.${landlordId},landlord_id.eq.${landlordId}`)
 
-    console.log("[v0] Properties query result:", properties, propertiesError)
+    console.log(" Properties query result:", properties, propertiesError)
 
     const propertyIds = properties?.map((p) => p.id) || []
 
@@ -80,7 +80,7 @@ export async function GET(
         .in("property_id", propertyIds)
 
       const unitIds = units?.map((u) => u.id) || []
-      console.log("[v0] Units found:", unitIds.length)
+      console.log(" Units found:", unitIds.length)
 
       if (unitIds.length > 0) {
         const { data: tenants, error: tenantsError } = await supabase
@@ -89,7 +89,7 @@ export async function GET(
           .in("unit_id", unitIds)
           .eq("status", "active")
 
-        console.log("[v0] Tenants query result:", tenants, tenantsError)
+        console.log(" Tenants query result:", tenants, tenantsError)
 
         expectedRentTotal = tenants?.reduce((sum, t) => sum + (t.monthly_rent || 0), 0) || 0
 
@@ -156,7 +156,7 @@ export async function GET(
       netPayoutCalculated,
     })
   } catch (error) {
-    console.error("[v0] Error in landlord payments API:", error)
+    console.error(" Error in landlord payments API:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

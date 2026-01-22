@@ -84,7 +84,7 @@ export default async function LandlordPaymentsPage() {
     .order("payment_due_day", { ascending: true })
 
   if (error) {
-    console.error("[v0] Error fetching landlords:", error)
+    console.error(" Error fetching landlords:", error)
     return (
       <div className="space-y-6 p-8">
         <div className="text-center py-12">Failed to load landlord payment schedule</div>
