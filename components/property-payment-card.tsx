@@ -74,9 +74,16 @@ export function PropertyPaymentCard({
 
   const loadBankAccounts = async () => {
     const accounts = await getBankAccounts()
-    setBankAccounts(accounts)
-    if (accounts.length > 0) {
-      setBankAccountId(accounts[0].id)
+    const mappedAccounts: BankAccount[] = accounts.map((account: any) => ({
+      id: account.id,
+      account_name: account.account_name,
+      bank_name: account.bank_name,
+      currency: account.currency || "UGX",
+      current_balance: account.current_balance || 0,
+    }))
+    setBankAccounts(mappedAccounts)
+    if (mappedAccounts.length > 0) {
+      setBankAccountId(mappedAccounts[0].id)
     }
   }
 
