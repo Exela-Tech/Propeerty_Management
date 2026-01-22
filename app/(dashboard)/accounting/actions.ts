@@ -13,7 +13,7 @@ export async function getChartOfAccounts() {
     .order("account_code")
 
   if (error) {
-    console.error("Error fetching chart of accounts:", error)
+    console.error(" Error fetching chart of accounts:", error)
     throw new Error("Failed to fetch chart of accounts")
   }
 
@@ -34,7 +34,7 @@ export async function getAccountBalances() {
   const { data, error } = await supabase.from("account_balances").select("*").order("account_code")
 
   if (error) {
-    console.error("Error fetching account balances:", error)
+    console.error(" Error fetching account balances:", error)
     throw new Error("Failed to fetch account balances")
   }
 
@@ -64,7 +64,7 @@ export async function getGeneralLedger(accountId?: string, startDate?: string, e
   const { data, error } = await query.limit(500)
 
   if (error) {
-    console.error("Error fetching general ledger:", error)
+    console.error(" Error fetching general ledger:", error)
     throw new Error("Failed to fetch general ledger")
   }
 
@@ -97,7 +97,7 @@ export async function syncTenantPaymentToGL(paymentId: string) {
     .single()
 
   if (!undepositedAccount || !rentTrustAccount) {
-    throw new Error("Required trust accounts not found")
+    throw new Error(" Required trust accounts not found")
   }
 
   // Build descriptive payment description with tenant name
@@ -128,7 +128,7 @@ export async function syncTenantPaymentToGL(paymentId: string) {
   const { error } = await supabase.from("general_ledger").insert(entries)
 
   if (error) {
-    console.error("Error syncing payment to GL:", error)
+    console.error(" Error syncing payment to GL:", error)
     throw new Error("Failed to sync payment to general ledger")
   }
 
@@ -145,7 +145,7 @@ export async function getBankAccounts() {
     .order("account_name", { ascending: true })
 
   if (error) {
-    console.error("Error fetching bank accounts:", error)
+    console.error(" Error fetching bank accounts:", error)
     throw new Error("Failed to fetch bank accounts")
   }
 
@@ -202,7 +202,7 @@ export async function getPaymentDeposits(bankAccountId?: string) {
   const { data, error } = await query
 
   if (error) {
-    console.error("Error fetching deposits:", error)
+    console.error(" Error fetching deposits:", error)
     throw new Error("Failed to fetch deposits")
   }
 
@@ -229,7 +229,7 @@ export async function createPaymentDeposit(
   console.log("Tenant payments fetched:", tenantPayments)
 
   if (tenantError) {
-    console.log("Error fetching tenant payments:", tenantError.message)
+    console.log(" Error fetching tenant payments:", tenantError.message)
   }
 
   let landlordPaymentsWithNames: any[] = []
@@ -242,7 +242,7 @@ export async function createPaymentDeposit(
   console.log("Landlord payments fetched:", landlordPayments)
 
   if (landlordError) {
-    console.log("Error fetching landlord payments:", landlordError.message)
+    console.log(" Error fetching landlord payments:", landlordError.message)
   }
 
   if (landlordPayments && landlordPayments.length > 0) {
@@ -254,7 +254,7 @@ export async function createPaymentDeposit(
       .in("id", landlordIds)
 
     if (profileError) {
-      console.log("Error fetching landlord profiles:", profileError.message)
+      console.log(" Error fetching landlord profiles:", profileError.message)
     } else if (landlordProfiles) {
       landlordPaymentsWithNames = landlordPayments.map((payment) => {
         const profile = landlordProfiles.find((p) => p.id === payment.landlord_id)
@@ -271,7 +271,7 @@ export async function createPaymentDeposit(
     (landlordPaymentsWithNames || []).reduce((sum, p) => sum + (p.amount || 0), 0)
 
   if (totalAmount === 0) {
-    throw new Error("No valid payments found to deposit")
+    throw new Error(" No valid payments found to deposit")
   }
 
   console.log("Total amount to deposit:", totalAmount)
@@ -325,8 +325,8 @@ export async function createPaymentDeposit(
     .single()
 
   if (depositError) {
-    console.error("Error creating deposit:", depositError)
-    throw new Error("Failed to create deposit: " + depositError.message)
+    console.error(" Error creating deposit:", depositError)
+    throw new Error(" Failed to create deposit: " + depositError.message)
   }
 
   const depositItems = [
@@ -351,8 +351,8 @@ export async function createPaymentDeposit(
   if (depositItems.length > 0) {
     const { error: itemsError } = await supabase.from("deposit_items").insert(depositItems)
     if (itemsError) {
-      console.error("Error creating deposit items:", itemsError)
-      throw new Error("Failed to create deposit items: " + itemsError.message)
+      console.error(" Error creating deposit items:", itemsError)
+      throw new Error(" Failed to create deposit items: " + itemsError.message)
     }
   }
 
@@ -383,8 +383,8 @@ export async function createPaymentDeposit(
     .single()
 
   if (!bankAccount?.gl_account_id) {
-    console.error("Bank account has no GL account linkage!")
-    throw new Error("Bank account is not linked to a GL account")
+    console.error(" Bank account has no GL account linkage!")
+    throw new Error(" Bank account is not linked to a GL account")
   }
 
   const { data: undepositedAccount } = await supabase
@@ -394,8 +394,8 @@ export async function createPaymentDeposit(
     .single()
 
   if (!undepositedAccount) {
-    console.error("Undeposited Funds account (1015) not found!")
-    throw new Error("Undeposited Funds GL account not found")
+    console.error(" Undeposited Funds account (1015) not found!")
+    throw new Error(" Undeposited Funds GL account not found")
   }
 
   console.log("Creating GL entries...")
@@ -445,8 +445,8 @@ export async function getLandlordStatements() {
   const { data, error } = await supabase.from("landlord_balances").select("*").order("landlord_name")
 
   if (error) {
-    console.error("Error fetching landlord statements:", error)
-    throw new Error("Failed to fetch landlord statements")
+    console.error(" Error fetching landlord statements:", error)
+    throw new Error(" Failed to fetch landlord statements")
   }
 
   return data || []
