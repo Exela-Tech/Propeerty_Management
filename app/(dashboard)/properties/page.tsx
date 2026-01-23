@@ -16,7 +16,9 @@ export default async function PropertiesPage() {
     },
   })
 
-  let properties, owners, propertiesError, ownersError
+  let properties: any[] | null = null
+  let owners: Array<{ id: string; name: string }> | null = null
+  let propertiesError, ownersError
   
   try {
     const results = await Promise.all([
@@ -37,7 +39,7 @@ export default async function PropertiesPage() {
     console.error("Error loading properties:", propertiesError)
   }
 
-  const ownerMap = new Map(owners?.map((o) => [o.id, o.name]) || [])
+  const ownerMap = new Map(owners?.map((o: { id: string; name: string }) => [o.id, o.name]) || [])
 
   const propertiesWithOwners = properties?.map((property) => ({
     ...property,
