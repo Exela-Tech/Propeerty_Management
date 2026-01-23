@@ -4,13 +4,23 @@ import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export const metadata = {
   title: "Landlord Statement Details",
   description: "Detailed accounting statement for landlord",
 }
 
-export default async function LandlordStatementDetailPage({ params }: { params: { landlordId: string } }) {
-  const subledger = await getLandlordSubledger(params.landlordId)
+export default async function LandlordStatementDetailPage({ params }: { params: Promise<{ landlordId: string }> }) {
+  const { landlordId } = await params
+  let subledger
+  try {
+    subledger = await getLandlordSubledger(landlordId)
+  } catch (error) {
+    console.error("Error fetching landlord subledger:", error)
+    subledger = []
+  }
 
   if (subledger.length === 0) {
     return (

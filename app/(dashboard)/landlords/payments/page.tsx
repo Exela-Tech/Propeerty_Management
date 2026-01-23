@@ -7,6 +7,9 @@ import { Calendar, Building2, Users, ChevronDown, ChevronUp } from "lucide-react
 import Link from "next/link"
 import { PropertyPaymentCard } from "@/components/property-payment-card"
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 interface Property {
   id: string
   name: string

@@ -3,13 +3,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export const metadata = {
   title: "Landlord Statements",
   description: "View accounting statements for all landlords",
 }
 
 export default async function LandlordStatementsPage() {
-  const statements = await getLandlordStatements()
+  let statements
+  try {
+    statements = await getLandlordStatements()
+  } catch (error) {
+    console.error("Error fetching landlord statements:", error)
+    statements = []
+  }
 
   return (
     <div className="space-y-6">

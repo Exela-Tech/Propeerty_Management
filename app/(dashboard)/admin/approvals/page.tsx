@@ -5,6 +5,9 @@ import { Badge } from "@/components/ui/badge"
 import { getPendingActions } from "@/app/(dashboard)/team/pending-actions"
 import { ApprovalActions } from "./approval-actions"
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function AdminApprovalsPage() {
   const supabase = await createClient()
 

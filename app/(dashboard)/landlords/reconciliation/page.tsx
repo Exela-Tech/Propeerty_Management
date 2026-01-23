@@ -9,6 +9,9 @@ import Link from "next/link"
 import { calculateLandlordOwed } from "../payment-actions"
 import { format } from "date-fns"
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function LandlordReconciliationPage() {
   const cookieStore = await cookies()
   const supabase = createServerClient(
