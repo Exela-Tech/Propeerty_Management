@@ -5,6 +5,9 @@ import Link from "next/link"
 import { createClient } from "@supabase/supabase-js"
 import { PropertyActionButtons } from "./property-action-buttons"
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function PropertiesPage() {
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
     auth: {
@@ -13,10 +16,22 @@ export default async function PropertiesPage() {
     },
   })
 
-  const [{ data: properties, error: propertiesError }, { data: owners, error: ownersError }] = await Promise.all([
-    supabase.from("properties").select("*").order("created_at", { ascending: false }),
-    supabase.from("owners").select("id, name"),
-  ])
+  let properties, owners, propertiesError, ownersError
+  
+  try {
+    const results = await Promise.all([
+      supabase.from("properties").select("*").order("created_at", { ascending: false }),
+      supabase.from("owners").select("id, name"),
+    ])
+    properties = results[0].data
+    propertiesError = results[0].error
+    owners = results[1].data
+    ownersError = results[1].error
+  } catch (error) {
+    console.error("Error loading properties:", error)
+    properties = []
+    owners = []
+  }
 
   if (propertiesError) {
     console.error("Error loading properties:", propertiesError)
@@ -27,7 +42,7 @@ export default async function PropertiesPage() {
   const propertiesWithOwners = properties?.map((property) => ({
     ...property,
     ownerName: ownerMap.get(property.owner_id) || "N/A",
-  }))
+  })) || []
 
   return (
     <div className="p-8">

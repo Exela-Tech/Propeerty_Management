@@ -2,13 +2,22 @@ import { getGeneralLedger } from "../actions"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export const metadata = {
   title: "General Ledger",
   description: "View all transactions and journal entries",
 }
 
 export default async function GeneralLedgerPage() {
-  const ledgerEntries = await getGeneralLedger()
+  let ledgerEntries
+  try {
+    ledgerEntries = await getGeneralLedger()
+  } catch (error) {
+    console.error("Error fetching general ledger:", error)
+    ledgerEntries = []
+  }
 
   const referenceTypeColors = {
     tenant_payment: "bg-blue-100 text-blue-800",

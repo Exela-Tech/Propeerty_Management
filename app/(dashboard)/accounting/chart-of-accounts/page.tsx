@@ -2,6 +2,9 @@ import { getChartOfAccounts, getAccountBalances } from "../actions"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export const metadata = {
   title: "Chart of Accounts",
   description: "View all accounts and their balances",
@@ -17,8 +20,16 @@ interface AccountBalance {
 }
 
 export default async function ChartOfAccountsPage() {
-  const accounts = await getChartOfAccounts()
-  const balances = await getAccountBalances()
+  let accounts, balances
+  
+  try {
+    accounts = await getChartOfAccounts()
+    balances = await getAccountBalances()
+  } catch (error) {
+    console.error("Error fetching chart of accounts:", error)
+    accounts = { asset: [], liability: [], equity: [], income: [], expense: [] }
+    balances = []
+  }
 
   const accountBalanceMap = new Map(balances.map((b: AccountBalance) => [b.id, b]))
 
