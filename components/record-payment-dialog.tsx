@@ -31,6 +31,14 @@ interface BankAccount {
   current_balance: number
 }
 
+interface GroupedBankAccounts {
+  asset?: BankAccount[]
+  liability?: BankAccount[]
+  equity?: BankAccount[]
+  income?: BankAccount[]
+  expense?: BankAccount[]
+}
+
 export function RecordPaymentDialog({
   landlord,
   periodStart,
@@ -44,22 +52,26 @@ export function RecordPaymentDialog({
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-if (open) {
-  getBankAccounts().then((accountsByType) => {
-    // Combine all account arrays into one flat array
-    const allAccounts: BankAccount[] = [
-      ...(accountsByType.asset || []),
-      ...(accountsByType.liability || []),
-      ...(accountsByType.equity || []),
-      ...(accountsByType.income || []),
-      ...(accountsByType.expense || []),
-    ]
-    setBankAccounts(allAccounts)
-    if (allAccounts.length > 0) {
-      setBankAccountId(allAccounts[0].id)
+    if (!open) return
+
+    const loadAccounts = async () => {
+      const accountsByType: GroupedBankAccounts = await getBankAccounts()
+
+      const allAccounts: BankAccount[] = [
+        ...(accountsByType.asset || []),
+        ...(accountsByType.liability || []),
+        ...(accountsByType.equity || []),
+        ...(accountsByType.income || []),
+        ...(accountsByType.expense || []),
+      ]
+
+      setBankAccounts(allAccounts)
+      if (allAccounts.length > 0) {
+        setBankAccountId(allAccounts[0].id)
+      }
     }
-  })
-}
+
+    loadAccounts()
   }, [open])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -106,40 +118,15 @@ if (open) {
         <DialogHeader>
           <DialogTitle>Record Payment to {landlord.name}</DialogTitle>
         </DialogHeader>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="amount">Gross Amount (UGX)</Label>
-            <Input
-              id="amount"
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              step="1"
-              required
-            />
-            {Number(amount) > 0 && (
-              <div className="mt-3 p-3 bg-muted rounded-lg space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span>Gross Amount:</span>
-                  <span className="font-medium">UGX {Number(amount).toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-orange-600">
-                  <span>Management Fee ({landlord.commission_percentage || 10}%):</span>
-                  <span className="font-medium">
-                    - UGX {Math.round((Number(amount) * (landlord.commission_percentage || 10)) / 100).toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between border-t pt-2 font-bold text-green-600">
-                  <span>Net to Landlord:</span>
-                  <span>
-                    UGX {Math.round(Number(amount) * (1 - (landlord.commission_percentage || 10) / 100)).toLocaleString()}
-                  </span>
-                </div>
-              </div>
-            )}
+            <Label>Gross Amount (UGX)</Label>
+            <Input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} required />
           </div>
+
           <div>
-            <Label htmlFor="bank_account">Pay From Bank</Label>
+            <Label>Pay From Bank</Label>
             <Select value={bankAccountId} onValueChange={setBankAccountId} required>
               <SelectTrigger>
                 <SelectValue placeholder="Select bank account" />
@@ -147,22 +134,18 @@ if (open) {
               <SelectContent>
                 {bankAccounts.map((account) => (
                   <SelectItem key={account.id} value={account.id}>
-                    {account.bank_name} - {account.account_name} (Balance: {account.currency}{" "}
+                    {account.bank_name} - {account.account_name} ({account.currency}{" "}
                     {account.current_balance.toLocaleString()})
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <p className="text-xs text-muted-foreground mt-1">
-              Select which bank account to use for this payment. The bank balance will be reduced.
-            </p>
           </div>
+
           <div>
-            <Label htmlFor="payment_method">Payment Method</Label>
+            <Label>Payment Method</Label>
             <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
+              <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
                 <SelectItem value="cash">Cash</SelectItem>
@@ -171,14 +154,10 @@ if (open) {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex gap-2">
-            <Button type="submit" disabled={loading} className="flex-1">
-              {loading ? "Recording..." : "Record Payment"}
-            </Button>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Cancel
-            </Button>
-          </div>
+
+          <Button type="submit" disabled={loading} className="w-full">
+            {loading ? "Recording..." : "Record Payment"}
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

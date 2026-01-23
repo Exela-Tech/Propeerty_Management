@@ -9,19 +9,21 @@ import { getBankReconciliation } from "@/app/(dashboard)/accounting/actions"
 import { formatCurrency } from "@/lib/utils"
 import { CheckCircle2, AlertCircle } from "lucide-react"
 
+interface OutstandingItem {
+  id: string
+  date: string
+  description: string
+  amount: number
+  reconciled: boolean
+}
+
 interface BankReconciliation {
   bankAccountId: string
   asOfDate: string
   glBalance: number
   bankBalance: number
   difference: number
-  outstandingItems: Array<{
-    id: string
-    date: string
-    description: string
-    amount: number
-    reconciled: boolean
-  }>
+  outstandingItems: OutstandingItem[]
 }
 
 export default function BankReconciliationPage() {
@@ -31,12 +33,21 @@ export default function BankReconciliationPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // TODO: Get bank account ID and date from props or state
         const bankAccountId = ""
         const asOfDate = new Date().toISOString().split("T")[0]
         if (bankAccountId) {
-          const data = await getBankReconciliation(bankAccountId, asOfDate)
-          setReconciliation(data)
+          const raw = await getBankReconciliation(bankAccountId, asOfDate)
+
+          const normalized: BankReconciliation = {
+            bankAccountId,
+            asOfDate,
+            glBalance: raw.glBalance ?? 0,
+            bankBalance: raw.bankBalance ?? 0,
+            difference: raw.difference ?? 0,
+            outstandingItems: raw.outstandingItems ?? [],
+          }
+
+          setReconciliation(normalized)
         }
       } catch (error) {
         console.error("Error loading reconciliation:", error)
@@ -51,48 +62,23 @@ export default function BankReconciliationPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Bank Reconciliation</h1>
-        <p className="text-gray-500 mt-2">Match GL entries with bank statements</p>
-      </div>
+      <h1 className="text-3xl font-bold">Bank Reconciliation</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">GL Balance</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{formatCurrency(reconciliation?.glBalance || 0)}</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">Bank Balance</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{formatCurrency(reconciliation?.bankBalance || 0)}</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">Difference</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p
-              className={`text-2xl font-bold ${(reconciliation?.difference || 0) === 0 ? "text-green-600" : "text-red-600"}`}
-            >
-              {formatCurrency(reconciliation?.difference || 0)}
-            </p>
-          </CardContent>
-        </Card>
+        {["glBalance", "bankBalance", "difference"].map((key) => (
+          <Card key={key}>
+            <CardHeader><CardTitle className="text-sm">{key}</CardTitle></CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">
+                {formatCurrency((reconciliation as any)?.[key] || 0)}
+              </p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Outstanding Items</CardTitle>
-        </CardHeader>
+        <CardHeader><CardTitle>Outstanding Items</CardTitle></CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
@@ -105,7 +91,7 @@ export default function BankReconciliationPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {reconciliation?.outstandingItems?.map((item: { id: string; date: string; description: string; amount: number; reconciled: boolean }) => (
+              {reconciliation?.outstandingItems.map(item => (
                 <TableRow key={item.id}>
                   <TableCell>{item.date}</TableCell>
                   <TableCell>{item.description}</TableCell>
