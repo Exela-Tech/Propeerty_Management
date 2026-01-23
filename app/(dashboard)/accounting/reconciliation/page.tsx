@@ -59,15 +59,43 @@ export default function ReconciliationPage() {
           getBankReconciliationSummary(),
           getAccountReconciliationSummary(),
         ])
-        setBankReconciliation(bankData)
-        setAccountReconciliation(accountData)
-        setBankList(bankData.accounts || [])
-        setAccountList(accountData.accounts || [])
-        if (bankData.accounts?.length > 0) {
-          setSelectedBank(bankData.accounts[0].id)
+        
+        // Map bank accounts to expected shape
+        const mappedBanks = (bankData.accounts || []).map((acc: any) => ({
+          id: acc.id,
+          account_name: acc.name || acc.account_name,
+          bank_name: acc.bank_name || "Unknown Bank",
+          current_balance: acc.balance || acc.current_balance || 0,
+          gl_account_id: acc.gl_account_id || "",
+        }))
+        setBankList(mappedBanks)
+        
+        // Map account reconciliation to expected shape
+        const mappedAccounts = (accountData.accounts || []).map((acc: any) => ({
+          id: acc.id,
+          account_code: acc.account_code || acc.code || "",
+          account_name: acc.account_name || acc.name,
+          account_type: acc.account_type,
+        }))
+        setAccountList(mappedAccounts)
+        
+        // Set bank reconciliation with mapped accounts
+        setBankReconciliation({
+          ...bankData,
+          accounts: mappedBanks,
+        })
+        
+        // Set account reconciliation with mapped accounts
+        setAccountReconciliation({
+          ...accountData,
+          accounts: mappedAccounts,
+        })
+        
+        if (mappedBanks.length > 0) {
+          setSelectedBank(mappedBanks[0].id)
         }
-        if (accountData.accounts?.length > 0) {
-          setSelectedAccount(accountData.accounts[0].id)
+        if (mappedAccounts.length > 0) {
+          setSelectedAccount(mappedAccounts[0].id)
         }
       } catch (error) {
         console.error("Error loading reconciliation data:", error)

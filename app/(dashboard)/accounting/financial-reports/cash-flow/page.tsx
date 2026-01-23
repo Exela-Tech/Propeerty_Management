@@ -6,12 +6,16 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import { getCashFlowStatement } from "@/app/(dashboard)/accounting/actions"
 import { formatCurrency } from "@/lib/utils"
 
+type CashFlowData = {
+  period: { startDate: string; endDate: string }
+  operatingActivities: number
+  investingActivities: number
+  financingActivities: number
+  netCashFlow: number
+}
+
 export default function CashFlowPage() {
-  const [cashFlow, setCashFlow] = useState<{
-    startDate: string
-    endDate: string
-    transactions: any[]
-  } | null>(null)
+  const [cashFlow, setCashFlow] = useState<CashFlowData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -47,14 +51,9 @@ export default function CashFlowPage() {
     )
   }
 
-  // Simplified cash flow - categorize transactions
-  const operatingInflow = (cashFlow.transactions || []).filter((t: any) => 
-    t.chart_of_accounts?.account_type === 'income'
-  ).reduce((sum: number, t: any) => sum + (t.credit || 0), 0)
-  
-  const operatingOutflow = (cashFlow.transactions || []).filter((t: any) => 
-    t.chart_of_accounts?.account_type === 'expense'
-  ).reduce((sum: number, t: any) => sum + (t.debit || 0), 0)
+  // Use the data from API response
+  const operatingInflow = cashFlow.operatingActivities > 0 ? cashFlow.operatingActivities : 0
+  const operatingOutflow = cashFlow.operatingActivities < 0 ? Math.abs(cashFlow.operatingActivities) : 0
 
   const chartData = [
     {

@@ -55,15 +55,31 @@ export function RecordPaymentDialog({
     if (!open) return
 
     const loadAccounts = async () => {
-      const accountsByType: GroupedBankAccounts = await getBankAccounts()
-
-      const allAccounts: BankAccount[] = [
-        ...(accountsByType.asset || []),
-        ...(accountsByType.liability || []),
-        ...(accountsByType.equity || []),
-        ...(accountsByType.income || []),
-        ...(accountsByType.expense || []),
-      ]
+      const accounts = await getBankAccounts()
+      
+      // Handle both flat array and grouped structure
+      let allAccounts: BankAccount[] = []
+      
+      if (Array.isArray(accounts)) {
+        // If it's a flat array, use it directly
+        allAccounts = accounts.map((acc: any) => ({
+          id: acc.id,
+          account_name: acc.account_name || acc.name,
+          bank_name: acc.bank_name,
+          currency: acc.currency || "UGX",
+          current_balance: acc.current_balance || acc.balance || 0,
+        }))
+      } else {
+        // If it's grouped, flatten it
+        const accountsByType = accounts as GroupedBankAccounts
+        allAccounts = [
+          ...(accountsByType.asset || []),
+          ...(accountsByType.liability || []),
+          ...(accountsByType.equity || []),
+          ...(accountsByType.income || []),
+          ...(accountsByType.expense || []),
+        ]
+      }
 
       setBankAccounts(allAccounts)
       if (allAccounts.length > 0) {

@@ -19,8 +19,12 @@ interface OutstandingItem {
 
 interface BankReconciliation {
   bankAccountId: string
-  asOfDate: string
+  statementDate: string
+  bankStatement: number
   glBalance: number
+  discrepancy: number
+  isReconciled: boolean
+  entries: any[]
   bankBalance: number
   difference: number
   outstandingItems: OutstandingItem[]
@@ -36,15 +40,13 @@ export default function BankReconciliationPage() {
         const bankAccountId = ""
         const asOfDate = new Date().toISOString().split("T")[0]
         if (bankAccountId) {
-          const raw = await getBankReconciliation(bankAccountId, asOfDate)
+          const data = await getBankReconciliation(bankAccountId, asOfDate)
 
           const normalized: BankReconciliation = {
-            bankAccountId,
-            asOfDate,
-            glBalance: raw.glBalance ?? 0,
-            bankBalance: raw.bankBalance ?? 0,
-            difference: raw.difference ?? 0,
-            outstandingItems: raw.outstandingItems ?? [],
+            ...data,
+            bankBalance: data.bankStatement ?? 0,
+            difference: data.discrepancy ?? 0,
+            outstandingItems: data.entries || [],
           }
 
           setReconciliation(normalized)
