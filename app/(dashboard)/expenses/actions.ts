@@ -2,9 +2,6 @@
 
 import { createClient } from "@supabase/supabase-js"
 import { revalidatePath } from "next/cache"
-import { logger } from "@/lib/logger"
-
-const log = logger.child("expenses:actions")
 
 function getServiceClient() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -20,7 +17,7 @@ export async function getProperties() {
   const { data, error } = await supabase.from("properties").select("id, name, property_type").order("name")
 
   if (error) {
-    log.error("Error fetching properties", error)
+    console.error("Error fetching properties:", error)
     throw new Error("Failed to fetch properties")
   }
 
@@ -36,7 +33,7 @@ export async function getBankAccounts() {
     .order("account_name", { ascending: true })
 
   if (error) {
-    console.error(" Error fetching bank accounts:", error)
+    console.error("Error fetching bank accounts:", error)
     return []
   }
 
@@ -64,46 +61,30 @@ async function recordExpenseToGL(
   }
 
   // Map expense category to GL account
-  // Based on chart_of_accounts: 5010=Maintenance, 5020=Salaries, 5030=Utilities, 
-  // 5040=Insurance, 5050=Commission, 5060=Administrative, 5070=Transportation, 5080=Office Rent
   const categoryToAccount: { [key: string]: string } = {
-    maintenance: "5010", // Maintenance & Repairs
-    salary: "5020", // Salaries & Wages
-    wage: "5020", // Salaries & Wages (same as salary)
-    utilities: "5030", // Utilities Expense
-    internet: "5060", // Administrative Expense (communications)
-    cleaning: "5010", // Maintenance & Repairs
-    field_expense: "5070", // Transportation Expense
-    transport: "5070", // Transportation Expense
-    office_rent: "5080", // Office Rent Expense
-    other: "5060", // Administrative Expense (fallback)
+    salary: "5010",
+    transport: "5020",
+    wage: "5030",
+    internet: "5040",
+    field_expense: "5050",
+    office_rent: "5060",
+    utilities: "5070",
+    cleaning: "5080",
+    maintenance: "5090",
+    other: "5099",
   }
 
-  const expenseAccountCode = categoryToAccount[category] || "5060" // Default to Administrative Expense
+  const expenseAccountCode = categoryToAccount[category] || "5099"
 
-  const { data: expenseAccounts, error: accountError } = await supabase
+  const { data: expenseAccounts } = await supabase
     .from("chart_of_accounts")
-    .select("id, account_code, account_name")
+    .select("id, account_code")
     .eq("account_code", expenseAccountCode)
-    .eq("is_active", true)
     .single()
 
-  if (accountError || !expenseAccounts) {
-    log.error("Expense GL account not found", {
-      accountCode: expenseAccountCode,
-      category,
-      error: accountError,
-    })
-    throw new Error(
-      `Expense GL account ${expenseAccountCode} not found. Please ensure the chart of accounts is properly set up.`
-    )
+  if (!expenseAccounts) {
+    throw new Error(`Expense GL account ${expenseAccountCode} not found`)
   }
-
-  log.debug("Found expense GL account", {
-    accountCode: expenseAccountCode,
-    accountName: expenseAccounts.account_name,
-    accountId: expenseAccounts.id,
-  })
 
   const glEntries = [
     {
@@ -111,7 +92,7 @@ async function recordExpenseToGL(
       debit: amount,
       credit: 0,
       transaction_date: transactionDate,
-      description: `Expense: ${description}`,
+      description: description,
       reference_type: "expense",
       reference_id: expenseId,
     },
@@ -120,7 +101,7 @@ async function recordExpenseToGL(
       debit: 0,
       credit: amount,
       transaction_date: transactionDate,
-      description: `Expense payment: ${description}`,
+      description: description,
       reference_type: "expense",
       reference_id: expenseId,
     },
@@ -129,7 +110,7 @@ async function recordExpenseToGL(
   const { error } = await supabase.from("general_ledger").insert(glEntries)
 
   if (error) {
-    console.error(" Error posting expense to GL:", error)
+    console.error("Error posting expense to GL:", error)
     throw new Error("Failed to post expense to general ledger")
   }
 }
@@ -159,24 +140,24 @@ export async function createExpense(formData: FormData) {
     type: "expense",
   }
 
-  log.debug("Creating expense", { category, amount, currency })
+  console.log("Creating expense with data:", expenseData)
 
   const { data, error } = await supabase.from("transactions").insert([expenseData]).select()
 
   if (error) {
-    log.error("Error creating expense", error)
+    console.error("Error creating expense:", error)
     throw new Error(error.message)
   }
 
-  log.info("Expense created successfully", { expenseId: data?.[0]?.id })
+  console.log("Expense created successfully:", data)
 
   if (data && data.length > 0) {
     const expenseId = data[0].id
     try {
       await recordExpenseToGL(expenseId, category, amount, description, transactionDate, bankAccountId)
-      console.log(" Expense posted to GL successfully")
+      console.log("Expense posted to GL successfully")
     } catch (glError) {
-      console.error(" Failed to post expense to GL:", glError)
+      console.error("Failed to post expense to GL:", glError)
       // Rollback the expense
       await supabase.from("transactions").delete().eq("id", expenseId)
       throw glError
@@ -196,11 +177,10 @@ export async function deleteExpense(expenseId: string) {
   const { error } = await supabase.from("transactions").delete().eq("id", expenseId)
 
   if (error) {
-    log.error("Error deleting expense", error, { expenseId })
+    console.error("Error deleting expense:", error)
     throw new Error(error.message)
   }
 
-  log.info("Expense deleted successfully", { expenseId })
   revalidatePath("/expenses")
 }
 
@@ -225,10 +205,9 @@ export async function updateExpense(expenseId: string, formData: FormData) {
     .eq("id", expenseId)
 
   if (error) {
-    log.error("Error updating expense", error, { expenseId })
+    console.error("Error updating expense:", error)
     throw new Error(error.message)
   }
 
-  log.info("Expense updated successfully", { expenseId })
   revalidatePath("/expenses")
 }

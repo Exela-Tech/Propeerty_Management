@@ -5,6 +5,9 @@ import { Plus } from "lucide-react"
 import { getTeamMembers } from "./actions"
 import { TeamMemberActionButtons } from "./team-member-action-buttons"
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 const ROLE_LABELS: Record<string, string> = {
   admin: "Admin",
   property_manager: "Property Manager",
@@ -26,7 +29,13 @@ const STATUS_COLORS: Record<string, string> = {
 }
 
 export default async function TeamPage() {
-  const teamMembers = await getTeamMembers()
+  let teamMembers
+  try {
+    teamMembers = await getTeamMembers()
+  } catch (error) {
+    console.error("Error fetching team members:", error)
+    teamMembers = []
+  }
 
   return (
     <div className="container mx-auto p-6 space-y-6">

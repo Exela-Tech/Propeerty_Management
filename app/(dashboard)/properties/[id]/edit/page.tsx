@@ -8,11 +8,11 @@ import { EditPropertyForm } from "@/components/edit-property-form"
 export default async function EditPropertyPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: propertyId } = await params
 
-  const supabase = getServiceClient()
+const supabase = getServiceClient()
 
   const { data: propertyData, error: propertyError } = await supabase
     .from("properties")
-    .select("id, name, property_type, location, total_units, owner_id, description, management_fee")
+    .select("id, name, property_type, location, total_units, owner_id, description, commission_type, commission_value")
     .eq("id", propertyId)
     .limit(1)
 

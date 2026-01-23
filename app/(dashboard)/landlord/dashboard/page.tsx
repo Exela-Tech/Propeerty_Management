@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Building2, DollarSign, Users, TrendingUp } from "lucide-react"
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function LandlordDashboardPage() {
   const supabase = await createClient()
 

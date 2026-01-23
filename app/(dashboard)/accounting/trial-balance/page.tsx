@@ -1,13 +1,22 @@
 import { getAccountBalances } from "../actions"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export const metadata = {
   title: "Trial Balance",
   description: "View trial balance summary",
 }
 
 export default async function TrialBalancePage() {
-  const accounts = await getAccountBalances()
+  let accounts
+  try {
+    accounts = await getAccountBalances()
+  } catch (error) {
+    console.error("Error fetching account balances:", error)
+    accounts = []
+  }
 
   let totalDebits = 0
   let totalCredits = 0

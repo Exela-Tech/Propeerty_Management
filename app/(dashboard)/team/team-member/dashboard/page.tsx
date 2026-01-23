@@ -7,6 +7,9 @@ import { getPendingActions } from "@/app/(dashboard)/team/pending-actions"
 import Link from "next/link"
 import { Clock, CheckCircle, XCircle, Plus } from "lucide-react"
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function TeamMemberDashboardPage() {
   const supabase = await createClient()
 

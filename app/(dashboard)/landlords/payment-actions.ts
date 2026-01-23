@@ -78,13 +78,32 @@ export async function calculateLandlordOwed(landlordId: string, periodStart: str
 
   const totalCollected = payments?.reduce((sum, p) => sum + (p.amount || 0), 0) || 0
 
-  // Get landlord data including commission percentage
-  const { data: landlord } = await supabase.from("owners").select("commission_percentage").eq("id", landlordId).single()
+  // Get properties with commission settings
+  const { data: propertiesWithCommission } = await supabase
+    .from("properties")
+    .select("id, commission_type, commission_value")
+    .in("id", propertyIds)
 
-  const commissionPercentage = landlord?.commission_percentage || 10
+  // Calculate commission per property based on collected rent
+  let totalCommissionDeducted = 0
+  for (const prop of propertiesWithCommission || []) {
+    const propTenants = tenants.filter(t => t.property_id === prop.id)
+    const propCollected = payments
+      ?.filter(p => propTenants.some(t => t.id === p.tenant_id))
+      .reduce((sum, p) => sum + (p.amount || 0), 0) || 0
+    
+    const commissionType = prop.commission_type || "percentage"
+    const commissionValue = prop.commission_value || 10
+    
+    if (commissionType === "fixed") {
+      totalCommissionDeducted += commissionValue
+    } else {
+      totalCommissionDeducted += (propCollected * commissionValue) / 100
+    }
+  }
 
-  const commissionDeducted = (expectedRent * commissionPercentage) / 100
-  const netPayout = expectedRent - commissionDeducted
+  const commissionDeducted = totalCommissionDeducted
+  const netPayout = totalCollected - commissionDeducted
 
   // Get previous payments to landlord during this period
   const { data: previousPayments } = await supabase
@@ -132,6 +151,8 @@ export async function calculateLandlordOwed(landlordId: string, periodStart: str
     }
   })
 
+  const commissionPercentage = 10 // Declare commissionPercentage here
+
   return {
     owed,
     breakdown,
@@ -152,7 +173,8 @@ export async function recordLandlordPayment(formData: FormData) {
   const supabase = getServiceClient()
 
   const landlord_id = formData.get("landlord_id") as string
-  const amount = Number.parseFloat(formData.get("amount") as string)
+  const property_id = formData.get("property_id") as string
+  const grossAmount = Number.parseFloat(formData.get("amount") as string)
   const payment_date = formData.get("payment_date") as string
   const payment_method = formData.get("payment_method") as string
   const period_start = formData.get("period_start") as string
@@ -165,11 +187,47 @@ export async function recordLandlordPayment(formData: FormData) {
     return { success: false, error: "Bank account selection is required" }
   }
 
+  if (!property_id) {
+    return { success: false, error: "Property selection is required" }
+  }
+
+  // Get landlord name
+  const { data: landlord } = await supabase
+    .from("owners")
+    .select("name")
+    .eq("id", landlord_id)
+    .single()
+
+  // Get property's commission settings
+  const { data: property } = await supabase
+    .from("properties")
+    .select("commission_type, commission_value, name")
+    .eq("id", property_id)
+    .single()
+
+  const commissionType = property?.commission_type || "percentage"
+  const commissionValue = property?.commission_value || 10
+  const commissionPercentage = property?.commission_value || 10 // Declare commissionPercentage here
+  
+  // Calculate management fee based on commission type
+  let managementFee: number
+  if (commissionType === "fixed") {
+    managementFee = commissionValue
+  } else {
+    managementFee = (grossAmount * commissionValue) / 100
+  }
+  const netAmount = grossAmount - managementFee
+
   const { data: paymentRecord, error } = await supabase
     .from("landlord_payments")
     .insert({
       landlord_id,
-      amount,
+      property_id,
+      amount: netAmount,
+      gross_amount: grossAmount,
+      management_fee: managementFee,
+      commission_type: commissionType,
+      commission_value: commissionValue,
       payment_date,
       payment_method,
       period_start,
@@ -187,13 +245,32 @@ export async function recordLandlordPayment(formData: FormData) {
     return { success: false, error: error.message }
   }
 
-  await postLandlordPaymentToGL(supabase, amount, payment_date, landlord_id, paymentRecord.id, bank_account_id)
+  // Post the net payment to landlord and management fee to income
+  await postLandlordPaymentToGL(
+    supabase,
+    netAmount,
+    managementFee,
+    payment_date,
+    landlord_id,
+    paymentRecord.id,
+    bank_account_id,
+    landlord?.name || "Landlord"
+  )
 
   revalidatePath("/landlords/payments")
   revalidatePath("/dashboard")
   revalidatePath("/accounting/cash-management")
 
-  return { success: true, receipt_number }
+  return { 
+    success: true, 
+    receipt_number, 
+    grossAmount, 
+    managementFee, 
+    netAmount,
+    commissionType,
+    commissionValue,
+    propertyName: property?.name 
+  }
 }
 
 export async function getLandlordPayments(landlordId: string) {
@@ -215,11 +292,13 @@ export async function getLandlordPayments(landlordId: string) {
 
 async function postLandlordPaymentToGL(
   supabase: any,
-  amount: number,
+  netAmount: number,
+  managementFee: number,
   payment_date: string,
   landlord_id: string,
   reference_id: string,
   bank_account_id: string,
+  landlordName: string,
 ) {
   const { data: bankAccount, error: bankError } = await supabase
     .from("bank_accounts")
@@ -232,24 +311,36 @@ async function postLandlordPaymentToGL(
     throw new Error("Bank account must be linked to a GL account")
   }
 
-  const { data: accounts } = await supabase
+  // Get Landlord Payout Expense account (5020)
+  const { data: expenseAccount } = await supabase
     .from("chart_of_accounts")
     .select("id, account_code")
     .eq("account_code", "5020")
     .single()
 
-  if (!accounts) {
+  if (!expenseAccount) {
     console.error(" Missing Landlord Payout Expense account (5020)")
     throw new Error("Landlord expense account not found in chart of accounts")
   }
 
-  const { data: landlord } = await supabase.from("owners").select("name").eq("id", landlord_id).single()
+  // Get Management Fee Income account (4010)
+  const { data: incomeAccount } = await supabase
+    .from("chart_of_accounts")
+    .select("id, account_code")
+    .eq("account_code", "4010")
+    .single()
 
-  const landlordName = landlord?.name || "Landlord"
+  if (!incomeAccount) {
+    console.error(" Missing Management Fee Income account (4010)")
+    throw new Error("Management fee income account not found in chart of accounts")
+  }
 
-  const { error: debitError } = await supabase.from("general_ledger").insert({
-    account_id: accounts.id,
-    debit: amount,
+  const totalAmount = netAmount + managementFee
+
+  // 1. Debit Landlord Expense (what we owe landlord - net amount)
+  const { error: expenseError } = await supabase.from("general_ledger").insert({
+    account_id: expenseAccount.id,
+    debit: netAmount,
     credit: 0,
     transaction_date: payment_date,
     description: `Landlord payout to ${landlordName}`,
@@ -257,25 +348,42 @@ async function postLandlordPaymentToGL(
     reference_id: reference_id,
   })
 
-  if (debitError) {
-    console.error(" Failed to create debit GL entry:", debitError)
+  if (expenseError) {
+    console.error(" Failed to create expense GL entry:", expenseError)
     throw new Error("Failed to post landlord expense to GL")
   }
 
-  const { error: creditError } = await supabase.from("general_ledger").insert({
+  // 2. Credit Management Fee Income (our 10% fee)
+  if (managementFee > 0) {
+    const { error: incomeError } = await supabase.from("general_ledger").insert({
+      account_id: incomeAccount.id,
+      debit: 0,
+      credit: managementFee,
+      transaction_date: payment_date,
+      description: `Management fee from ${landlordName}`,
+      reference_type: "landlord_payment",
+      reference_id: reference_id,
+    })
+
+    if (incomeError) {
+      console.error(" Failed to create income GL entry:", incomeError)
+      throw new Error("Failed to post management fee income to GL")
+    }
+  }
+
+  // 3. Credit Bank (total amount leaving bank = net to landlord)
+  const { error: bankCreditError } = await supabase.from("general_ledger").insert({
     account_id: bankAccount.gl_account_id,
     debit: 0,
-    credit: amount,
+    credit: netAmount,
     transaction_date: payment_date,
     description: `Payment to ${landlordName} via ${bankAccount.account_name}`,
     reference_type: "landlord_payment",
     reference_id: reference_id,
   })
 
-  if (creditError) {
-    console.error(" Failed to create credit GL entry:", creditError)
+  if (bankCreditError) {
+    console.error(" Failed to create bank credit GL entry:", bankCreditError)
     throw new Error("Failed to reduce bank balance in GL")
   }
-
-  console.log(" Landlord payment GL entries created successfully")
 }

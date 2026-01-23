@@ -17,6 +17,7 @@ interface LandlordWithPaymentInfo {
   email: string
   phone: string
   payment_due_day: number
+  commission_percentage: number
   owed: number
   totalCollected: number
   totalPaidToLandlord: number
@@ -28,6 +29,14 @@ interface BankAccount {
   bank_name: string
   currency: string
   current_balance: number
+}
+
+interface GroupedBankAccounts {
+  asset?: BankAccount[]
+  liability?: BankAccount[]
+  equity?: BankAccount[]
+  income?: BankAccount[]
+  expense?: BankAccount[]
 }
 
 export function RecordPaymentDialog({
@@ -43,14 +52,42 @@ export function RecordPaymentDialog({
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (open) {
-      getBankAccounts().then((accounts: BankAccount[]) => {
-        setBankAccounts(accounts)
-        if (accounts.length > 0) {
-          setBankAccountId(accounts[0].id)
-        }
-      })
+    if (!open) return
+
+    const loadAccounts = async () => {
+      const accounts = await getBankAccounts()
+      
+      // Handle both flat array and grouped structure
+      let allAccounts: BankAccount[] = []
+      
+      if (Array.isArray(accounts)) {
+        // If it's a flat array, use it directly
+        allAccounts = accounts.map((acc: any) => ({
+          id: acc.id,
+          account_name: acc.account_name || acc.name,
+          bank_name: acc.bank_name,
+          currency: acc.currency || "UGX",
+          current_balance: acc.current_balance || acc.balance || 0,
+        }))
+      } else {
+        // If it's grouped, flatten it
+        const accountsByType = accounts as GroupedBankAccounts
+        allAccounts = [
+          ...(accountsByType.asset || []),
+          ...(accountsByType.liability || []),
+          ...(accountsByType.equity || []),
+          ...(accountsByType.income || []),
+          ...(accountsByType.expense || []),
+        ]
+      }
+
+      setBankAccounts(allAccounts)
+      if (allAccounts.length > 0) {
+        setBankAccountId(allAccounts[0].id)
+      }
     }
+
+    loadAccounts()
   }, [open])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,7 +107,9 @@ export function RecordPaymentDialog({
       const result = await recordLandlordPayment(formData)
 
       if (result.success) {
-        alert(`Payment recorded! Receipt: ${result.receipt_number}`)
+        alert(
+          `Payment recorded!\n\nReceipt: ${result.receipt_number}\nGross: UGX ${result.grossAmount?.toLocaleString()}\nManagement Fee: UGX ${result.managementFee?.toLocaleString()}\nNet to Landlord: UGX ${result.netAmount?.toLocaleString()}`
+        )
         setOpen(false)
         window.location.reload()
       } else {
@@ -95,20 +134,15 @@ export function RecordPaymentDialog({
         <DialogHeader>
           <DialogTitle>Record Payment to {landlord.name}</DialogTitle>
         </DialogHeader>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="amount">Amount (UGX)</Label>
-            <Input
-              id="amount"
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              step="1"
-              required
-            />
+            <Label>Gross Amount (UGX)</Label>
+            <Input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} required />
           </div>
+
           <div>
-            <Label htmlFor="bank_account">Pay From Bank</Label>
+            <Label>Pay From Bank</Label>
             <Select value={bankAccountId} onValueChange={setBankAccountId} required>
               <SelectTrigger>
                 <SelectValue placeholder="Select bank account" />
@@ -116,22 +150,18 @@ export function RecordPaymentDialog({
               <SelectContent>
                 {bankAccounts.map((account) => (
                   <SelectItem key={account.id} value={account.id}>
-                    {account.bank_name} - {account.account_name} (Balance: {account.currency}{" "}
+                    {account.bank_name} - {account.account_name} ({account.currency}{" "}
                     {account.current_balance.toLocaleString()})
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <p className="text-xs text-muted-foreground mt-1">
-              Select which bank account to use for this payment. The bank balance will be reduced.
-            </p>
           </div>
+
           <div>
-            <Label htmlFor="payment_method">Payment Method</Label>
+            <Label>Payment Method</Label>
             <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
+              <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
                 <SelectItem value="cash">Cash</SelectItem>
@@ -140,14 +170,10 @@ export function RecordPaymentDialog({
               </SelectContent>
             </Select>
           </div>
-          <div className="flex gap-2">
-            <Button type="submit" disabled={loading} className="flex-1">
-              {loading ? "Recording..." : "Record Payment"}
-            </Button>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Cancel
-            </Button>
-          </div>
+
+          <Button type="submit" disabled={loading} className="w-full">
+            {loading ? "Recording..." : "Record Payment"}
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

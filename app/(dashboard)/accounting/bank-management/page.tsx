@@ -57,14 +57,7 @@ export default function BankManagementPage() {
 
   const handleAddBank = async () => {
     try {
-      await createBankAccount({
-        account_name: formData.accountName,
-        bank_name: formData.bankName,
-        account_number: formData.accountNumber,
-        gl_account_id: formData.glAccountId,
-        currency: formData.currency,
-        account_type: "checking",
-      })
+      await createBankAccount(formData)
       setShowAddDialog(false)
       setFormData({
         accountName: "",
@@ -85,9 +78,12 @@ export default function BankManagementPage() {
   const handleEditBank = async () => {
     try {
       await updateBankAccount(selectedBank.id, {
-        account_name: formData.accountName,
-        bank_name: formData.bankName,
-        account_number: formData.accountNumber,
+        accountName: formData.accountName,
+        bankName: formData.bankName,
+        accountNumber: formData.accountNumber,
+        routingNumber: formData.routingNumber,
+        notes: formData.notes,
+        isActive: selectedBank.is_active,
       })
       setShowEditDialog(false)
       await loadData()
@@ -100,7 +96,7 @@ export default function BankManagementPage() {
     try {
       setSelectedBank(bank)
       const data = await getBankTransactions(bank.id)
-      setTransactions(data)
+      setTransactions(data.transactions)
       setShowTransactionsDialog(true)
     } catch (error) {
       console.error(" Error loading transactions:", error)

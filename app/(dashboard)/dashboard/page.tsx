@@ -2,6 +2,9 @@ import { getServiceClient } from "@/lib/supabase/server"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Building2, Users, Wrench, DollarSign, Building, UserCircle } from "lucide-react"
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export default async function DashboardPage() {
   const supabase = getServiceClient()
 

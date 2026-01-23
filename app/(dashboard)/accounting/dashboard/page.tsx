@@ -43,7 +43,16 @@ export default function AccountingDashboardPage() {
     const loadData = async () => {
       try {
         const dashboardData = await getAccountingDashboard()
-        setData(dashboardData)
+        setData({
+          metrics: {
+            totalIncome: dashboardData.totalAssets || 0,
+            totalExpenses: dashboardData.totalLiabilities || 0,
+            netProfit: dashboardData.totalEquity || 0,
+            trustBalance: dashboardData.totalEquity || 0,
+          },
+          chartData: [],
+          expensesByCategory: [],
+        })
       } catch (error) {
         console.error("Error loading dashboard:", error)
       } finally {

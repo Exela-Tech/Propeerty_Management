@@ -2,9 +2,6 @@
 
 import { createClient } from "@supabase/supabase-js"
 import { revalidatePath } from "next/cache"
-import { logger } from "@/lib/logger"
-
-const log = logger.child("tenants:actions")
 
 function getServiceClient() {
   return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -22,13 +19,13 @@ export async function getProperties() {
     const { data, error } = await supabase.from("properties").select("id, name, property_type").order("name")
 
     if (error) {
-      log.error("Error fetching properties", error)
+      console.error(" Error fetching properties:", error)
       throw error
     }
 
     return data || []
   } catch (error) {
-    log.error("getProperties failed", error)
+    console.error(" getProperties failed:", error)
     return []
   }
 }
@@ -45,13 +42,13 @@ export async function getVacantUnits(propertyId: string) {
       .order("unit_number")
 
     if (error) {
-      log.error("Error fetching units", error, { propertyId })
+      console.error(" Error fetching units:", error)
       throw error
     }
 
     return data || []
   } catch (error) {
-    log.error("getVacantUnits failed", error, { propertyId })
+    console.error(" getVacantUnits failed:", error)
     return []
   }
 }
@@ -81,7 +78,7 @@ export async function createTenant(formData: FormData) {
     const { data, error } = await supabase.from("tenants").insert([tenantData]).select().single()
 
     if (error) {
-      log.error("Error creating tenant", error)
+      console.error(" Error creating tenant:", error)
       return { success: false, error: error.message }
     }
 
@@ -93,10 +90,9 @@ export async function createTenant(formData: FormData) {
     revalidatePath("/tenants")
     revalidatePath("/dashboard")
 
-    log.info("Tenant created successfully", { tenantId: data?.id })
     return { success: true, data }
   } catch (error: any) {
-    log.error("createTenant failed", error)
+    console.error(" createTenant failed:", error)
     return { success: false, error: error.message || "Failed to create tenant" }
   }
 }
@@ -108,13 +104,13 @@ export async function getTenant(id: string) {
     const { data, error } = await supabase.from("tenants").select("*").eq("id", id).single()
 
     if (error) {
-      log.error("Error fetching tenant", error, { tenantId: id })
+      console.error(" Error fetching tenant:", error)
       throw error
     }
 
     return data
   } catch (error) {
-    log.error("getTenant failed", error, { tenantId: id })
+    console.error(" getTenant failed:", error)
     return null
   }
 }
@@ -159,13 +155,24 @@ export async function updateTenant(id: string, formData: FormData) {
     const { data, error } = await supabase.from("tenants").update(tenantData).eq("id", id).select().single()
 
     if (error) {
-      log.error("Error updating tenant", error, { tenantId: id })
+      console.error(" Error updating tenant:", error)
       return { success: false, error: error.message }
     }
 
     // Handle unit status changes
-    // If unit changed, mark old unit as vacant and new unit as occupied
-    if (oldUnitId !== newUnitId) {
+    const newStatus = formData.get("status") as string
+    const oldStatus = oldTenantData?.status
+
+    // If tenant is being disabled, mark their unit as vacant
+    if (newStatus === "inactive" && oldStatus === "active" && oldUnitId) {
+      await supabase.from("units").update({ status: "vacant" }).eq("id", oldUnitId)
+    }
+    // If tenant is being reactivated, mark their unit as occupied
+    else if (newStatus === "active" && oldStatus === "inactive" && newUnitId) {
+      await supabase.from("units").update({ status: "occupied" }).eq("id", newUnitId)
+    }
+    // If unit changed (and tenant is active), mark old unit as vacant and new unit as occupied
+    else if (oldUnitId !== newUnitId && newStatus === "active") {
       if (oldUnitId) {
         await supabase.from("units").update({ status: "vacant" }).eq("id", oldUnitId)
       }
@@ -175,12 +182,12 @@ export async function updateTenant(id: string, formData: FormData) {
     }
 
     revalidatePath("/tenants")
+    revalidatePath("/units")
     revalidatePath("/dashboard")
 
-    log.info("Tenant updated successfully", { tenantId: id })
     return { success: true, data }
   } catch (error: any) {
-    log.error("updateTenant failed", error, { tenantId: id })
+    console.error(" updateTenant failed:", error)
     return { success: false, error: error.message || "Failed to update tenant" }
   }
 }
@@ -189,19 +196,42 @@ export async function toggleTenantStatus(tenantId: string, newStatus: "active" |
   try {
     const supabase = getServiceClient()
 
+    // Get the tenant's unit_id before updating status
+    const { data: tenant } = await supabase
+      .from("tenants")
+      .select("unit_id")
+      .eq("id", tenantId)
+      .single()
+
     const { error } = await supabase.from("tenants").update({ status: newStatus }).eq("id", tenantId)
 
     if (error) {
-      log.error("Error updating tenant status", error, { tenantId, newStatus })
+      console.error(" Error updating tenant status:", error)
       throw new Error(error.message)
     }
 
-    log.info("Tenant status updated", { tenantId, newStatus })
+    // If tenant is being disabled/deactivated and they have a unit, mark it as vacant
+    if (newStatus === "inactive" && tenant?.unit_id) {
+      await supabase
+        .from("units")
+        .update({ status: "vacant" })
+        .eq("id", tenant.unit_id)
+    }
+
+    // If tenant is being reactivated and they have a unit, mark it as occupied
+    if (newStatus === "active" && tenant?.unit_id) {
+      await supabase
+        .from("units")
+        .update({ status: "occupied" })
+        .eq("id", tenant.unit_id)
+    }
+
     revalidatePath("/tenants")
+    revalidatePath("/units")
     revalidatePath("/reports")
     revalidatePath("/dashboard")
   } catch (error: any) {
-    log.error("toggleTenantStatus failed", error, { tenantId, newStatus })
+    console.error(" toggleTenantStatus failed:", error)
     throw error
   }
 }

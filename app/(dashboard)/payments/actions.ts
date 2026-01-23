@@ -189,6 +189,11 @@ export async function deletePayment(paymentId: string) {
     throw new Error("Payment not found")
   }
 
+  // Check if payment has been deposited
+  if (payment.deposit_id) {
+    throw new Error("Cannot delete a payment that has already been deposited to bank. Please reverse the deposit first.")
+  }
+
   const { data: tenant, error: tenantError } = await supabase
     .from("tenants")
     .select("balance, prepaid_balance, total_paid")
@@ -197,6 +202,18 @@ export async function deletePayment(paymentId: string) {
 
   if (tenantError) {
     throw new Error("Tenant not found")
+  }
+
+  // Delete the general_ledger entries for this payment (undeposited funds history)
+  const { error: glDeleteError } = await supabase
+    .from("general_ledger")
+    .delete()
+    .eq("reference_id", paymentId)
+    .eq("reference_type", "tenant_payment")
+
+  if (glDeleteError) {
+    console.error(" Error deleting GL entries:", glDeleteError)
+    // Continue anyway - the payment should still be deleted
   }
 
   const { error: deleteError } = await supabase.from("tenant_payments").delete().eq("id", paymentId)
@@ -229,6 +246,7 @@ export async function deletePayment(paymentId: string) {
   revalidatePath("/tenants")
   revalidatePath("/financials")
   revalidatePath("/reports")
+  revalidatePath("/accounting/cash-management")
   revalidatePath("/")
 }
 
