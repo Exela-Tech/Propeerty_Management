@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useToast } from "@/hooks/use-toast"
 import { Edit, Ban, CheckCircle, Trash2 } from "lucide-react"
 import { updateUserRole, disableUser, enableUser, deleteUser } from "./user-management-actions"
 
@@ -39,40 +41,155 @@ export function ExistingUsersTable({ users }: { users: User[] }) {
   const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; userId?: string; userName?: string }>({
     open: false,
   })
-  const [loading, setLoading] = useState(false)
+  const [loadingUserId, setLoadingUserId] = useState<string | null>(null)
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
+  const { toast } = useToast()
 
   const handleUpdateRole = async () => {
     if (!roleDialog.userId) return
 
-    setLoading(true)
-    await updateUserRole(roleDialog.userId, selectedRole)
-    setLoading(false)
+     // Prevent demoting the last active admin
+    const targetUser = users.find((u) => u.id === roleDialog.userId)
+    const activeAdminCount = users.filter((u) => u.role === "admin" && u.is_active).length
+    const isDemotingLastAdmin =
+      targetUser && targetUser.role === "admin" && targetUser.is_active && selectedRole !== "admin" && activeAdminCount === 1
+
+    if (isDemotingLastAdmin) {
+      const message = "You cannot remove the last active admin. Create another admin first."
+      setMessage({ type: "error", text: message })
+      toast({
+        title: "Cannot change role",
+        description: message,
+        variant: "destructive",
+      })
+      return
+    }
+
+    setLoadingUserId(roleDialog.userId)
+    setMessage(null)
+    const result = await updateUserRole(roleDialog.userId, selectedRole)
+    setLoadingUserId(null)
     setRoleDialog({ open: false })
+    if (result?.error) {
+      setMessage({ type: "error", text: result.error })
+      toast({
+        title: "Failed to update role",
+        description: result.error,
+        variant: "destructive",
+      })
+    } else {
+      const msg = "User role updated successfully."
+      setMessage({ type: "success", text: msg })
+      toast({
+        title: "Role updated",
+        description: msg,
+      })
+    }
   }
 
   const handleDisable = async () => {
     if (!disableDialog.userId) return
 
-    setLoading(true)
-    await disableUser(disableDialog.userId, disableReason)
-    setLoading(false)
+    const targetUser = users.find((u) => u.id === disableDialog.userId)
+    const activeAdminCount = users.filter((u) => u.role === "admin" && u.is_active).length
+    const isDisablingLastAdmin =
+      targetUser && targetUser.role === "admin" && targetUser.is_active && activeAdminCount === 1
+
+    if (isDisablingLastAdmin) {
+      const message = "You cannot disable the last active admin. Create another admin first."
+      setMessage({ type: "error", text: message })
+      toast({
+        title: "Cannot disable user",
+        description: message,
+        variant: "destructive",
+      })
+      return
+    }
+
+    setLoadingUserId(disableDialog.userId)
+    setMessage(null)
+    const result = await disableUser(disableDialog.userId, disableReason)
+    setLoadingUserId(null)
     setDisableDialog({ open: false })
     setDisableReason("")
+    if (result?.error) {
+      setMessage({ type: "error", text: result.error })
+      toast({
+        title: "Failed to disable user",
+        description: result.error,
+        variant: "destructive",
+      })
+    } else {
+      const msg = "User disabled successfully."
+      setMessage({ type: "success", text: msg })
+      toast({
+        title: "User disabled",
+        description: msg,
+      })
+    }
   }
 
   const handleEnable = async (userId: string) => {
-    setLoading(true)
-    await enableUser(userId)
-    setLoading(false)
+    setLoadingUserId(userId)
+    setMessage(null)
+    const result = await enableUser(userId)
+    setLoadingUserId(null)
+    if (result?.error) {
+      setMessage({ type: "error", text: result.error })
+      toast({
+        title: "Failed to enable user",
+        description: result.error,
+        variant: "destructive",
+      })
+    } else {
+      const msg = "User enabled successfully."
+      setMessage({ type: "success", text: msg })
+      toast({
+        title: "User enabled",
+        description: msg,
+      })
+    }
   }
 
   const handleDelete = async () => {
     if (!deleteDialog.userId) return
 
-    setLoading(true)
-    await deleteUser(deleteDialog.userId)
-    setLoading(false)
+    const targetUser = users.find((u) => u.id === deleteDialog.userId)
+    const activeAdminCount = users.filter((u) => u.role === "admin" && u.is_active).length
+    const isDeletingLastAdmin =
+      targetUser && targetUser.role === "admin" && targetUser.is_active && activeAdminCount === 1
+
+    if (isDeletingLastAdmin) {
+      const message = "You cannot delete the last active admin. Create another admin first."
+      setMessage({ type: "error", text: message })
+      toast({
+        title: "Cannot delete user",
+        description: message,
+        variant: "destructive",
+      })
+      return
+    }
+
+    setLoadingUserId(deleteDialog.userId)
+    setMessage(null)
+    const result = await deleteUser(deleteDialog.userId)
+    setLoadingUserId(null)
     setDeleteDialog({ open: false })
+    if (result?.error) {
+      setMessage({ type: "error", text: result.error })
+      toast({
+        title: "Failed to delete user",
+        description: result.error,
+        variant: "destructive",
+      })
+    } else {
+      const msg = "User deleted successfully."
+      setMessage({ type: "success", text: msg })
+      toast({
+        title: "User deleted",
+        description: msg,
+      })
+    }
   }
 
   const roleColors: Record<string, string> = {
@@ -86,6 +203,13 @@ export function ExistingUsersTable({ users }: { users: User[] }) {
 
   return (
     <>
+      {message && (
+        <div className="mb-4">
+          <Alert variant={message.type === "error" ? "destructive" : "default"}>
+            <AlertDescription>{message.text}</AlertDescription>
+          </Alert>
+        </div>
+      )}
       <Table>
         <TableHeader>
           <TableRow>
@@ -137,12 +261,18 @@ export function ExistingUsersTable({ users }: { users: User[] }) {
                       size="sm"
                       variant="outline"
                       onClick={() => setDisableDialog({ open: true, userId: user.id })}
+                      disabled={loadingUserId === user.id}
                     >
                       <Ban className="mr-1 h-4 w-4" />
                       Disable
                     </Button>
                   ) : (
-                    <Button size="sm" variant="outline" onClick={() => handleEnable(user.id)} disabled={loading}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleEnable(user.id)}
+                      disabled={loadingUserId === user.id}
+                    >
                       <CheckCircle className="mr-1 h-4 w-4" />
                       Enable
                     </Button>
@@ -157,7 +287,7 @@ export function ExistingUsersTable({ users }: { users: User[] }) {
                         userName: `${user.first_name || ""} ${user.last_name || ""}`.trim() || user.email,
                       })
                     }
-                  >
+                    >
                     <Trash2 className="mr-1 h-4 w-4" />
                     Delete
                   </Button>
@@ -195,7 +325,10 @@ export function ExistingUsersTable({ users }: { users: User[] }) {
             <Button variant="outline" onClick={() => setRoleDialog({ open: false })}>
               Cancel
             </Button>
-            <Button onClick={handleUpdateRole} disabled={loading}>
+            <Button
+              onClick={handleUpdateRole}
+              disabled={roleDialog.userId ? loadingUserId === roleDialog.userId : false || !selectedRole}
+            >
               Update Role
             </Button>
           </DialogFooter>
@@ -223,7 +356,11 @@ export function ExistingUsersTable({ users }: { users: User[] }) {
             <Button variant="outline" onClick={() => setDisableDialog({ open: false })}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDisable} disabled={!disableReason || loading}>
+            <Button
+              variant="destructive"
+              onClick={handleDisable}
+              disabled={!disableReason || (disableDialog.userId ? loadingUserId === disableDialog.userId : false)}
+            >
               Disable User
             </Button>
           </DialogFooter>
@@ -243,7 +380,11 @@ export function ExistingUsersTable({ users }: { users: User[] }) {
             <Button variant="outline" onClick={() => setDeleteDialog({ open: false })}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDelete} disabled={loading}>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={deleteDialog.userId ? loadingUserId === deleteDialog.userId : false}
+            >
               Delete Permanently
             </Button>
           </DialogFooter>

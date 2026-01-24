@@ -16,6 +16,7 @@ import {
 import { CheckCircle, Copy } from "lucide-react"
 import { approveTeamMember } from "./user-management-actions"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useToast } from "@/hooks/use-toast"
 
 interface TeamMember {
   id: string
@@ -33,18 +34,41 @@ export function PendingTeamMembersTable({ teamMembers }: { teamMembers: TeamMemb
     open: false,
   })
   const [loading, setLoading] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const { toast } = useToast()
 
   const handleApprove = async (teamMemberId: string) => {
+    setError(null)
     const assignedRole = selectedRoles[teamMemberId] || teamMembers.find((tm) => tm.id === teamMemberId)?.role
 
+    if (!assignedRole) {
+      const message = "Please select a role before approving this team member."
+      setError(message)
+      toast({
+        title: "Role required",
+        description: message,
+        variant: "destructive",
+      })
+      return
+    }
+
     setLoading(teamMemberId)
-    const result = await approveTeamMember(teamMemberId, assignedRole!)
+    const result = await approveTeamMember(teamMemberId, assignedRole)
     setLoading(null)
 
     if (result.success && result.tempPassword) {
       setApprovalDialog({ open: true, email: result.email, password: result.tempPassword })
+      toast({
+        title: "Team member approved",
+        description: "The user account has been created successfully.",
+      })
     } else if (result.error) {
-      alert(result.error)
+      setError(result.error)
+      toast({
+        title: "Failed to approve team member",
+        description: result.error,
+        variant: "destructive",
+      })
     }
   }
 
@@ -64,6 +88,13 @@ export function PendingTeamMembersTable({ teamMembers }: { teamMembers: TeamMemb
 
   return (
     <>
+      {error && (
+        <div className="mb-4">
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        </div>
+      )}
       <Table>
         <TableHeader>
           <TableRow>
