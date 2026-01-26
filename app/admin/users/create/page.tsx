@@ -12,12 +12,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { UserPlus, Copy, CheckCircle } from "lucide-react"
 import { createUserManually } from "../user-management-actions"
+import { useToast } from "@/hooks/use-toast"
 
 export default function CreateUserPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState<{ email: string; password: string } | null>(null)
+  const { toast } = useToast()
 
   const [formData, setFormData] = useState({
     email: "",
@@ -32,14 +34,35 @@ export default function CreateUserPage() {
     setLoading(true)
     setError("")
 
+    if (!formData.role) {
+      const message = "Please select a role for this user."
+      setError(message)
+      setLoading(false)
+      toast({
+        title: "Role required",
+        description: message,
+        variant: "destructive",
+      })
+      return
+    }
+
     const result = await createUserManually(formData)
 
     if (result.error) {
       setError(result.error)
       setLoading(false)
+      toast({
+        title: "Failed to create user",
+        description: result.error,
+        variant: "destructive",
+      })
     } else if (result.success && result.tempPassword) {
       setSuccess({ email: result.email, password: result.tempPassword })
       setLoading(false)
+      toast({
+        title: "User created",
+        description: "Temporary credentials have been generated.",
+      })
     }
   }
 

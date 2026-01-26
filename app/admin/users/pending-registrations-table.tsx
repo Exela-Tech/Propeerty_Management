@@ -18,6 +18,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { CheckCircle, XCircle, Copy } from "lucide-react"
 import { approveRegistration, rejectRegistration } from "./user-management-actions"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useToast } from "@/hooks/use-toast"
 
 interface Registration {
   id: string
@@ -37,17 +38,42 @@ export function PendingRegistrationsTable({ registrations }: { registrations: Re
   const [rejectDialog, setRejectDialog] = useState<{ open: boolean; registrationId?: string }>({ open: false })
   const [rejectionReason, setRejectionReason] = useState("")
   const [loading, setLoading] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const { toast } = useToast()
 
   const handleApprove = async (registrationId: string) => {
+    setError(null)
     const assignedRole =
       selectedRoles[registrationId] || registrations.find((r) => r.id === registrationId)?.requested_role
 
+    if (!assignedRole) {
+      const message = "Please select a role before approving this registration."
+      setError(message)
+      toast({
+        title: "Role required",
+        description: message,
+        variant: "destructive",
+      })
+      return
+    }
+
     setLoading(registrationId)
-    const result = await approveRegistration(registrationId, assignedRole!)
+    const result = await approveRegistration(registrationId, assignedRole)
     setLoading(null)
 
     if (result.success && result.tempPassword) {
       setApprovalDialog({ open: true, email: result.email, password: result.tempPassword })
+      toast({
+        title: "User approved",
+        description: "The user account has been created successfully.",
+      })
+    } else if (result.error) {
+      setError(result.error)
+      toast({
+        title: "Failed to approve user",
+        description: result.error,
+        variant: "destructive",
+      })
     }
   }
 
@@ -55,10 +81,23 @@ export function PendingRegistrationsTable({ registrations }: { registrations: Re
     if (!rejectDialog.registrationId) return
 
     setLoading(rejectDialog.registrationId)
-    await rejectRegistration(rejectDialog.registrationId, rejectionReason)
+    const result = await rejectRegistration(rejectDialog.registrationId, rejectionReason)
     setLoading(null)
     setRejectDialog({ open: false })
     setRejectionReason("")
+
+    if (result?.error) {
+      toast({
+        title: "Failed to reject registration",
+        description: result.error,
+        variant: "destructive",
+      })
+    } else {
+      toast({
+        title: "Registration rejected",
+        description: "The registration request has been rejected.",
+      })
+    }
   }
 
   const copyCredentials = () => {
@@ -77,6 +116,13 @@ export function PendingRegistrationsTable({ registrations }: { registrations: Re
 
   return (
     <>
+      {error && (
+        <div className="mb-4">
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        </div>
+      )}
       <Table>
         <TableHeader>
           <TableRow>
