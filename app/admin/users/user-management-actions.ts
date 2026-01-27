@@ -57,27 +57,27 @@ export async function approveRegistration(registrationId: string, assignedRole: 
 
   if (authError) {
     console.error(" Auth creation error:", authError)
-    return { error: "Failed to create user account" }
+    return { error: `Failed to create user account: ${authError.message}` }
   }
 
   // Create profile
-  const { error: profileError } = await supabase.from("profiles").insert({
-    id: authUser.user.id,
-    email: registration.email,
-    first_name: registration.first_name,
-    last_name: registration.last_name,
-    phone: registration.phone,
-    role: assignedRole,
-    is_admin: assignedRole === "admin",
-    requires_password_change: true,
-    is_active: true,
-    created_by: currentUser.id,
-    status: "active",
-  })
+  const { error: profileError } = await serviceClient.from("profiles").insert({
+  id: authUser.user.id,
+  email: registration.email,
+  first_name: registration.first_name,
+  last_name: registration.last_name,
+  phone: registration.phone,
+  role: assignedRole,
+  is_admin: assignedRole === "admin",
+  requires_password_change: true,
+  is_active: true,
+  created_by: currentUser.id,
+  status: "active",
+})
 
   if (profileError) {
     console.error(" Profile creation error:", profileError)
-    return { error: "Failed to create user profile" }
+    return { error: `Failed to create user profile: ${profileError.message}` }
   }
 
   // Update registration status
@@ -165,27 +165,27 @@ export async function createUserManually(formData: {
 
   if (authError) {
     console.error(" Auth creation error:", authError)
-    return { error: "Failed to create user account" }
+    return { error: `Failed to create user account: ${authError.message}` }
   }
 
   // Create profile
-  const { error: profileError } = await supabase.from("profiles").insert({
-    id: authUser.user.id,
-    email: formData.email,
-    first_name: formData.first_name,
-    last_name: formData.last_name,
-    phone: formData.phone,
-    role: formData.role,
-    is_admin: formData.role === "admin",
-    requires_password_change: true,
-    is_active: true,
-    created_by: currentUser.id,
-    status: "active",
-  })
+  const { error: profileError } = await serviceClient.from("profiles").insert({
+  id: authUser.user.id,
+  email: formData.email,
+  first_name: formData.first_name,
+  last_name: formData.last_name,
+  phone: formData.phone,
+  role: formData.role,
+  is_admin: formData.role === "admin",
+  requires_password_change: true,
+  is_active: true,
+  created_by: currentUser.id,
+  status: "active",
+})
 
   if (profileError) {
     console.error(" Profile creation error:", profileError)
-    return { error: "Failed to create user profile" }
+    return { error: `Failed to create user profile: ${profileError.message}` }
   }
 
   await logActivity(currentUser.id, "create_user", "users", authUser.user.id, {
@@ -422,26 +422,26 @@ export async function approveTeamMember(teamMemberId: string, assignedRole?: str
 
   if (authError) {
     console.error(" Auth creation error:", authError)
-    return { error: "Failed to create user account" }
+    return { error: `Failed to create user account: ${authError.message}` }
   }
 
   // Create profile
-  const { error: profileError } = await supabase.from("profiles").insert({
-    id: authUser.user.id,
-    email: teamMember.email,
-    first_name: teamMember.first_name,
-    last_name: teamMember.last_name,
-    role: role,
-    is_admin: role === "admin",
-    requires_password_change: true,
-    is_active: true,
-    created_by: currentUser.id,
-    status: "active",
-  })
+  const { error: profileError } = await serviceClient.from("profiles").insert({
+  id: authUser.user.id,
+  email: teamMember.email,
+  first_name: teamMember.first_name,
+  last_name: teamMember.last_name,
+  role: role,
+  is_admin: role === "admin",
+  requires_password_change: true,
+  is_active: true,
+  created_by: currentUser.id,
+  status: "active",
+})
 
   if (profileError) {
     console.error(" Profile creation error:", profileError)
-    return { error: "Failed to create user profile" }
+    return { error: `Failed to create user profile: ${profileError.message}` }
   }
 
   // Update team member status to active

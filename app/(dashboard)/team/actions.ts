@@ -1,39 +1,7 @@
 "use server"
 
-import { createClient } from "@supabase/supabase-js"
 import { revalidatePath } from "next/cache"
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-function getServiceClient() {
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    throw new Error("Missing Supabase environment variables")
-  }
-  return createClient(supabaseUrl, supabaseServiceRoleKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  })
-}
-
-async function getCurrentUser() {
-  const supabase = getServiceClient()
-
-  // Get all users and find the one with admin role
-  const {
-    data: { users },
-    error,
-  } = await supabase.auth.admin.listUsers()
-
-  if (error || !users || users.length === 0) {
-    throw new Error("Unable to get admin user")
-  }
-
-  // Get the first user (super admin) or implement logic to find current user
-  return users[0].id
-}
+import { createClient, getServiceClient } from "@/lib/supabase/server"
 
 export async function createTeamMember(formData: {
   firstName: string
@@ -42,9 +10,15 @@ export async function createTeamMember(formData: {
   role: string
 }) {
   try {
-    const supabase = getServiceClient()
+    const supabase = await createClient()
 
-    const userId = await getCurrentUser()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+
+    if (!user) {
+      return { success: false, error: "Unauthorized" }
+    }
 
     const { data, error } = await supabase
       .from("team_members")
@@ -57,7 +31,7 @@ export async function createTeamMember(formData: {
           status: "pending",
           invitation_token: Math.random().toString(36).substring(2, 15),
           invited_at: new Date().toISOString(),
-          created_by: userId,
+          created_by: user.id,
         },
       ])
       .select()
