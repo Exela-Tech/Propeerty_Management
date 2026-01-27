@@ -1,28 +1,95 @@
--- Create function to handle new user signup
-CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER
-LANGUAGE plpgsql
+-- ============================
+-- FIX RLS POLICIES (Profiles & Admin Access)
+-- ============================
+
+-- Drop existing policies that may cause recursion or conflicts
+DROP POLICY IF EXISTS "Admins can view all profiles" ON public.profiles;
+DROP POLICY IF EXISTS "Admins can update all profiles" ON public.profiles;
+DROP POLICY IF EXISTS "Admins can delete profiles" ON public.profiles;
+DROP POLICY IF EXISTS "Admins can insert profiles" ON public.profiles;
+DROP POLICY IF EXISTS "Users can view own profile" ON public.profiles;
+DROP POLICY IF EXISTS "Users can update own profile" ON public.profiles;
+DROP POLICY IF EXISTS "Users can insert own profile" ON public.profiles;
+
+DROP POLICY IF EXISTS "Admins can view all properties" ON public.properties;
+DROP POLICY IF EXISTS "Admins can update all properties" ON public.properties;
+DROP POLICY IF EXISTS "Admins can view all tenants" ON public.tenants;
+DROP POLICY IF EXISTS "Admins can view all rent payments" ON public.rent_payments;
+
+-- ============================
+-- SAFE SECURITY DEFINER FUNCTION
+-- ============================
+
+CREATE OR REPLACE FUNCTION public.get_user_role(user_id UUID)
+RETURNS user_role
+LANGUAGE sql
 SECURITY DEFINER
 SET search_path = public
 AS $$
-BEGIN
-  INSERT INTO public.profiles (id, email, full_name, role)
-  VALUES (
-    NEW.id,
-    NEW.email,
-    COALESCE(NEW.raw_user_meta_data->>'full_name', ''),
-    COALESCE((NEW.raw_user_meta_data->>'role')::user_role, 'renter')
-  )
-  ON CONFLICT (id) DO NOTHING;
-  
-  RETURN NEW;
-END;
+  SELECT role FROM public.profiles WHERE id = user_id;
 $$;
 
--- Create trigger for new user creation
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+-- Prevent RLS recursion
+ALTER FUNCTION public.get_user_role(UUID) SET row_security = off;
 
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW
-  EXECUTE FUNCTION public.handle_new_user();
+-- ============================
+-- PROFILE POLICIES
+-- ============================
+
+-- Admins can view all profiles
+CREATE POLICY "Admins can view all profiles"
+ON public.profiles FOR SELECT
+USING (public.get_user_role(auth.uid()) = 'admin');
+
+-- Admins can update all profiles
+CREATE POLICY "Admins can update all profiles"
+ON public.profiles FOR UPDATE
+USING (public.get_user_role(auth.uid()) = 'admin');
+
+-- Admins can insert profiles
+CREATE POLICY "Admins can insert profiles"
+ON public.profiles FOR INSERT
+WITH CHECK (public.get_user_role(auth.uid()) = 'admin');
+
+-- Admins can delete profiles
+CREATE POLICY "Admins can delete profiles"
+ON public.profiles FOR DELETE
+USING (public.get_user_role(auth.uid()) = 'admin');
+
+-- Users can view their own profile
+CREATE POLICY "Users can view own profile"
+ON public.profiles FOR SELECT
+USING (auth.uid() = id);
+
+-- Users can update their own profile
+CREATE POLICY "Users can update own profile"
+ON public.profiles FOR UPDATE
+USING (auth.uid() = id);
+
+-- Users can insert their own profile (for self-signup / triggers)
+CREATE POLICY "Users can insert own profile"
+ON public.profiles FOR INSERT
+WITH CHECK (auth.uid() = id);
+
+-- ============================
+-- OTHER TABLE POLICIES
+-- ============================
+
+-- Properties
+CREATE POLICY "Admins can view all properties"
+ON public.properties FOR SELECT
+USING (public.get_user_role(auth.uid()) = 'admin');
+
+CREATE POLICY "Admins can update all properties"
+ON public.properties FOR UPDATE
+USING (public.get_user_role(auth.uid()) = 'admin');
+
+-- Tenants
+CREATE POLICY "Admins can view all tenants"
+ON public.tenants FOR SELECT
+USING (public.get_user_role(auth.uid()) = 'admin');
+
+-- Rent payments
+CREATE POLICY "Admins can view all rent payments"
+ON public.rent_payments FOR SELECT
+USING (public.get_user_role(auth.uid()) = 'admin');
