@@ -166,8 +166,23 @@ admin'--
 
 All of these should be safely handled by Supabase's parameterized queries.
 
+## Content Security Policy (CSP) and eval
+
+To reduce XSS and code-injection risk, the app uses a strict Content Security Policy that **does not allow `eval()` in production** (see [issue #83](https://github.com/jonusgreen/Propeerty_Management/issues/83)).
+
+### What we do
+
+- **CSP headers** are set in `proxy.ts`: script execution uses nonces and `'strict-dynamic'`. `'unsafe-eval'` is allowed **only in development** (for React/Next.js error stack reconstruction).
+- **ESLint** enforces: `no-eval`, `no-implied-eval`, and `no-new-func` so application code does not use `eval()`, `new Function()`, or string forms of `setTimeout`/`setInterval`.
+
+### What to avoid
+
+- Do not use `eval()`, `new Function()`, `setTimeout("string")`, or `setInterval("string")` in application code.
+- Do not add `'unsafe-eval'` to the production CSP. If a dependency requires eval, prefer replacing it or loading it in a sandboxed context.
+
 ## Resources
 
 - [Supabase Security Best Practices](https://supabase.com/docs/guides/database/postgres/row-level-security)
 - [OWASP SQL Injection Prevention](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html)
 - [PostgreSQL Security](https://www.postgresql.org/docs/current/sql-syntax.html)
+- [Next.js Content Security Policy](https://nextjs.org/docs/app/guides/content-security-policy)
