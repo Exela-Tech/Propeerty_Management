@@ -1,19 +1,28 @@
+-- 006_fix_deposit_gl_entries.sql
 -- Fix missing GL entries for existing deposits
 -- This script creates GL entries for deposits that were recorded but didn't create GL entries
 
--- First, add 'deposit' to the allowed reference_type values
-ALTER TABLE general_ledger 
+-- 1) Ensure 'deposit' is allowed as a reference_type
+ALTER TABLE general_ledger
 DROP CONSTRAINT IF EXISTS general_ledger_reference_type_check;
 
-ALTER TABLE general_ledger 
-ADD CONSTRAINT general_ledger_reference_type_check 
-CHECK (reference_type IN ('tenant_payment', 'landlord_payment', 'maintenance', 'expense', 'journal_entry', 'deposit'));
+ALTER TABLE general_ledger
+ADD CONSTRAINT general_ledger_reference_type_check
+CHECK (
+  reference_type IN (
+    'tenant_payment',
+    'landlord_payment',
+    'maintenance',
+    'expense',
+    'journal_entry',
+    'deposit'
+  )
+);
 
--- Now create the GL entries for deposits
+-- 2) Create GL entries for deposits that do not have them
 DO $$
 DECLARE
   deposit_record RECORD;
-  bank_gl_account_id UUID;
   undeposited_funds_account_id UUID;
 BEGIN
   -- Get the Undeposited Funds account
@@ -22,9 +31,13 @@ BEGIN
   WHERE account_code = '1015'
   LIMIT 1;
 
+  IF undeposited_funds_account_id IS NULL THEN
+    RAISE EXCEPTION 'Undeposited Funds account (1015) not found in chart_of_accounts';
+  END IF;
+
   -- Loop through all deposits that don't have GL entries
-  FOR deposit_record IN 
-    SELECT 
+  FOR deposit_record IN
+    SELECT
       pd.id as deposit_id,
       pd.bank_account_id,
       pd.deposit_date,
@@ -35,18 +48,25 @@ BEGIN
     FROM payment_deposits pd
     JOIN bank_accounts ba ON pd.bank_account_id = ba.id
     WHERE NOT EXISTS (
-      SELECT 1 FROM general_ledger gl 
-      WHERE gl.reference_type = 'deposit' 
+      SELECT 1 FROM general_ledger gl
+      WHERE gl.reference_type = 'deposit'
       AND gl.reference_id = pd.id
     )
     ORDER BY pd.deposit_date
   LOOP
-    RAISE NOTICE 'Creating GL entries for deposit % to % (Amount: %)', 
-      deposit_record.deposit_reference, 
+
+    IF deposit_record.bank_gl_account_id IS NULL THEN
+      RAISE NOTICE 'Skipping deposit % because bank account has no gl_account_id',
+        deposit_record.deposit_reference;
+      CONTINUE;
+    END IF;
+
+    RAISE NOTICE 'Creating GL entries for deposit % to % (Amount: %)',
+      deposit_record.deposit_reference,
       deposit_record.bank_name,
       deposit_record.total_amount;
 
-    -- Create GL entry to debit the bank account (increase bank balance)
+    -- Debit the bank account (increase bank balance)
     INSERT INTO general_ledger (
       account_id,
       transaction_date,
@@ -58,14 +78,14 @@ BEGIN
     ) VALUES (
       deposit_record.bank_gl_account_id,
       deposit_record.deposit_date,
-      'Deposit: ' || deposit_record.deposit_reference,
+      'Deposit: ' || COALESCE(deposit_record.deposit_reference, ''),
       deposit_record.total_amount,
       0,
       'deposit',
       deposit_record.deposit_id
     );
 
-    -- Create GL entry to credit Undeposited Funds (decrease undeposited funds)
+    -- Credit Undeposited Funds (decrease undeposited funds)
     INSERT INTO general_ledger (
       account_id,
       transaction_date,
@@ -77,7 +97,7 @@ BEGIN
     ) VALUES (
       undeposited_funds_account_id,
       deposit_record.deposit_date,
-      'Deposit: ' || deposit_record.deposit_reference,
+      'Deposit: ' || COALESCE(deposit_record.deposit_reference, ''),
       0,
       deposit_record.total_amount,
       'deposit',
